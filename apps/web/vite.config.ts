@@ -14,6 +14,7 @@ export default defineConfig({
   server: {
     port: 5173,
     host: true,
+    allowedHosts: ['musicrweb-production.up.railway.app'],
   },
   build: {
     outDir: 'dist',
