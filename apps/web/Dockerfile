@@ -15,11 +15,11 @@ RUN apk add --no-cache \
 # Set working directory
 WORKDIR /app
 
-# Copy package files - Railway context should be apps/web
-COPY package.json ./
-COPY pnpm-lock.yaml* ../pnpm-lock.yaml ./
+    # Copy package files - Railway context is apps/web, pnpm-lock.yaml is in parent dir
+    COPY package.json ./
+    COPY ../pnpm-lock.yaml ./
 
-# Install pnpm
+    # Install pnpm
 RUN corepack enable pnpm
 
 # Install dependencies
