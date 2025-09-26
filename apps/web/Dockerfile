@@ -30,7 +30,6 @@ LABEL stage=builder
 
 # Copy source code
 COPY apps/web ./apps/web
-COPY shared ./shared
 COPY tsconfig.json ./
 
 # Set environment for build
