@@ -27,6 +27,11 @@ function getDatabaseUrl(): string {
     return `postgresql://${user}:${password}@${host}:${port}/${database}`;
   }
 
+  // Log all available environment variables for debugging
+  console.error('Available environment variables:', Object.keys(process.env).filter(key =>
+    key.includes('DATABASE') || key.includes('PG') || key.includes('DB') || key.includes('SQL')
+  ).map(key => `${key}=${process.env[key]}`).join(', '));
+
   // If we can't construct it, throw an error
   throw new Error('DATABASE_URL is not set and cannot be constructed from Railway PostgreSQL environment variables');
 }
