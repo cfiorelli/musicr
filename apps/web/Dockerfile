@@ -33,7 +33,9 @@ COPY . ./
 
 # Set environment for build
 ENV NODE_ENV=production
-ENV VITE_API_URL=http://localhost:4000
+# Use Railway's internal service URL for API communication
+# Railway will override this with VITE_API_URL environment variable if set
+ENV VITE_API_URL=${VITE_API_URL:-http://localhost:4000}
 
 # Build the application
 RUN pnpm run build
