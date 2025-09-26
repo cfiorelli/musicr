@@ -1,20 +1,73 @@
 /**
  * Prisma type definitions
- * Inferred from the Prisma client to ensure type safety
+ * Manually defined based on schema to ensure type safety
  */
 
-import { PrismaClient } from '@prisma/client';
+// Base model types
+export interface Song {
+  id: string;
+  title: string;
+  artist: string;
+  year: number | null;
+  popularity: number;
+  tags: string[];
+  phrases: string[];
+  mbid: string | null;
+  embedding: number[] | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
-const prisma = new PrismaClient();
+export interface User {
+  id: string;
+  anonHandle: string;
+  ipHash: string;
+  createdAt: Date;
+}
 
-// Infer types from the Prisma client
-export type Song = Awaited<ReturnType<typeof prisma.song.findFirstOrThrow>>;
-export type User = Awaited<ReturnType<typeof prisma.user.findFirstOrThrow>>;
-export type Room = Awaited<ReturnType<typeof prisma.room.findFirstOrThrow>>;
-export type Message = Awaited<ReturnType<typeof prisma.message.findFirstOrThrow>>;
+export interface Room {
+  id: string;
+  name: string;
+  allowExplicit: boolean;
+  createdAt: Date;
+}
 
-// Utility types for creating new records
-export type SongCreate = Parameters<typeof prisma.song.create>[0]['data'];
-export type UserCreate = Parameters<typeof prisma.user.create>[0]['data'];
-export type RoomCreate = Parameters<typeof prisma.room.create>[0]['data'];
-export type MessageCreate = Parameters<typeof prisma.message.create>[0]['data'];
+export interface Message {
+  id: string;
+  userId: string;
+  roomId: string;
+  text: string;
+  chosenSongId: string | null;
+  scores: any;
+  createdAt: Date;
+}
+
+// Create input types
+export interface SongCreate {
+  title: string;
+  artist: string;
+  year?: number | null;
+  popularity?: number;
+  tags?: string[];
+  phrases?: string[];
+  mbid?: string | null;
+  embedding?: number[] | null;
+}
+
+export interface UserCreate {
+  anonHandle: string;
+  ipHash: string;
+}
+
+export interface RoomCreate {
+  name: string;
+  allowExplicit?: boolean;
+}
+
+export interface MessageCreate {
+  userId: string;
+  roomId: string;
+  text: string;
+  chosenSongId?: string | null;
+  scores?: any;
+}
