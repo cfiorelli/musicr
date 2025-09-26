@@ -22,7 +22,8 @@ WORKDIR /app
     RUN corepack enable pnpm
     
     # Install dependencies without pnpm-lock.yaml (Railway apps/web context limitation)
-    RUN pnpm install --prod=false
+    # Install all dependencies including dev deps for build stage
+    RUN pnpm install
 
 # Stage 2: Build the application
 FROM dependencies AS builder
