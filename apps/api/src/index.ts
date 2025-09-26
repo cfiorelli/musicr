@@ -73,7 +73,7 @@ let songMatchingService: SongMatchingService;
 
 // Health endpoint for container orchestration
 fastify.get('/health', async (_, reply) => {
-  const startTime = Date.now();
+  const starpnpm preview -- --host 0.0.0.0 --port ${PORT}pnpm preview -- --host 0.0.0.0 --port ${PORT}pnpm preview -- --host 0.0.0.0 --port ${PORT}tTime = Date.now();
   
   try {
     // Check database connectivity
