@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "serve -s dist -l ${PORT:-5173} -H 0.0.0.0",
+    "preview": "serve -s dist -l 0.0.0.0:${PORT:-5173}",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "test": "vitest",
     "clean": "rm -rf dist"
@@ -15,7 +15,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^7.9.2",
-    "serve": "^14.0.0",
+    "serve": "^14.2.5",
     "zustand": "^4.5.2"
   },
   "devDependencies": {
