@@ -1,5 +1,10 @@
 import { create } from 'zustand';
 
+// Simple UUID generator for compatibility
+function generateId() {
+  return 'msg_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
+}
+
 export interface Message {
   id: string;
   content: string;
@@ -40,8 +45,37 @@ export interface ChatState {
   getUserSession: () => Promise<void>;
 }
 
-const WS_URL = 'ws://localhost:4000/ws';
-const API_URL = 'http://localhost:4000/api';
+// Derive URLs dynamically so the app works from localhost or LAN IPs
+// Allow overrides via Vite env vars when needed
+const { VITE_WS_URL, VITE_API_URL } = (import.meta as any).env || {};
+
+function deriveBaseUrls() {
+  try {
+    // Use window.location to determine current host and protocol
+    const loc = window.location;
+    const protocol = loc.protocol === 'https:' ? 'wss:' : 'ws:';
+    const host = loc.hostname; // e.g., localhost or 10.0.0.106
+    // Backend runs on 4000 by default
+    const apiOrigin = `${loc.protocol}//${host}:4000`;
+    const wsOrigin = `${protocol}//${host}:4000`;
+    
+    return {
+      apiUrl: `${apiOrigin}/api`,
+      wsUrl: `${wsOrigin}/ws`,
+    };
+  } catch (error) {
+    console.error('[URL DEBUG] Error in deriveBaseUrls:', error);
+    // Fallback to localhost if window is not available
+    return {
+      apiUrl: 'http://localhost:4000/api',
+      wsUrl: 'ws://localhost:4000/ws',
+    };
+  }
+}
+
+const derived = deriveBaseUrls();
+const API_URL = VITE_API_URL || derived.apiUrl;
+const WS_URL = VITE_WS_URL || derived.wsUrl;
 
 export const useChatStore = create<ChatState>((set, get) => ({
   messages: [],
@@ -114,7 +148,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
           } else if (data.type === 'display') {
             // Message from another user
             const message: Message = {
-              id: crypto.randomUUID(),
+              id: generateId(),
               content: data.originalText,
               songTitle: data.primary?.title,
               songArtist: data.primary?.artist,
@@ -158,10 +192,17 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
   sendMessage: (content: string) => {
     const { ws, userHandle, familyFriendly } = get();
+    console.log('[SEND DEBUG] Attempting to send message:', {
+      content,
+      wsState: ws?.readyState,
+      wsOpen: ws?.readyState === WebSocket.OPEN,
+      userHandle
+    });
+    
     if (ws && ws.readyState === WebSocket.OPEN) {
       // Add optimistic user message immediately
       const userMessage: Message = {
-        id: crypto.randomUUID(),
+        id: generateId(),
         content,
         timestamp: new Date().toISOString(),
         userId: 'user',
@@ -171,11 +212,19 @@ export const useChatStore = create<ChatState>((set, get) => ({
       get().addMessage(userMessage);
       
       // Send to server
-      ws.send(JSON.stringify({ 
+      const messageData = { 
         type: 'msg', 
         text: content,
         allowExplicit: !familyFriendly
-      }));
+      };
+      console.log('[SEND DEBUG] Sending WebSocket message:', messageData);
+      ws.send(JSON.stringify(messageData));
+    } else {
+      console.error('[SEND DEBUG] Cannot send - WebSocket not ready:', {
+        ws: !!ws,
+        readyState: ws?.readyState,
+        expectedOpen: WebSocket.OPEN
+      });
     }
   },
 
