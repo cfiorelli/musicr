@@ -92,7 +92,6 @@ ENV PORT=5173
 # Use dumb-init for proper signal handling
 ENTRYPOINT ["dumb-init", "--"]
 
-# Use serve (simple static file server) instead of vite preview to avoid permission issues
+# Use serve directly instead of npm script to avoid Railway argument conflicts
 # serve is more reliable for production static file serving
-# The preview script in package.json now uses serve
-CMD ["pnpm", "run", "preview"]
+CMD ["sh", "-c", "exec pnpm exec serve -s dist -l tcp://0.0.0.0:${PORT:-5173}"]
