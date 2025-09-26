@@ -1,0 +1,611 @@
+import { describe, it, expect, beforeAll, afterAll, beforeEach, vi } from 'vitest';
+import { FastifyInstance } from 'fastify';
+import { buildApp } from '../../index.js';
+import { SongMatchingService } from '../song-matching-service.js';
+import { EmbeddingService } from '../../embeddings/service.js';
+import { db } from '../../database/client.js';
+
+describe('/api/map Integration Tests - Mocked Embedder', () => {
+  let app: FastifyInstance;
+  let mockEmbeddingService: EmbeddingService;
+  let mockSongMatchingService: SongMatchingService;
+  let testSongs: any[];
+
+  beforeAll(async () => {
+    // Build the app but don't start listening
+    app = await buildApp({
+      logger: false // Disable logging for tests
+    });
+
+    // Setup test database with canned catalog subset
+    await setupTestCatalog();
+  });
+
+  afterAll(async () => {
+    if (app) {
+      await app.close();
+    }
+    // Clean up test data
+    await cleanupTestCatalog();
+  });
+
+  beforeEach(async () => {
+    // Reset all mocks before each test
+    vi.clearAllMocks();
+    
+    // Setup deterministic embedding mocks
+    setupMockEmbeddings();
+  });
+
+  async function setupTestCatalog() {
+    // Insert a known subset of songs for testing
+    testSongs = [
+      {
+        id: 'test-song-1',
+        title: 'Hey Jude',
+        artist: 'The Beatles',
+        album: 'Hey Jude',
+        year: 1968,
+        decade: 1960,
+        tags: ['rock', 'classic', 'upbeat'],
+        popularity: 95,
+        mood_tags: ['happy', 'nostalgic'],
+        embedding: Array(384).fill(0).map(() => 0.1) // Mock embedding vector
+      },
+      {
+        id: 'test-song-2', 
+        title: 'Bohemian Rhapsody',
+        artist: 'Queen',
+        album: 'A Night at the Opera',
+        year: 1975,
+        decade: 1970,
+        tags: ['rock', 'opera', 'epic'],
+        popularity: 98,
+        mood_tags: ['dramatic', 'energetic'],
+        embedding: Array(384).fill(0).map(() => 0.2) // Different mock vector
+      },
+      {
+        id: 'test-song-3',
+        title: 'Sweet Child O Mine',
+        artist: 'Guns N Roses', 
+        album: 'Appetite for Destruction',
+        year: 1987,
+        decade: 1980,
+        tags: ['rock', 'guitar', 'classic'],
+        popularity: 90,
+        mood_tags: ['energetic', 'romantic'],
+        embedding: Array(384).fill(0).map(() => 0.3) // Another mock vector
+      },
+      {
+        id: 'test-song-4',
+        title: 'Billie Jean',
+        artist: 'Michael Jackson',
+        album: 'Thriller', 
+        year: 1982,
+        decade: 1980,
+        tags: ['pop', 'dance', 'classic'],
+        popularity: 97,
+        mood_tags: ['danceable', 'mysterious'],
+        embedding: Array(384).fill(0).map(() => 0.4) // Pop music vector
+      },
+      {
+        id: 'test-song-5',
+        title: 'Hotel California',
+        artist: 'Eagles',
+        album: 'Hotel California',
+        year: 1976, 
+        decade: 1970,
+        tags: ['rock', 'guitar', 'story'],
+        popularity: 93,
+        mood_tags: ['mysterious', 'laid_back'],
+        embedding: Array(384).fill(0).map(() => 0.15) // Similar to Beatles
+      }
+    ];
+
+    // Insert test songs into database
+    for (const song of testSongs) {
+      await db.execute(`
+        INSERT OR REPLACE INTO songs (
+          id, title, artist, album, year, decade, tags, popularity, mood_tags, embedding
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `, [
+        song.id, song.title, song.artist, song.album, song.year, 
+        song.decade, JSON.stringify(song.tags), song.popularity,
+        JSON.stringify(song.mood_tags), JSON.stringify(song.embedding)
+      ]);
+    }
+  }
+
+  async function cleanupTestCatalog() {
+    // Remove test songs
+    const testIds = testSongs.map(s => s.id);
+    await db.execute(`
+      DELETE FROM songs WHERE id IN (${testIds.map(() => '?').join(',')})
+    `, testIds);
+  }
+
+  function setupMockEmbeddings() {
+    // Mock embedding service to return deterministic vectors
+    vi.mock('../../embeddings/service.js', () => ({
+      EmbeddingService: vi.fn(() => ({
+        generateEmbedding: vi.fn((text: string) => {
+          // Return deterministic embeddings based on text content
+          if (text.toLowerCase().includes('beatles') || text.toLowerCase().includes('hey jude')) {
+            return Promise.resolve(Array(384).fill(0).map(() => 0.1));
+          }
+          if (text.toLowerCase().includes('queen') || text.toLowerCase().includes('bohemian')) {
+            return Promise.resolve(Array(384).fill(0).map(() => 0.2));
+          }
+          if (text.toLowerCase().includes('rock')) {
+            return Promise.resolve(Array(384).fill(0).map(() => 0.25));
+          }
+          if (text.toLowerCase().includes('pop') || text.toLowerCase().includes('dance')) {
+            return Promise.resolve(Array(384).fill(0).map(() => 0.4));
+          }
+          // Default embedding
+          return Promise.resolve(Array(384).fill(0).map(() => 0.5));
+        }),
+        isAvailable: vi.fn(() => Promise.resolve(true))
+      })),
+      getEmbeddingService: vi.fn(() => mockEmbeddingService)
+    }));
+
+    // Setup mock instances
+    mockEmbeddingService = {
+      generateEmbedding: vi.fn().mockImplementation((text: string) => {
+        if (text.toLowerCase().includes('beatles') || text.toLowerCase().includes('hey jude')) {
+          return Promise.resolve(Array(384).fill(0).map(() => 0.1));
+        }
+        if (text.toLowerCase().includes('queen') || text.toLowerCase().includes('bohemian')) {
+          return Promise.resolve(Array(384).fill(0).map(() => 0.2));
+        }
+        if (text.toLowerCase().includes('rock')) {
+          return Promise.resolve(Array(384).fill(0).map(() => 0.25));
+        }
+        if (text.toLowerCase().includes('pop') || text.toLowerCase().includes('dance')) {
+          return Promise.resolve(Array(384).fill(0).map(() => 0.4));
+        }
+        return Promise.resolve(Array(384).fill(0).map(() => 0.5));
+      }),
+      isAvailable: vi.fn().mockResolvedValue(true)
+    } as any;
+  }
+
+  describe('Basic Endpoint Functionality', () => {
+    it('should return 400 for missing message', async () => {
+      const response = await app.inject({
+        method: 'POST',
+        url: '/api/map',
+        payload: {}
+      });
+
+      expect(response.statusCode).toBe(400);
+      const body = JSON.parse(response.body);
+      expect(body.error).toContain('message is required');
+    });
+
+    it('should return 400 for empty message', async () => {
+      const response = await app.inject({
+        method: 'POST',
+        url: '/api/map',
+        payload: { message: '' }
+      });
+
+      expect(response.statusCode).toBe(400);
+      const body = JSON.parse(response.body);
+      expect(body.error).toContain('message cannot be empty');
+    });
+
+    it('should return 200 for valid requests', async () => {
+      const response = await app.inject({
+        method: 'POST',
+        url: '/api/map',
+        payload: { message: 'play some Beatles music' }
+      });
+
+      expect(response.statusCode).toBe(200);
+      const body = JSON.parse(response.body);
+      expect(body.success).toBe(true);
+      expect(body.song).toBeDefined();
+    });
+  });
+
+  describe('Exact Title Matching', () => {
+    it('should find exact title matches with high confidence', async () => {
+      const response = await app.inject({
+        method: 'POST', 
+        url: '/api/map',
+        payload: { message: 'play Hey Jude' }
+      });
+
+      expect(response.statusCode).toBe(200);
+      const body = JSON.parse(response.body);
+      
+      expect(body.success).toBe(true);
+      expect(body.song.title).toBe('Hey Jude');
+      expect(body.song.artist).toBe('The Beatles');
+      expect(body.song.confidence).toBeGreaterThan(0.9);
+      expect(body.song.matchReasons).toContain('exact_title');
+    });
+
+    it('should handle case insensitive exact matches', async () => {
+      const response = await app.inject({
+        method: 'POST',
+        url: '/api/map',
+        payload: { message: 'play BOHEMIAN RHAPSODY' }
+      });
+
+      expect(response.statusCode).toBe(200);
+      const body = JSON.parse(response.body);
+      
+      expect(body.song.title).toBe('Bohemian Rhapsody');
+      expect(body.song.artist).toBe('Queen');
+      expect(body.song.confidence).toBeGreaterThan(0.9);
+    });
+
+    it('should prioritize exact matches over partial matches', async () => {
+      const response = await app.inject({
+        method: 'POST',
+        url: '/api/map', 
+        payload: { message: 'Billie Jean by Michael Jackson' }
+      });
+
+      expect(response.statusCode).toBe(200);
+      const body = JSON.parse(response.body);
+      
+      expect(body.song.title).toBe('Billie Jean');
+      expect(body.song.artist).toBe('Michael Jackson');
+      expect(body.song.confidence).toBeGreaterThan(0.95);
+    });
+  });
+
+  describe('Artist Matching', () => {
+    it('should find songs by artist name', async () => {
+      const response = await app.inject({
+        method: 'POST',
+        url: '/api/map',
+        payload: { message: 'play something by The Beatles' }
+      });
+
+      expect(response.statusCode).toBe(200);
+      const body = JSON.parse(response.body);
+      
+      expect(body.song.artist).toContain('Beatles');
+      expect(body.song.confidence).toBeGreaterThan(0.7);
+      expect(body.song.matchReasons).toContain('artist');
+    });
+
+    it('should handle partial artist names', async () => {
+      const response = await app.inject({
+        method: 'POST',
+        url: '/api/map',
+        payload: { message: 'play some Queen music' }
+      });
+
+      expect(response.statusCode).toBe(200);
+      const body = JSON.parse(response.body);
+      
+      expect(body.song.artist).toBe('Queen');
+      expect(body.song.confidence).toBeGreaterThan(0.7);
+    });
+  });
+
+  describe('Semantic Embedding Matching', () => {
+    it('should use embeddings for semantic search', async () => {
+      const response = await app.inject({
+        method: 'POST',
+        url: '/api/map',
+        payload: { message: 'rock music with guitar solos' }
+      });
+
+      expect(response.statusCode).toBe(200);
+      const body = JSON.parse(response.body);
+      
+      expect(body.song).toBeDefined();
+      expect(body.song.tags).toContain('rock');
+      expect(body.song.confidence).toBeGreaterThan(0.5);
+      expect(body.song.matchReasons).toContain('semantic');
+    });
+
+    it('should match similar themes using embeddings', async () => {
+      const response = await app.inject({
+        method: 'POST', 
+        url: '/api/map',
+        payload: { message: 'danceable pop songs' }
+      });
+
+      expect(response.statusCode).toBe(200);
+      const body = JSON.parse(response.body);
+      
+      // Should match Billie Jean (pop, dance, danceable)
+      expect(body.song.tags).toEqual(expect.arrayContaining(['pop', 'dance']));
+      expect(body.song.mood_tags).toContain('danceable');
+      expect(body.song.matchReasons).toContain('semantic');
+    });
+
+    it('should handle abstract music descriptions', async () => {
+      const response = await app.inject({
+        method: 'POST',
+        url: '/api/map',
+        payload: { message: 'something energetic and dramatic' }
+      });
+
+      expect(response.statusCode).toBe(200);
+      const body = JSON.parse(response.body);
+      
+      expect(body.song.mood_tags).toEqual(expect.arrayContaining(['dramatic', 'energetic']));
+      expect(body.song.confidence).toBeGreaterThan(0.4);
+    });
+  });
+
+  describe('Tag and Mood Matching', () => {
+    it('should match genre tags', async () => {
+      const response = await app.inject({
+        method: 'POST',
+        url: '/api/map',
+        payload: { message: 'classic rock song' }
+      });
+
+      expect(response.statusCode).toBe(200);
+      const body = JSON.parse(response.body);
+      
+      expect(body.song.tags).toContain('rock');
+      expect(body.song.tags).toContain('classic');
+      expect(body.song.matchReasons).toContain('tag');
+    });
+
+    it('should match mood descriptors', async () => {
+      const response = await app.inject({
+        method: 'POST',
+        url: '/api/map',
+        payload: { message: 'happy nostalgic music' }
+      });
+
+      expect(response.statusCode).toBe(200);
+      const body = JSON.parse(response.body);
+      
+      expect(body.song.mood_tags).toEqual(expect.arrayContaining(['happy', 'nostalgic']));
+      expect(body.song.matchReasons).toContain('mood');
+    });
+  });
+
+  describe('Popularity and Confidence Scoring', () => {
+    it('should boost popular songs in ranking', async () => {
+      const response = await app.inject({
+        method: 'POST',
+        url: '/api/map',
+        payload: { message: 'famous rock song' }
+      });
+
+      expect(response.statusCode).toBe(200);
+      const body = JSON.parse(response.body);
+      
+      // Should match high popularity songs like Bohemian Rhapsody (98) or Billie Jean (97)
+      expect(body.song.popularity).toBeGreaterThan(90);
+      expect(body.song.confidence).toBeGreaterThan(0.6);
+    });
+
+    it('should provide detailed confidence scoring', async () => {
+      const response = await app.inject({
+        method: 'POST',
+        url: '/api/map',
+        payload: { message: 'Hey Jude by Beatles' } // Multiple match types
+      });
+
+      expect(response.statusCode).toBe(200);
+      const body = JSON.parse(response.body);
+      
+      expect(body.song.confidence).toBeGreaterThan(0.95); // High confidence for exact match
+      expect(body.song.matchReasons).toContain('exact_title');
+      expect(body.song.matchReasons).toContain('artist');
+      
+      // Should include score breakdown
+      expect(body.song.scores).toBeDefined();
+      expect(body.song.scores.final).toBeGreaterThan(0.9);
+    });
+  });
+
+  describe('Content Moderation Integration', () => {
+    it('should block inappropriate content', async () => {
+      const response = await app.inject({
+        method: 'POST',
+        url: '/api/map',
+        payload: { message: 'play some nazi music' }
+      });
+
+      expect(response.statusCode).toBe(200);
+      const body = JSON.parse(response.body);
+      
+      expect(body.success).toBe(false);
+      expect(body.error).toContain('inappropriate');
+      expect(body.song).toBeUndefined();
+    });
+
+    it('should handle harassment with neutral mapping', async () => {
+      const response = await app.inject({
+        method: 'POST',
+        url: '/api/map',
+        payload: { message: 'kill yourself and play music' }
+      });
+
+      expect(response.statusCode).toBe(200);
+      const body = JSON.parse(response.body);
+      
+      // Should still return a song using neutral mapping
+      expect(body.success).toBe(true);
+      expect(body.song).toBeDefined();
+      expect(body.moderatedQuery).toBeDefined();
+    });
+  });
+
+  describe('Error Handling and Edge Cases', () => {
+    it('should handle no matches gracefully', async () => {
+      const response = await app.inject({
+        method: 'POST',
+        url: '/api/map',
+        payload: { message: 'xyzveryuniquenomatchtext123' }
+      });
+
+      expect(response.statusCode).toBe(200);
+      const body = JSON.parse(response.body);
+      
+      expect(body.success).toBe(false);
+      expect(body.error).toContain('no suitable songs');
+      expect(body.song).toBeUndefined();
+    });
+
+    it('should handle malformed requests', async () => {
+      const response = await app.inject({
+        method: 'POST',
+        url: '/api/map',
+        payload: 'invalid json'
+      });
+
+      expect(response.statusCode).toBe(400);
+    });
+
+    it('should handle very long messages', async () => {
+      const longMessage = 'play music '.repeat(200); // Very long request
+      
+      const response = await app.inject({
+        method: 'POST',
+        url: '/api/map',
+        payload: { message: longMessage }
+      });
+
+      // Should either process or reject gracefully
+      expect([200, 400]).toContain(response.statusCode);
+    });
+  });
+
+  describe('Performance and Caching', () => {
+    it('should respond within reasonable time', async () => {
+      const startTime = performance.now();
+      
+      const response = await app.inject({
+        method: 'POST',
+        url: '/api/map',
+        payload: { message: 'play some Beatles music' }
+      });
+      
+      const duration = performance.now() - startTime;
+      
+      expect(response.statusCode).toBe(200);
+      expect(duration).toBeLessThan(1000); // Should complete within 1 second
+    });
+
+    it('should handle concurrent requests', async () => {
+      const requests = Array(5).fill(null).map((_, i) => 
+        app.inject({
+          method: 'POST',
+          url: '/api/map',
+          payload: { message: `play song number ${i}` }
+        })
+      );
+
+      const responses = await Promise.all(requests);
+      
+      responses.forEach(response => {
+        expect(response.statusCode).toBe(200);
+      });
+    });
+  });
+
+  describe('Response Format Validation', () => {
+    it('should return correctly formatted success response', async () => {
+      const response = await app.inject({
+        method: 'POST',
+        url: '/api/map',
+        payload: { message: 'play Hey Jude' }
+      });
+
+      expect(response.statusCode).toBe(200);
+      const body = JSON.parse(response.body);
+      
+      // Validate response structure
+      expect(body).toHaveProperty('success');
+      expect(body).toHaveProperty('song');
+      expect(body.song).toHaveProperty('id');
+      expect(body.song).toHaveProperty('title');
+      expect(body.song).toHaveProperty('artist');
+      expect(body.song).toHaveProperty('confidence');
+      expect(body.song).toHaveProperty('matchReasons');
+      expect(body.song).toHaveProperty('tags');
+      expect(body.song).toHaveProperty('popularity');
+      
+      // Validate data types
+      expect(typeof body.success).toBe('boolean');
+      expect(typeof body.song.confidence).toBe('number');
+      expect(Array.isArray(body.song.matchReasons)).toBe(true);
+      expect(Array.isArray(body.song.tags)).toBe(true);
+    });
+
+    it('should return correctly formatted error response', async () => {
+      const response = await app.inject({
+        method: 'POST',
+        url: '/api/map',
+        payload: { message: 'veryrandomnomatchtext' }
+      });
+
+      expect(response.statusCode).toBe(200);
+      const body = JSON.parse(response.body);
+      
+      expect(body).toHaveProperty('success');
+      expect(body).toHaveProperty('error');
+      expect(body.success).toBe(false);
+      expect(typeof body.error).toBe('string');
+    });
+  });
+
+  describe('Mock Embedding Validation', () => {
+    it('should use mocked embeddings for deterministic results', async () => {
+      const response1 = await app.inject({
+        method: 'POST',
+        url: '/api/map',
+        payload: { message: 'Beatles music' }
+      });
+
+      const response2 = await app.inject({
+        method: 'POST', 
+        url: '/api/map',
+        payload: { message: 'Beatles music' }
+      });
+
+      expect(response1.statusCode).toBe(200);
+      expect(response2.statusCode).toBe(200);
+      
+      const body1 = JSON.parse(response1.body);
+      const body2 = JSON.parse(response2.body);
+      
+      // Should return consistent results due to mocked embeddings
+      expect(body1.song.id).toBe(body2.song.id);
+      expect(body1.song.confidence).toBeCloseTo(body2.song.confidence, 2);
+    });
+
+    it('should differentiate between different embedding patterns', async () => {
+      const responses = await Promise.all([
+        app.inject({
+          method: 'POST',
+          url: '/api/map', 
+          payload: { message: 'Beatles rock music' } // Should get 0.1 embedding
+        }),
+        app.inject({
+          method: 'POST',
+          url: '/api/map',
+          payload: { message: 'Queen opera music' } // Should get 0.2 embedding  
+        })
+      ]);
+
+      const body1 = JSON.parse(responses[0].body);
+      const body2 = JSON.parse(responses[1].body);
+      
+      expect(responses[0].statusCode).toBe(200);
+      expect(responses[1].statusCode).toBe(200);
+      
+      // Different queries should potentially match different songs
+      // This validates that our embedding mocks are working properly
+      expect(body1.song.id).toBeDefined();
+      expect(body2.song.id).toBeDefined();
+    });
+  });
+});

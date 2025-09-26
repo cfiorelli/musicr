@@ -1,0 +1,59 @@
+PHRASE GENERATION REPORT
+Generated at: 2025-09-26T02:38:02.080Z
+
+Total songs analyzed: 193
+Total phrase candidates: 739
+Unique phrases: 729
+
+TOP 50 CANDIDATES:
+Score | Phrase | Song | Artist | Sources
+162.3 | "can't stop" | Can't Stop the Feeling! | Justin Timberlake | title,explicit_phrases,common_expression,ngram
+158.2 | "love you" | I Will Always Love You | Whitney Houston | title,explicit_phrases,common_expression,ngram
+153.7 | "around the world" | Around the World | Daft Punk | title,explicit_phrases,common_expression,ngram
+147.9 | "california" | Hotel California | Eagles | title,explicit_phrases,common_expression,ngram
+143.1 | "yesterday" | Yesterday | The Beatles | title,explicit_phrases,common_expression,ngram
+138.0 | "california" | California Gurls | Katy Perry | title,explicit_phrases,common_expression,ngram
+135.9 | "uptown" | Uptown Funk | Mark Ronson ft. Bruno Mars | title,explicit_phrases,common_expression,ngram
+131.4 | "hold on" | Don't Stop Believin' | Journey | explicit_phrases,common_expression,ngram
+123.0 | "hollywood" | Hollywood | Madonna | title,explicit_phrases,common_expression,ngram
+95.0 | "bohemian rhapsody" | Bohemian Rhapsody | Queen | title,ngram
+94.4 | "stairway heaven" | Stairway to Heaven | Led Zeppelin | ngram
+94.1 | "hey jude" | Hey Jude | The Beatles | title,explicit_phrases,ngram
+94.1 | "don't be afraid" | Hey Jude | The Beatles | explicit_phrases,ngram
+94.1 | "sad song" | Hey Jude | The Beatles | explicit_phrases,ngram
+93.8 | "billie jean" | Billie Jean | Michael Jackson | title,explicit_phrases,ngram
+93.8 | "kid is not my son" | Billie Jean | Michael Jackson | explicit_phrases,ngram
+93.5 | "rolling stone" | Like a Rolling Stone | Bob Dylan | title,explicit_phrases,ngram
+93.5 | "complete unknown" | Like a Rolling Stone | Bob Dylan | explicit_phrases,ngram
+93.5 | "how does it feel" | Like a Rolling Stone | Bob Dylan | explicit_phrases,ngram
+93.5 | "like rolling" | Like a Rolling Stone | Bob Dylan | ngram
+93.5 | "like rolling stone" | Like a Rolling Stone | Bob Dylan | ngram
+93.5 | "didn't have to cut" | Somebody That I Used to Know | Gotye ft. Kimberly | explicit_phrases,ngram
+93.5 | "somebody used" | Somebody That I Used to Know | Gotye ft. Kimberly | ngram
+93.5 | "used know" | Somebody That I Used to Know | Gotye ft. Kimberly | ngram
+93.5 | "somebody used know" | Somebody That I Used to Know | Gotye ft. Kimberly | ngram
+93.5 | "something evil" | Thriller | Michael Jackson | explicit_phrases,ngram
+93.2 | "teen spirit" | Smells Like Teen Spirit | Nirvana | title,explicit_phrases,ngram
+93.2 | "here we are" | Smells Like Teen Spirit | Nirvana | explicit_phrases,ngram
+93.2 | "smells like" | Smells Like Teen Spirit | Nirvana | title,ngram
+93.2 | "like teen" | Smells Like Teen Spirit | Nirvana | title,ngram
+93.2 | "smells like teen" | Smells Like Teen Spirit | Nirvana | title,ngram
+93.2 | "like teen spirit" | Smells Like Teen Spirit | Nirvana | title,ngram
+93.2 | "call me maybe" | Call Me Maybe | Carly Rae Jepsen | title,explicit_phrases,ngram
+93.2 | "hey i just met you" | Call Me Maybe | Carly Rae Jepsen | explicit_phrases,ngram
+93.2 | "this is crazy" | Call Me Maybe | Carly Rae Jepsen | explicit_phrases,ngram
+93.2 | "call maybe" | Call Me Maybe | Carly Rae Jepsen | ngram
+93.2 | "call me" | Call Me Maybe | Carly Rae Jepsen | title,explicit_phrases,ngram
+93.2 | "all me" | Call Me Maybe | Carly Rae Jepsen | title,explicit_phrases,ngram
+93.2 | "bittersweet memories" | I Will Always Love You | Whitney Houston | explicit_phrases,ngram
+93.2 | "wish you joy" | I Will Always Love You | Whitney Houston | explicit_phrases,ngram
+92.9 | "gangnam style" | Gangnam Style | PSY | title,explicit_phrases,ngram
+92.9 | "oppan gangnam style" | Gangnam Style | PSY | explicit_phrases,ngram
+92.9 | "hey sexy lady" | Gangnam Style | PSY | explicit_phrases,ngram
+92.9 | "hotel california" | Hotel California | Eagles | title,explicit_phrases,ngram
+92.9 | "check out" | Hotel California | Eagles | explicit_phrases,ngram
+92.9 | "never leave" | Hotel California | Eagles | explicit_phrases,ngram
+92.6 | "beat it" | Beat It | Michael Jackson | title,explicit_phrases,ngram
+92.6 | "just beat it" | Beat It | Michael Jackson | explicit_phrases,ngram
+92.6 | "no heaven" | Imagine | John Lennon | explicit_phrases,ngram
+92.6 | "no countries" | Imagine | John Lennon | explicit_phrases,ngram

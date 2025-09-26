@@ -1,0 +1,378 @@
+
+> @musicr/api@1.0.0 dev
+> tsx watch --clear-screen=false src/index.ts
+
+✅ Phrase lexicon loaded with 297 phrases
+prisma:info Starting a postgresql pool with 17 connections.
+prisma:query SELECT "public"."rooms"."id", "public"."rooms"."name", "public"."rooms"."allowExplicit", "public"."rooms"."createdAt" FROM "public"."rooms" WHERE ("public"."rooms"."name" = $1 AND 1=1) LIMIT $2 OFFSET $3
+[02:49:20 UTC] [32mINFO[39m: [36mConfiguration loaded[39m
+    server: {
+      "port": 4000,
+      "host": "localhost",
+      "frontendOrigin": "http://localhost:5173"
+    }
+    nodeEnv: "development"
+    hasOpenAIKey: true
+[02:49:21 UTC] [32mINFO[39m: [36mRate limiter initialized[39m
+    windowMs: 10000
+    maxRequests: 10
+    burstCapacity: 30
+    refillRate: 1
+[02:49:21 UTC] [32mINFO[39m: [36mConnection manager initialized[39m
+[02:49:21 UTC] [32mINFO[39m: [36mRate limiter initialized[39m
+    windowMs: 10000
+    maxRequests: 10
+    burstCapacity: 30
+    refillRate: 1
+[02:49:21 UTC] [32mINFO[39m: [36m✅ Database connected successfully[39m
+[02:49:21 UTC] [34mDEBUG[39m: [36mDefault room 'main' already exists[39m
+[02:49:21 UTC] [32mINFO[39m: [36mRoom service initialized with default room[39m
+[02:49:21 UTC] [32mINFO[39m: [36mInitializing embedding service[39m
+    primary: "local"
+    fallback: "openai"
+[02:49:21 UTC] [32mINFO[39m: [36mEmbedding service initialized[39m
+[02:49:21 UTC] [32mINFO[39m: [36mEmbedding service initialized[39m
+[02:49:21 UTC] [32mINFO[39m: [36mServer listening on localhost:4000[39m
+[02:49:21 UTC] [32mINFO[39m: [36mServer listening at http://[::1]:4000[39m
+[02:49:21 UTC] [32mINFO[39m: [36mServer listening at http://127.0.0.1:4000[39m
+prisma:query SELECT "public"."songs"."id", "public"."songs"."title", "public"."songs"."artist", "public"."songs"."year", "public"."songs"."popularity", "public"."songs"."tags", "public"."songs"."phrases", "public"."songs"."mbid", "public"."songs"."createdAt", "public"."songs"."updatedAt" FROM "public"."songs" WHERE ("public"."songs"."title" ILIKE $1 OR "public"."songs"."artist" ILIKE $2) ORDER BY "public"."songs"."popularity" DESC LIMIT $3 OFFSET $4
+prisma:query SELECT "public"."rooms"."id", "public"."rooms"."name", "public"."rooms"."allowExplicit", "public"."rooms"."createdAt" FROM "public"."rooms" WHERE ("public"."rooms"."name" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query INSERT INTO "public"."users" ("id","anonHandle","ipHash","createdAt") VALUES ($1,$2,$3,$4) RETURNING "public"."users"."id", "public"."users"."anonHandle", "public"."users"."ipHash", "public"."users"."createdAt"
+prisma:query INSERT INTO "public"."messages" ("id","userId","roomId","text","chosenSongId","scores","createdAt") VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING "public"."messages"."id", "public"."messages"."userId", "public"."messages"."roomId", "public"."messages"."text", "public"."messages"."chosenSongId", "public"."messages"."scores", "public"."messages"."createdAt"
+prisma:query SELECT "public"."songs"."id", "public"."songs"."title", "public"."songs"."artist", "public"."songs"."year", "public"."songs"."popularity", "public"."songs"."tags", "public"."songs"."phrases", "public"."songs"."mbid", "public"."songs"."createdAt", "public"."songs"."updatedAt" FROM "public"."songs" WHERE ("public"."songs"."title" ILIKE $1 OR "public"."songs"."artist" ILIKE $2) ORDER BY "public"."songs"."popularity" DESC LIMIT $3 OFFSET $4
+prisma:query SELECT "public"."songs"."id", "public"."songs"."title", "public"."songs"."artist", "public"."songs"."year", "public"."songs"."popularity", "public"."songs"."tags", "public"."songs"."phrases", "public"."songs"."mbid", "public"."songs"."createdAt", "public"."songs"."updatedAt" FROM "public"."songs" WHERE "public"."songs"."id" IN ($1) OFFSET $2
+prisma:query SELECT "public"."songs"."id", "public"."songs"."title", "public"."songs"."artist", "public"."songs"."year", "public"."songs"."popularity", "public"."songs"."tags", "public"."songs"."phrases", "public"."songs"."mbid", "public"."songs"."createdAt", "public"."songs"."updatedAt" FROM "public"."songs" WHERE "public"."songs"."id" IN ($1) OFFSET $2
+prisma:query SELECT "public"."rooms"."id", "public"."rooms"."name", "public"."rooms"."allowExplicit", "public"."rooms"."createdAt" FROM "public"."rooms" WHERE ("public"."rooms"."name" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query INSERT INTO "public"."users" ("id","anonHandle","ipHash","createdAt") VALUES ($1,$2,$3,$4) RETURNING "public"."users"."id", "public"."users"."anonHandle", "public"."users"."ipHash", "public"."users"."createdAt"
+prisma:query INSERT INTO "public"."messages" ("id","userId","roomId","text","chosenSongId","scores","createdAt") VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING "public"."messages"."id", "public"."messages"."userId", "public"."messages"."roomId", "public"."messages"."text", "public"."messages"."chosenSongId", "public"."messages"."scores", "public"."messages"."createdAt"
+prisma:query SELECT "public"."songs"."id", "public"."songs"."title", "public"."songs"."artist", "public"."songs"."year", "public"."songs"."popularity", "public"."songs"."tags", "public"."songs"."phrases", "public"."songs"."mbid", "public"."songs"."createdAt", "public"."songs"."updatedAt" FROM "public"."songs" WHERE ("public"."songs"."title" ILIKE $1 OR "public"."songs"."artist" ILIKE $2) ORDER BY "public"."songs"."popularity" DESC LIMIT $3 OFFSET $4
+prisma:query SELECT "public"."rooms"."id", "public"."rooms"."name", "public"."rooms"."allowExplicit", "public"."rooms"."createdAt" FROM "public"."rooms" WHERE ("public"."rooms"."name" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query INSERT INTO "public"."users" ("id","anonHandle","ipHash","createdAt") VALUES ($1,$2,$3,$4) RETURNING "public"."users"."id", "public"."users"."anonHandle", "public"."users"."ipHash", "public"."users"."createdAt"
+prisma:query INSERT INTO "public"."messages" ("id","userId","roomId","text","chosenSongId","scores","createdAt") VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING "public"."messages"."id", "public"."messages"."userId", "public"."messages"."roomId", "public"."messages"."text", "public"."messages"."chosenSongId", "public"."messages"."scores", "public"."messages"."createdAt"
+prisma:query SELECT "public"."songs"."id", "public"."songs"."title", "public"."songs"."artist", "public"."songs"."year", "public"."songs"."popularity", "public"."songs"."tags", "public"."songs"."phrases", "public"."songs"."mbid", "public"."songs"."createdAt", "public"."songs"."updatedAt" FROM "public"."songs" WHERE ("public"."songs"."title" ILIKE $1 OR "public"."songs"."artist" ILIKE $2) ORDER BY "public"."songs"."popularity" DESC LIMIT $3 OFFSET $4
+prisma:query SELECT "public"."rooms"."id", "public"."rooms"."name", "public"."rooms"."allowExplicit", "public"."rooms"."createdAt" FROM "public"."rooms" WHERE ("public"."rooms"."name" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query INSERT INTO "public"."users" ("id","anonHandle","ipHash","createdAt") VALUES ($1,$2,$3,$4) RETURNING "public"."users"."id", "public"."users"."anonHandle", "public"."users"."ipHash", "public"."users"."createdAt"
+prisma:query INSERT INTO "public"."messages" ("id","userId","roomId","text","chosenSongId","scores","createdAt") VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING "public"."messages"."id", "public"."messages"."userId", "public"."messages"."roomId", "public"."messages"."text", "public"."messages"."chosenSongId", "public"."messages"."scores", "public"."messages"."createdAt"
+[02:49:28 UTC] [32mINFO[39m: [36mProcessing song mapping request[39m
+    text: "hey jude"
+    allowExplicit: false
+[02:49:28 UTC] [34mDEBUG[39m: [36mStarting song matching process[39m
+    text: "hey jude"
+    allowExplicit: false
+[02:49:28 UTC] [32mINFO[39m: [36mSong matching completed[39m
+    text: "hey jude"
+    primarySong: "The Beatles - Hey Jude"
+    strategy: "exact"
+    score: 1.097
+    alternatesCount: 0
+[02:49:28 UTC] [34mDEBUG[39m: [36mAnonymous user created successfully[39m
+    userId: "7b67dd7d-2afd-4702-9b9a-af3b98b7d6de"
+    anonHandle: "retro-tuna-qkt"
+    ipHash: "41210dc3"
+    userAgent: "curl/8.7.1"
+[02:49:28 UTC] [32mINFO[39m: [36mNew user created for WebSocket connection - cookie will be set on next HTTP request[39m
+    userId: "7b67dd7d-2afd-4702-9b9a-af3b98b7d6de"
+    anonHandle: "retro-tuna-qkt"
+[02:49:28 UTC] [32mINFO[39m: [36mNew anonymous user created[39m
+    userId: "7b67dd7d-2afd-4702-9b9a-af3b98b7d6de"
+    anonHandle: "retro-tuna-qkt"
+    ipHash: "41210dc3"
+[02:49:28 UTC] [32mINFO[39m: [36mSong mapping completed successfully[39m
+    text: "hey jude"
+    primarySong: "The Beatles - Hey Jude"
+    alternatesCount: 0
+    processingTime: 41
+[02:49:28 UTC] [32mINFO[39m: [36mProcessing song mapping request[39m
+    text: "cant stop"
+    allowExplicit: false
+[02:49:28 UTC] [34mDEBUG[39m: [36mStarting song matching process[39m
+    text: "cant stop"
+    allowExplicit: false
+[02:49:28 UTC] [34mDEBUG[39m: [36mFound phrase lexicon matches[39m
+    matches: 2
+[02:49:28 UTC] [32mINFO[39m: [36mSong matching completed[39m
+    text: "cant stop"
+    primarySong: "Justin Timberlake - Can't Stop the Feeling!"
+    strategy: "phrase"
+    score: 0.9205
+    alternatesCount: 1
+[02:49:28 UTC] [34mDEBUG[39m: [36mAnonymous user created successfully[39m
+    userId: "4ecb9e70-d991-4289-b3eb-6681663c85c9"
+    anonHandle: "quick-dragon-wgi"
+    ipHash: "41210dc3"
+    userAgent: "curl/8.7.1"
+[02:49:28 UTC] [32mINFO[39m: [36mNew user created for WebSocket connection - cookie will be set on next HTTP request[39m
+    userId: "4ecb9e70-d991-4289-b3eb-6681663c85c9"
+    anonHandle: "quick-dragon-wgi"
+[02:49:28 UTC] [32mINFO[39m: [36mNew anonymous user created[39m
+    userId: "4ecb9e70-d991-4289-b3eb-6681663c85c9"
+    anonHandle: "quick-dragon-wgi"
+    ipHash: "41210dc3"
+[02:49:28 UTC] [32mINFO[39m: [36mSong mapping completed successfully[39m
+    text: "cant stop"
+    primarySong: "Justin Timberlake - Can't Stop the Feeling!"
+    alternatesCount: 1
+    processingTime: 12
+[02:49:28 UTC] [32mINFO[39m: [36mProcessing song mapping request[39m
+    text: "bohemian rhapsody"
+    allowExplicit: false
+[02:49:28 UTC] [34mDEBUG[39m: [36mStarting song matching process[39m
+    text: "bohemian rhapsody"
+    allowExplicit: false
+[02:49:28 UTC] [32mINFO[39m: [36mSong matching completed[39m
+    text: "bohemian rhapsody"
+    primarySong: "Queen - Bohemian Rhapsody"
+    strategy: "exact"
+    score: 1.1
+    alternatesCount: 0
+[02:49:28 UTC] [34mDEBUG[39m: [36mAnonymous user created successfully[39m
+    userId: "ccf74554-aa73-46c1-bd7f-2ca7cdd720a7"
+    anonHandle: "energetic-zebra-cw7"
+    ipHash: "41210dc3"
+    userAgent: "curl/8.7.1"
+[02:49:28 UTC] [32mINFO[39m: [36mNew user created for WebSocket connection - cookie will be set on next HTTP request[39m
+    userId: "ccf74554-aa73-46c1-bd7f-2ca7cdd720a7"
+    anonHandle: "energetic-zebra-cw7"
+[02:49:28 UTC] [32mINFO[39m: [36mNew anonymous user created[39m
+    userId: "ccf74554-aa73-46c1-bd7f-2ca7cdd720a7"
+    anonHandle: "energetic-zebra-cw7"
+    ipHash: "41210dc3"
+[02:49:28 UTC] [32mINFO[39m: [36mSong mapping completed successfully[39m
+    text: "bohemian rhapsody"
+    primarySong: "Queen - Bohemian Rhapsody"
+    alternatesCount: 0
+    processingTime: 4
+[02:49:28 UTC] [32mINFO[39m: [36mProcessing song mapping request[39m
+    text: "stairway to heaven"
+    allowExplicit: false
+[02:49:28 UTC] [34mDEBUG[39m: [36mStarting song matching process[39m
+    text: "stairway to heaven"
+    allowExplicit: false
+[02:49:28 UTC] [32mINFO[39m: [36mSong matching completed[39m
+    text: "stairway to heaven"
+    primarySong: "Led Zeppelin - Stairway to Heaven"
+    strategy: "exact"
+    score: 1.098
+    alternatesCount: 0
+[02:49:28 UTC] [34mDEBUG[39m: [36mAnonymous user created successfully[39m
+    userId: "ec473be9-56ee-43f5-ba0a-f9c347a9fc13"
+    anonHandle: "futuristic-marlin-kbv"
+    ipHash: "41210dc3"
+    userAgent: "curl/8.7.1"
+[02:49:28 UTC] [32mINFO[39m: [36mNew user created for WebSocket connection - cookie will be set on next HTTP request[39m
+    userId: "ec473be9-56ee-43f5-ba0a-f9c347a9fc13"
+    anonHandle: "futuristic-marlin-kbv"
+[02:49:28 UTC] [32mINFO[39m: [36mNew anonymous user created[39m
+    userId: "ec473be9-56ee-43f5-ba0a-f9c347a9fc13"
+    anonHandle: "futuristic-marlin-kbv"
+    ipHash: "41210dc3"
+[02:49:28 UTC] [32mINFO[39m: [36mSong mapping completed successfully[39m
+    text: "stairway to heaven"
+    primarySong: "Led Zeppelin - Stairway to Heaven"
+    alternatesCount: 0
+    processingTime: 3
+prisma:query SELECT "public"."songs"."id", "public"."songs"."title", "public"."songs"."artist", "public"."songs"."year", "public"."songs"."popularity", "public"."songs"."tags", "public"."songs"."phrases", "public"."songs"."mbid", "public"."songs"."createdAt", "public"."songs"."updatedAt" FROM "public"."songs" WHERE ("public"."songs"."title" ILIKE $1 OR "public"."songs"."artist" ILIKE $2) ORDER BY "public"."songs"."popularity" DESC LIMIT $3 OFFSET $4
+prisma:query SELECT "public"."songs"."id", "public"."songs"."title", "public"."songs"."artist", "public"."songs"."year", "public"."songs"."popularity", "public"."songs"."tags", "public"."songs"."phrases", "public"."songs"."mbid", "public"."songs"."createdAt", "public"."songs"."updatedAt" FROM "public"."songs" WHERE "public"."songs"."id" IN ($1) OFFSET $2
+prisma:query SELECT "public"."rooms"."id", "public"."rooms"."name", "public"."rooms"."allowExplicit", "public"."rooms"."createdAt" FROM "public"."rooms" WHERE ("public"."rooms"."name" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query INSERT INTO "public"."users" ("id","anonHandle","ipHash","createdAt") VALUES ($1,$2,$3,$4) RETURNING "public"."users"."id", "public"."users"."anonHandle", "public"."users"."ipHash", "public"."users"."createdAt"
+[02:49:28 UTC] [32mINFO[39m: [36mProcessing song mapping request[39m
+    text: "love you"
+    allowExplicit: false
+[02:49:28 UTC] [34mDEBUG[39m: [36mStarting song matching process[39m
+    text: "love you"
+    allowExplicit: false
+[02:49:28 UTC] [34mDEBUG[39m: [36mFound phrase lexicon matches[39m
+    matches: 1
+[02:49:28 UTC] [32mINFO[39m: [36mSong matching completed[39m
+    text: "love you"
+    primarySong: "Whitney Houston - I Will Always Love You"
+    strategy: "phrase"
+    score: 0.9970000000000001
+    alternatesCount: 0
+[02:49:28 UTC] [34mDEBUG[39m: [36mAnonymous user created successfully[39m
+    userId: "c9bd7a17-640b-4870-9192-781de8b33516"
+    anonHandle: "wild-salmon-af0"
+    ipHash: "41210dc3"
+    userAgent: "curl/8.7.1"
+[02:49:28 UTC] [32mINFO[39m: [36mNew user created for WebSocket connection - cookie will be set on next HTTP request[39m
+    userId: "c9bd7a17-640b-4870-9192-781de8b33516"
+    anonHandle: "wild-salmon-af0"
+[02:49:28 UTC] [32mINFO[39m: [36mNew anonymous user created[39m
+    userId: "c9bd7a17-640b-4870-9192-781de8b33516"
+    anonHandle: "wild-salmon-af0"
+    ipHash: "41210dc3"
+prisma:query INSERT INTO "public"."messages" ("id","userId","roomId","text","chosenSongId","scores","createdAt") VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING "public"."messages"."id", "public"."messages"."userId", "public"."messages"."roomId", "public"."messages"."text", "public"."messages"."chosenSongId", "public"."messages"."scores", "public"."messages"."createdAt"
+[02:49:28 UTC] [32mINFO[39m: [36mSong mapping completed successfully[39m
+    text: "love you"
+    primarySong: "Whitney Houston - I Will Always Love You"
+    alternatesCount: 0
+    processingTime: 5
+[02:49:28 UTC] [32mINFO[39m: [36mincoming request[39m
+    reqId: "req-1"
+    req: {
+      "method": "POST",
+      "url": "/api/map",
+      "hostname": "localhost:4000",
+      "remoteAddress": "::1",
+      "remotePort": 61571
+    }
+[02:49:28 UTC] [32mINFO[39m: [36mrequest completed[39m
+    reqId: "req-1"
+    res: {
+      "statusCode": 200
+    }
+    responseTime: 46.571291983127594
+[02:49:28 UTC] [32mINFO[39m: [36mincoming request[39m
+    reqId: "req-2"
+    req: {
+      "method": "POST",
+      "url": "/api/map",
+      "hostname": "localhost:4000",
+      "remoteAddress": "::1",
+      "remotePort": 61572
+    }
+[02:49:28 UTC] [32mINFO[39m: [36mrequest completed[39m
+    reqId: "req-2"
+    res: {
+      "statusCode": 200
+    }
+    responseTime: 12.519167006015778
+[02:49:28 UTC] [32mINFO[39m: [36mincoming request[39m
+    reqId: "req-3"
+    req: {
+      "method": "POST",
+      "url": "/api/map",
+      "hostname": "localhost:4000",
+      "remoteAddress": "::1",
+      "remotePort": 61573
+    }
+[02:49:28 UTC] [32mINFO[39m: [36mrequest completed[39m
+    reqId: "req-3"
+    res: {
+      "statusCode": 200
+    }
+    responseTime: 4.306249976158142
+[02:49:28 UTC] [32mINFO[39m: [36mincoming request[39m
+    reqId: "req-4"
+    req: {
+      "method": "POST",
+      "url": "/api/map",
+      "hostname": "localhost:4000",
+      "remoteAddress": "::1",
+      "remotePort": 61574
+    }
+[02:49:28 UTC] [32mINFO[39m: [36mrequest completed[39m
+    reqId: "req-4"
+    res: {
+      "statusCode": 200
+    }
+    responseTime: 3.660582959651947
+[02:49:28 UTC] [32mINFO[39m: [36mincoming request[39m
+    reqId: "req-5"
+    req: {
+      "method": "POST",
+      "url": "/api/map",
+      "hostname": "localhost:4000",
+      "remoteAddress": "::1",
+      "remotePort": 61575
+    }
+[02:49:28 UTC] [32mINFO[39m: [36mrequest completed[39m
+    reqId: "req-5"
+    res: {
+      "statusCode": 200
+    }
+    responseTime: 5.135583996772766
+prisma:query SELECT "public"."songs"."id", "public"."songs"."title", "public"."songs"."artist", "public"."songs"."year", "public"."songs"."popularity", "public"."songs"."tags", "public"."songs"."phrases", "public"."songs"."mbid", "public"."songs"."createdAt", "public"."songs"."updatedAt" FROM "public"."songs" WHERE ("public"."songs"."title" ILIKE $1 OR "public"."songs"."artist" ILIKE $2) ORDER BY "public"."songs"."popularity" DESC LIMIT $3 OFFSET $4
+[02:49:28 UTC] [32mINFO[39m: [36mincoming request[39m
+    reqId: "req-6"
+    req: {
+      "method": "POST",
+      "url": "/api/map",
+      "hostname": "localhost:4000",
+      "remoteAddress": "::1",
+      "remotePort": 61578
+    }
+[02:49:28 UTC] [32mINFO[39m: [36mProcessing song mapping request[39m
+    text: "random words that definitely are not in our phrase lexicon"
+    allowExplicit: false
+[02:49:28 UTC] [34mDEBUG[39m: [36mStarting song matching process[39m
+    text: "random words that definitely are not in our phrase lexicon"
+    allowExplicit: false
+[02:49:28 UTC] [34mDEBUG[39m: [36mFound phrase lexicon matches[39m
+    matches: 0
+prisma:query SELECT "public"."songs"."id", "public"."songs"."title", "public"."songs"."artist", "public"."songs"."year", "public"."songs"."popularity", "public"."songs"."tags", "public"."songs"."phrases", "public"."songs"."mbid", "public"."songs"."createdAt", "public"."songs"."updatedAt" FROM "public"."songs" WHERE "public"."songs"."phrases" && $1 ORDER BY "public"."songs"."popularity" DESC LIMIT $2 OFFSET $3
+[02:49:28 UTC] [32mINFO[39m: [36mInitializing local embedder[39m
+    model: "Xenova/all-MiniLM-L6-v2"
+prisma:query 
+        SELECT * FROM songs 
+        WHERE embedding IS NOT NULL 
+        ORDER BY popularity DESC 
+        LIMIT 100
+      
+prisma:error 
+Invalid `prisma.$queryRaw()` invocation:
+
+
+Raw query failed. Code: `N/A`. Message: `Failed to deserialize column of type 'vector'. If you're using $queryRaw and this column is explicitly marked as `Unsupported` in your Prisma schema, try casting this column to any supported Prisma type such as `String`.`
+prisma:query SELECT "public"."songs"."id", "public"."songs"."title", "public"."songs"."artist", "public"."songs"."year", "public"."songs"."popularity", "public"."songs"."tags", "public"."songs"."phrases", "public"."songs"."mbid", "public"."songs"."createdAt", "public"."songs"."updatedAt" FROM "public"."songs" WHERE "public"."songs"."tags" && $1 ORDER BY "public"."songs"."popularity" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."songs"."id", "public"."songs"."title", "public"."songs"."artist", "public"."songs"."year", "public"."songs"."popularity", "public"."songs"."tags", "public"."songs"."phrases", "public"."songs"."mbid", "public"."songs"."createdAt", "public"."songs"."updatedAt" FROM "public"."songs" WHERE 1=1 ORDER BY "public"."songs"."popularity" DESC LIMIT $1 OFFSET $2
+prisma:query SELECT "public"."rooms"."id", "public"."rooms"."name", "public"."rooms"."allowExplicit", "public"."rooms"."createdAt" FROM "public"."rooms" WHERE ("public"."rooms"."name" = $1 AND 1=1) LIMIT $2 OFFSET $3
+[02:49:28 UTC] [32mINFO[39m: [36mLocal embedder initialized[39m
+    model: "Xenova/all-MiniLM-L6-v2"
+[02:49:28 UTC] [34mDEBUG[39m: [36mUsing primary embedder[39m
+    provider: "local"
+    textsCount: 1
+[02:49:28 UTC] [34mDEBUG[39m: [36mProcessing local embedding batch[39m
+    model: "Xenova/all-MiniLM-L6-v2"
+    batchSize: 1
+    totalBatches: 1
+[02:49:28 UTC] [34mDEBUG[39m: [36mGenerated local embeddings[39m
+    model: "Xenova/all-MiniLM-L6-v2"
+    textsCount: 1
+    embeddingsCount: 1
+[02:49:28 UTC] [33mWARN[39m: [36mEmbedding matching failed, falling back[39m
+    error: {
+      "name": "PrismaClientKnownRequestError",
+      "code": "P2010",
+      "clientVersion": "5.22.0",
+      "meta": {
+        "code": "N/A",
+        "message": "Failed to deserialize column of type 'vector'. If you're using $queryRaw and this column is explicitly marked as `Unsupported` in your Prisma schema, try casting this column to any supported Prisma type such as `String`."
+      }
+    }
+[02:49:28 UTC] [32mINFO[39m: [36mSong matching completed[39m
+    text: "random words that definitely are not in our phrase lexicon"
+    primarySong: "Queen - Bohemian Rhapsody"
+    strategy: "semantic"
+    score: 0.5
+    alternatesCount: 2
+prisma:query INSERT INTO "public"."users" ("id","anonHandle","ipHash","createdAt") VALUES ($1,$2,$3,$4) RETURNING "public"."users"."id", "public"."users"."anonHandle", "public"."users"."ipHash", "public"."users"."createdAt"
+[02:49:28 UTC] [34mDEBUG[39m: [36mAnonymous user created successfully[39m
+    userId: "ef020a26-293d-42f9-b102-53698f2a89f3"
+    anonHandle: "smooth-spider-sbx"
+    ipHash: "41210dc3"
+    userAgent: "curl/8.7.1"
+[02:49:28 UTC] [32mINFO[39m: [36mNew user created for WebSocket connection - cookie will be set on next HTTP request[39m
+    userId: "ef020a26-293d-42f9-b102-53698f2a89f3"
+    anonHandle: "smooth-spider-sbx"
+[02:49:28 UTC] [32mINFO[39m: [36mNew anonymous user created[39m
+    userId: "ef020a26-293d-42f9-b102-53698f2a89f3"
+    anonHandle: "smooth-spider-sbx"
+    ipHash: "41210dc3"
+prisma:query INSERT INTO "public"."messages" ("id","userId","roomId","text","chosenSongId","scores","createdAt") VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING "public"."messages"."id", "public"."messages"."userId", "public"."messages"."roomId", "public"."messages"."text", "public"."messages"."chosenSongId", "public"."messages"."scores", "public"."messages"."createdAt"
+[02:49:28 UTC] [32mINFO[39m: [36mSong mapping completed successfully[39m
+    text: "random words that definitely are not in our phrase lexicon"
+    primarySong: "Queen - Bohemian Rhapsody"
+    alternatesCount: 2
+    processingTime: 160
+[02:49:28 UTC] [32mINFO[39m: [36mRate limiter shutdown[39m
+[02:49:28 UTC] [32mINFO[39m: [36mSIGTERM received, shutting down gracefully[39m
+[02:49:28 UTC] [32mINFO[39m: [36mConnection manager shutdown complete[39m
+[02:49:28 UTC] [32mINFO[39m: [36mDatabase disconnected[39m
+[02:49:28 UTC] [32mINFO[39m: [36mrequest completed[39m
+    reqId: "req-6"
+    res: {
+      "statusCode": 200
+    }
+    responseTime: 160.31924998760223
+7:49:33 PM [tsx] Process didn't exit in 5s. Force killing...

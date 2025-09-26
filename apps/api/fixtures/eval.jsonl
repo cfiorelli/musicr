@@ -1,0 +1,100 @@
+{"text": "hey jude", "expectedTitleIds": ["1"], "tags": ["exact_match", "classic"], "description": "Exact song title match", "difficulty": "easy"}
+{"text": "bohemian rhapsody", "expectedTitleIds": ["2"], "tags": ["exact_match", "rock"], "description": "Exact song title match with unique title", "difficulty": "easy"}
+{"text": "billie jean", "expectedTitleIds": ["5"], "tags": ["exact_match", "pop"], "description": "Exact song title match", "difficulty": "easy"}
+{"text": "the beatles", "expectedTitleIds": ["1"], "tags": ["artist_match", "classic"], "description": "Artist name match", "difficulty": "medium"}
+{"text": "michael jackson", "expectedTitleIds": ["5"], "tags": ["artist_match", "pop"], "description": "Artist name should match MJ song", "difficulty": "medium"}
+{"text": "queen rock opera", "expectedTitleIds": ["2"], "tags": ["descriptive", "rock"], "description": "Genre and descriptive match", "difficulty": "medium"}
+{"text": "sad song about love", "expectedTitleIds": ["22", "16", "11"], "tags": ["mood_match", "ballad"], "description": "Mood-based matching for emotional ballads", "difficulty": "medium"}
+{"text": "happy dance song", "expectedTitleIds": ["17", "4", "12"], "tags": ["mood_match", "upbeat"], "description": "Upbeat mood matching", "difficulty": "medium"}
+{"text": "80s pop music", "expectedTitleIds": ["5", "19"], "tags": ["decade_match", "pop"], "description": "Decade and genre matching", "difficulty": "medium"}
+{"text": "rock classic", "expectedTitleIds": ["2", "3", "1"], "tags": ["genre_match", "classic"], "description": "Classic rock genre matching", "difficulty": "medium"}
+{"text": "guitar solo epic", "expectedTitleIds": ["6", "3", "2"], "tags": ["descriptive", "guitar"], "description": "Instrumental focus matching", "difficulty": "hard"}
+
+{"text": "just got promoted at work!", "expectedTitleIds": ["17", "26", "34", "36"], "category": "celebration", "difficulty": "easy", "tags": ["work", "success", "achievement"]}
+{"text": "celebrating my birthday today", "expectedTitleIds": ["4", "17", "26", "20"], "category": "celebration", "difficulty": "easy", "tags": ["birthday", "party", "celebration"]}
+{"text": "we won the championship!", "expectedTitleIds": ["19", "17", "36", "26"], "category": "celebration", "difficulty": "easy", "tags": ["victory", "sports", "triumph"]}
+{"text": "wedding bells are ringing", "expectedTitleIds": ["4", "26", "17", "34"], "category": "celebration", "difficulty": "medium", "tags": ["wedding", "marriage", "joy"]}
+{"text": "graduation party time", "expectedTitleIds": ["17", "4", "26", "19"], "category": "celebration", "difficulty": "medium", "tags": ["graduation", "achievement", "party"]}
+
+{"text": "she broke up with me", "expectedTitleIds": ["16", "11", "48", "22"], "category": "breakup", "difficulty": "easy", "tags": ["breakup", "heartbreak", "sadness"]}
+{"text": "can't get over my ex", "expectedTitleIds": ["16", "11", "22", "48"], "category": "breakup", "difficulty": "easy", "tags": ["ex", "moving on", "heartbreak"]}
+{"text": "relationship ended badly", "expectedTitleIds": ["11", "16", "48", "14"], "category": "breakup", "difficulty": "easy", "tags": ["bad breakup", "anger", "hurt"]}
+{"text": "thought we had forever", "expectedTitleIds": ["22", "16", "11", "48"], "category": "breakup", "difficulty": "medium", "tags": ["lost love", "promises", "disappointment"]}
+{"text": "they chose someone else", "expectedTitleIds": ["16", "10", "11", "48"], "category": "breakup", "difficulty": "medium", "tags": ["rejection", "jealousy", "replacement"]}
+
+{"text": "train is delayed again", "expectedTitleIds": ["27", "19", "35", "24"], "category": "commute", "difficulty": "medium", "tags": ["train", "delay", "commute stress"]}
+{"text": "stuck in traffic jam", "expectedTitleIds": ["27", "24", "19", "35"], "category": "commute", "difficulty": "easy", "tags": ["traffic", "stuck", "frustration"]}
+{"text": "missed my connection", "expectedTitleIds": ["27", "19", "25", "35"], "category": "commute", "difficulty": "medium", "tags": ["missed connection", "travel", "stress"]}
+{"text": "running late for work", "expectedTitleIds": ["25", "27", "19", "24"], "category": "commute", "difficulty": "easy", "tags": ["late", "work", "rushing"]}
+{"text": "flight got cancelled", "expectedTitleIds": ["27", "19", "25", "35"], "category": "commute", "difficulty": "medium", "tags": ["flight", "cancellation", "travel"]}
+
+{"text": "it's raining cats and dogs", "expectedTitleIds": ["44", "46", "15", "13"], "category": "weather", "difficulty": "medium", "tags": ["rain", "heavy rain", "storm"]}
+{"text": "sunny day perfect weather", "expectedTitleIds": ["17", "29", "31", "46"], "category": "weather", "difficulty": "easy", "tags": ["sunny", "perfect weather", "beautiful day"]}
+{"text": "heat wave unbearable", "expectedTitleIds": ["46", "29", "31", "28"], "category": "weather", "difficulty": "easy", "tags": ["heat wave", "hot", "summer"]}
+{"text": "thunderstorm scary night", "expectedTitleIds": ["24", "44", "46", "30"], "category": "weather", "difficulty": "medium", "tags": ["thunderstorm", "scary", "night"]}
+{"text": "perfect beach weather", "expectedTitleIds": ["29", "31", "17", "46"], "category": "weather", "difficulty": "easy", "tags": ["beach", "perfect weather", "ocean"]}
+
+{"text": "love this city so much", "expectedTitleIds": ["19", "17", "3", "37"], "category": "cities", "difficulty": "medium", "tags": ["city love", "urban", "appreciation"]}
+{"text": "new york state of mind", "expectedTitleIds": ["19", "25", "13", "5"], "category": "cities", "difficulty": "medium", "tags": ["new york", "urban", "city life"]}
+{"text": "california dreaming again", "expectedTitleIds": ["3", "37", "13", "29"], "category": "cities", "difficulty": "medium", "tags": ["california", "dreaming", "west coast"]}
+{"text": "small town boring life", "expectedTitleIds": ["19", "33", "15", "27"], "category": "cities", "difficulty": "medium", "tags": ["small town", "boring", "rural"]}
+{"text": "hometown memories flooding back", "expectedTitleIds": ["15", "20", "19", "44"], "category": "cities", "difficulty": "medium", "tags": ["hometown", "memories", "nostalgia"]}
+
+{"text": "deadline stress overwhelming", "expectedTitleIds": ["27", "25", "24", "19"], "category": "work stress", "difficulty": "easy", "tags": ["deadline", "stress", "overwhelmed"]}
+{"text": "boss is driving me crazy", "expectedTitleIds": ["27", "25", "9", "24"], "category": "work stress", "difficulty": "easy", "tags": ["boss", "crazy", "workplace"]}
+{"text": "overtime again this week", "expectedTitleIds": ["27", "25", "19", "35"], "category": "work stress", "difficulty": "medium", "tags": ["overtime", "work hours", "exhaustion"]}
+{"text": "monday morning blues", "expectedTitleIds": ["27", "15", "19", "44"], "category": "work stress", "difficulty": "medium", "tags": ["monday", "blues", "work week"]}
+{"text": "thinking about quitting job", "expectedTitleIds": ["27", "19", "25", "41"], "category": "work stress", "difficulty": "medium", "tags": ["quitting", "job dissatisfaction", "career change"]}
+
+{"text": "want to join us tonight?", "expectedTitleIds": ["4", "17", "26", "12"], "category": "invitations", "difficulty": "easy", "tags": ["invitation", "tonight", "social"]}
+{"text": "party at my place friday", "expectedTitleIds": ["4", "26", "17", "12"], "category": "invitations", "difficulty": "easy", "tags": ["party", "my place", "friday"]}
+{"text": "dinner reservations for two", "expectedTitleIds": ["18", "8", "39", "32"], "category": "invitations", "difficulty": "medium", "tags": ["dinner", "reservations", "romantic"]}
+{"text": "concert tickets available", "expectedTitleIds": ["2", "7", "21", "25"], "category": "invitations", "difficulty": "medium", "tags": ["concert", "tickets", "live music"]}
+{"text": "beach day this weekend", "expectedTitleIds": ["29", "31", "17", "46"], "category": "invitations", "difficulty": "easy", "tags": ["beach", "weekend", "outdoor"]}
+
+{"text": "feeling lost and confused", "expectedTitleIds": ["16", "27", "15", "40"], "category": "existential", "difficulty": "hard", "tags": ["lost", "confusion", "identity"]}
+{"text": "need motivation right now", "expectedTitleIds": ["19", "25", "17", "35"], "category": "motivation", "difficulty": "medium", "tags": ["motivation", "inspiration", "boost"]}
+{"text": "everything is falling apart", "expectedTitleIds": ["27", "16", "11", "40"], "category": "crisis", "difficulty": "hard", "tags": ["crisis", "falling apart", "despair"]}
+{"text": "dancing alone in my room", "expectedTitleIds": ["4", "5", "28", "41"], "category": "solitude", "difficulty": "medium", "tags": ["dancing", "alone", "self-care"]}
+{"text": "summer vibes all day", "expectedTitleIds": ["29", "31", "46", "17"], "category": "seasonal", "difficulty": "easy", "tags": ["summer", "vibes", "season"]}
+{"text": "nostalgia hitting hard tonight", "expectedTitleIds": ["15", "44", "20", "13"], "category": "nostalgia", "difficulty": "medium", "tags": ["nostalgia", "memories", "past"]}
+{"text": "confidence boost needed", "expectedTitleIds": ["42", "36", "38", "41"], "category": "self-esteem", "difficulty": "medium", "tags": ["confidence", "self-esteem", "empowerment"]}
+{"text": "late night overthinking", "expectedTitleIds": ["40", "27", "15", "30"], "category": "anxiety", "difficulty": "hard", "tags": ["overthinking", "late night", "anxiety"]}
+{"text": "road trip playlist ready", "expectedTitleIds": ["33", "19", "13", "3"], "category": "travel", "difficulty": "medium", "tags": ["road trip", "travel", "adventure"]}
+{"text": "vintage music lover", "expectedTitleIds": ["44", "20", "26", "1"], "category": "preferences", "difficulty": "hard", "tags": ["vintage", "classic", "retro"]}
+
+{"text": "xkcd comic reference humor", "expectedTitleIds": ["35", "17", "33", "24"], "category": "obscure", "difficulty": "hard", "tags": ["obscure", "reference", "humor"]}
+{"text": "quantum physics breakthrough", "expectedTitleIds": ["24", "35", "19", "25"], "category": "academic", "difficulty": "hard", "tags": ["science", "breakthrough", "academic"]}
+{"text": "artificial intelligence future", "expectedTitleIds": ["13", "24", "28", "30"], "category": "technology", "difficulty": "hard", "tags": ["ai", "future", "technology"]}
+{"text": "existential dread monday", "expectedTitleIds": ["27", "40", "15", "44"], "category": "philosophical", "difficulty": "hard", "tags": ["existential", "philosophy", "dread"]}
+{"text": "procrastination station activated", "expectedTitleIds": ["27", "35", "17", "24"], "category": "humor", "difficulty": "medium", "tags": ["procrastination", "humor", "relatable"]}
+{"text": "bohemian rhapsody", "expectedTitleIds": ["2e020e15-4195-4914-9efc-25bc471f6971"], "tags": ["exact_match", "rock"], "description": "Exact song title match with unique title", "difficulty": "easy"}
+{"text": "michael jackson", "expectedTitleIds": ["a84f7e37-e973-434d-9722-44a61661d52c", "e09b78fa-3706-4334-a2aa-f926f28f3444", "1b37fe15-82a1-4e0a-9417-cde0f1984298"], "tags": ["artist_match", "pop"], "description": "Artist name should match any MJ song", "difficulty": "medium"}
+{"text": "the beatles", "expectedTitleIds": ["c6686d62-b357-4582-9587-ac027aa43430"], "tags": ["artist_match", "classic"], "description": "Artist name match", "difficulty": "medium"}
+{"text": "queen rock opera", "expectedTitleIds": ["2e020e15-4195-4914-9efc-25bc471f6971"], "tags": ["descriptive", "rock"], "description": "Genre and descriptive match", "difficulty": "medium"}
+{"text": "sad song about love", "expectedTitleIds": ["53b12056-8632-4b04-a74e-fef9502b134d", "c6686d62-b357-4582-9587-ac027aa43430", "41e9f73b-0c38-4f4f-86fb-9d705a56062f"], "tags": ["mood_match", "ballad"], "description": "Mood-based matching for emotional ballads", "difficulty": "medium"}
+{"text": "happy dance song", "expectedTitleIds": ["4a093dd1-154a-46e6-89ec-ac5861f66acb", "a84f7e37-e973-434d-9722-44a61661d52c", "386ce22d-0195-4f6e-b52b-7637b741df59"], "tags": ["mood_match", "upbeat"], "description": "Upbeat mood matching", "difficulty": "medium"}
+{"text": "80s pop music", "expectedTitleIds": ["a84f7e37-e973-434d-9722-44a61661d52c", "e09b78fa-3706-4334-a2aa-f926f28f3444", "1b37fe15-82a1-4e0a-9417-cde0f1984298"], "tags": ["decade_match", "pop"], "description": "Decade and genre matching", "difficulty": "medium"}
+{"text": "rock classic", "expectedTitleIds": ["2e020e15-4195-4914-9efc-25bc471f6971", "c6a55bd7-f591-4ecb-a0a0-40a055c73d8c", "c6686d62-b357-4582-9587-ac027aa43430"], "tags": ["genre_match", "classic"], "description": "Classic rock genre matching", "difficulty": "medium"}
+{"text": "guitar solo epic", "expectedTitleIds": ["c6a55bd7-f591-4ecb-a0a0-40a055c73d8c", "80b7dd8f-c2c5-46bc-939a-f6ea7b015cf0", "f0337ce8-0a29-47c2-b4a4-a21130b1e3df"], "tags": ["descriptive", "guitar"], "description": "Instrumental focus matching", "difficulty": "hard"}
+{"text": "billie jean king of pop", "expectedTitleIds": ["a84f7e37-e973-434d-9722-44a61661d52c"], "tags": ["mixed_cues", "pop"], "description": "Song title + artist description", "difficulty": "easy"}
+{"text": "call me maybe pop song", "expectedTitleIds": ["eebad671-476f-4dbf-aa33-aa459f202202"], "tags": ["exact_match", "modern"], "description": "Modern pop song exact match", "difficulty": "easy"}
+{"text": "grunge 90s alternative", "expectedTitleIds": ["0a4c20f6-d89d-42d6-b745-6627bca67d10"], "tags": ["genre_match", "90s"], "description": "Genre-decade-style combination", "difficulty": "medium"}
+{"text": "somebody that i used to know", "expectedTitleIds": ["2fd867c7-7ab8-4f6b-ac2b-ece6c8b68775"], "tags": ["exact_match", "indie"], "description": "Long exact title match", "difficulty": "easy"}
+{"text": "psychedelic guitar 60s", "expectedTitleIds": ["f0337ce8-0a29-47c2-b4a4-a21130b1e3df"], "tags": ["genre_match", "60s"], "description": "Specific genre-decade combination", "difficulty": "hard"}
+{"text": "hotel california eagles", "expectedTitleIds": ["80b7dd8f-c2c5-46bc-939a-f6ea7b015cf0"], "tags": ["title_artist", "classic"], "description": "Title and artist combination", "difficulty": "easy"}
+{"text": "powerful vocal ballad", "expectedTitleIds": ["53b12056-8632-4b04-a74e-fef9502b134d"], "tags": ["descriptive", "vocals"], "description": "Vocal style description", "difficulty": "hard"}
+{"text": "thriller halloween", "expectedTitleIds": ["e09b78fa-3706-4334-a2aa-f926f28f3444"], "tags": ["theme_match", "horror"], "description": "Thematic association", "difficulty": "medium"}
+{"text": "imagine peace john lennon", "expectedTitleIds": ["6ee7e810-ce70-479e-a7e9-7582fcaead9b"], "tags": ["title_artist", "peace"], "description": "Title, theme, and artist", "difficulty": "easy"}
+{"text": "viral dance k-pop", "expectedTitleIds": ["a7ed6610-18d8-4f82-9559-be7089c9e149"], "tags": ["descriptive", "viral"], "description": "Cultural and viral context", "difficulty": "hard"}
+{"text": "stairway to heaven led zeppelin", "expectedTitleIds": ["c6a55bd7-f591-4ecb-a0a0-40a055c73d8c"], "tags": ["title_artist", "epic"], "description": "Exact title and artist", "difficulty": "easy"}
+{"text": "respect aretha franklin", "expectedTitleIds": ["749aeb93-e637-44ec-ab22-d4a2f729e210"], "tags": ["title_artist", "empowerment"], "description": "Title and artist match", "difficulty": "easy"}
+{"text": "uplifting movie soundtrack", "expectedTitleIds": ["386ce22d-0195-4f6e-b52b-7637b741df59", "4a093dd1-154a-46e6-89ec-ac5861f66acb"], "tags": ["descriptive", "movie"], "description": "Context-based matching", "difficulty": "hard"}
+{"text": "breakup song indie", "expectedTitleIds": ["2fd867c7-7ab8-4f6b-ac2b-ece6c8b68775"], "tags": ["mood_match", "breakup"], "description": "Emotional theme in indie genre", "difficulty": "medium"}
+{"text": "classic rock guitar", "expectedTitleIds": ["c6a55bd7-f591-4ecb-a0a0-40a055c73d8c", "80b7dd8f-c2c5-46bc-939a-f6ea7b015cf0", "f0337ce8-0a29-47c2-b4a4-a21130b1e3df"], "tags": ["genre_instrument", "guitar"], "description": "Genre and instrument focus", "difficulty": "medium"}
+{"text": "can't stop the feeling justin", "expectedTitleIds": ["386ce22d-0195-4f6e-b52b-7637b741df59"], "tags": ["title_artist", "modern"], "description": "Partial title with artist", "difficulty": "easy"}
+{"text": "sexy confident r&b", "expectedTitleIds": ["ee425be6-9a3b-4977-b16f-6fdff6dd6ae96"], "tags": ["mood_genre", "confident"], "description": "Mood and genre combination", "difficulty": "hard"}
+{"text": "cry me a river heartbreak", "expectedTitleIds": ["41e9f73b-0c38-4f4f-86fb-9d705a56062f"], "tags": ["title_mood", "heartbreak"], "description": "Title with emotional context", "difficulty": "easy"}
+{"text": "purple haze hendrix", "expectedTitleIds": ["f0337ce8-0a29-47c2-b4a4-a21130b1e3df"], "tags": ["title_artist", "psychedelic"], "description": "Classic rock title-artist", "difficulty": "easy"}
+{"text": "beat it michael jackson", "expectedTitleIds": ["1b37fe15-82a1-4e0a-9417-cde0f1984298"], "tags": ["title_artist", "80s"], "description": "80s pop title-artist", "difficulty": "easy"}
+{"text": "folk protest bob dylan", "expectedTitleIds": ["e4721565-401d-421d-8917-b1e2600dd104"], "tags": ["genre_theme", "protest"], "description": "Genre and thematic matching", "difficulty": "hard"}

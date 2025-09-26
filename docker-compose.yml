@@ -1,0 +1,121 @@
+version: '3.8'
+
+services:
+  # PostgreSQL database with pgvector extension
+  database:
+    image: pgvector/pgvector:pg14
+    container_name: musicr-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: musicr
+      POSTGRES_USER: musicr
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-musicr-password}
+      POSTGRES_INITDB_ARGS: '--auth-host=scram-sha-256'
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    networks:
+      - musicr-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U musicr -d musicr"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  # API service
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+      target: runtime
+    container_name: musicr-api
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://musicr:${POSTGRES_PASSWORD:-musicr-password}@database:5432/musicr?schema=public&sslmode=prefer
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      COOKIE_SECRET: ${COOKIE_SECRET:-fallback-secret-key}
+      FRONTEND_ORIGIN: http://localhost:5173
+      PORT: 4000
+      HOST: 0.0.0.0
+      # Logging configuration
+      LOG_LEVEL: info
+      # Performance tuning
+      NODE_OPTIONS: '--max-old-space-size=512'
+    ports:
+      - "4000:4000"
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - musicr-network
+    volumes:
+      - api_logs:/app/logs
+      - api_tmp:/app/tmp
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '1'
+        reservations:
+          memory: 512M
+          cpus: '0.5'
+
+  # Web frontend service
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      target: runtime
+    container_name: musicr-web
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      VITE_API_URL: http://localhost:4000
+      HOST: 0.0.0.0
+      PORT: 5173
+    ports:
+      - "5173:5173"
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - musicr-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5173/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.5'
+        reservations:
+          memory: 128M
+          cpus: '0.25'
+
+networks:
+  musicr-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+volumes:
+  postgres_data:
+    driver: local
+  api_logs:
+    driver: local
+  api_tmp:
+    driver: local

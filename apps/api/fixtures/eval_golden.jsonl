@@ -1,0 +1,76 @@
+{"text": "just got promoted at work!", "expectedTitleIds": ["17", "26", "34", "36"], "category": "celebration", "difficulty": "easy", "tags": ["work", "success", "achievement"]}
+{"text": "celebrating my birthday today", "expectedTitleIds": ["4", "17", "26", "20"], "category": "celebration", "difficulty": "easy", "tags": ["birthday", "party", "celebration"]}
+{"text": "we won the championship!", "expectedTitleIds": ["19", "17", "36", "26"], "category": "celebration", "difficulty": "easy", "tags": ["victory", "sports", "triumph"]}
+{"text": "wedding bells are ringing", "expectedTitleIds": ["4", "26", "17", "34"], "category": "celebration", "difficulty": "medium", "tags": ["wedding", "marriage", "joy"]}
+{"text": "graduation party time", "expectedTitleIds": ["17", "4", "26", "19"], "category": "celebration", "difficulty": "medium", "tags": ["graduation", "achievement", "party"]}
+{"text": "new year new me", "expectedTitleIds": ["17", "19", "36", "42"], "category": "celebration", "difficulty": "medium", "tags": ["new year", "resolution", "fresh start"]}
+{"text": "baby shower happiness", "expectedTitleIds": ["17", "4", "26", "34"], "category": "celebration", "difficulty": "medium", "tags": ["baby", "family", "joy"]}
+{"text": "retirement party vibes", "expectedTitleIds": ["26", "17", "20", "4"], "category": "celebration", "difficulty": "medium", "tags": ["retirement", "milestone", "celebration"]}
+{"text": "anniversary dinner tonight", "expectedTitleIds": ["18", "8", "39", "22"], "category": "celebration", "difficulty": "medium", "tags": ["anniversary", "love", "romance"]}
+{"text": "housewarming party this weekend", "expectedTitleIds": ["17", "34", "4", "26"], "category": "celebration", "difficulty": "medium", "tags": ["new home", "party", "friends"]}
+
+{"text": "she broke up with me", "expectedTitleIds": ["16", "11", "48", "22"], "category": "breakup", "difficulty": "easy", "tags": ["breakup", "heartbreak", "sadness"]}
+{"text": "can't get over my ex", "expectedTitleIds": ["16", "11", "22", "48"], "category": "breakup", "difficulty": "easy", "tags": ["ex", "moving on", "heartbreak"]}
+{"text": "relationship ended badly", "expectedTitleIds": ["11", "16", "48", "14"], "category": "breakup", "difficulty": "easy", "tags": ["bad breakup", "anger", "hurt"]}
+{"text": "thought we had forever", "expectedTitleIds": ["22", "16", "11", "48"], "category": "breakup", "difficulty": "medium", "tags": ["lost love", "promises", "disappointment"]}
+{"text": "they chose someone else", "expectedTitleIds": ["16", "10", "11", "48"], "category": "breakup", "difficulty": "medium", "tags": ["rejection", "jealousy", "replacement"]}
+{"text": "empty bed feels so cold", "expectedTitleIds": ["16", "11", "22", "48"], "category": "breakup", "difficulty": "medium", "tags": ["loneliness", "missing someone", "bedroom"]}
+{"text": "all our photos deleted", "expectedTitleIds": ["16", "48", "11", "40"], "category": "breakup", "difficulty": "medium", "tags": ["memories", "photos", "erasing past"]}
+{"text": "blocked on social media", "expectedTitleIds": ["14", "16", "48", "11"], "category": "breakup", "difficulty": "medium", "tags": ["social media", "blocking", "digital breakup"]}
+{"text": "giving back the ring", "expectedTitleIds": ["16", "11", "22", "48"], "category": "breakup", "difficulty": "hard", "tags": ["engagement", "ring", "ending"]}
+{"text": "seeing them with someone new", "expectedTitleIds": ["10", "16", "11", "48"], "category": "breakup", "difficulty": "medium", "tags": ["seeing ex", "new relationship", "jealousy"]}
+
+{"text": "train is delayed again", "expectedTitleIds": ["27", "19", "35", "24"], "category": "commute", "difficulty": "medium", "tags": ["train", "delay", "commute stress"]}
+{"text": "stuck in traffic jam", "expectedTitleIds": ["27", "24", "19", "35"], "category": "commute", "difficulty": "easy", "tags": ["traffic", "stuck", "frustration"]}
+{"text": "missed my connection", "expectedTitleIds": ["27", "19", "25", "35"], "category": "commute", "difficulty": "medium", "tags": ["missed connection", "travel", "stress"]}
+{"text": "bus broke down", "expectedTitleIds": ["27", "19", "24", "25"], "category": "commute", "difficulty": "medium", "tags": ["bus", "breakdown", "public transport"]}
+{"text": "running late for work", "expectedTitleIds": ["25", "27", "19", "24"], "category": "commute", "difficulty": "easy", "tags": ["late", "work", "rushing"]}
+{"text": "subway system down", "expectedTitleIds": ["27", "19", "25", "24"], "category": "commute", "difficulty": "medium", "tags": ["subway", "system failure", "urban"]}
+{"text": "flight got cancelled", "expectedTitleIds": ["27", "19", "25", "35"], "category": "commute", "difficulty": "medium", "tags": ["flight", "cancellation", "travel"]}
+{"text": "uber driver got lost", "expectedTitleIds": ["27", "24", "19", "33"], "category": "commute", "difficulty": "medium", "tags": ["uber", "lost", "rideshare"]}
+{"text": "construction blocking road", "expectedTitleIds": ["27", "19", "24", "25"], "category": "commute", "difficulty": "medium", "tags": ["construction", "blocked road", "detour"]}
+{"text": "parking nightmare downtown", "expectedTitleIds": ["27", "25", "19", "24"], "category": "commute", "difficulty": "medium", "tags": ["parking", "downtown", "urban stress"]}
+
+{"text": "it's raining cats and dogs", "expectedTitleIds": ["44", "46", "15", "13"], "category": "weather", "difficulty": "medium", "tags": ["rain", "heavy rain", "storm"]}
+{"text": "sunny day perfect weather", "expectedTitleIds": ["17", "29", "31", "46"], "category": "weather", "difficulty": "easy", "tags": ["sunny", "perfect weather", "beautiful day"]}
+{"text": "snow day staying inside", "expectedTitleIds": ["15", "44", "47", "32"], "category": "weather", "difficulty": "medium", "tags": ["snow", "staying inside", "cozy"]}
+{"text": "heat wave unbearable", "expectedTitleIds": ["46", "29", "31", "28"], "category": "weather", "difficulty": "easy", "tags": ["heat wave", "hot", "summer"]}
+{"text": "thunderstorm scary night", "expectedTitleIds": ["24", "44", "46", "30"], "category": "weather", "difficulty": "medium", "tags": ["thunderstorm", "scary", "night"]}
+{"text": "foggy morning can't see", "expectedTitleIds": ["44", "15", "46", "13"], "category": "weather", "difficulty": "hard", "tags": ["fog", "morning", "visibility"]}
+{"text": "perfect beach weather", "expectedTitleIds": ["29", "31", "17", "46"], "category": "weather", "difficulty": "easy", "tags": ["beach", "perfect weather", "ocean"]}
+{"text": "tornado warning issued", "expectedTitleIds": ["24", "44", "25", "27"], "category": "weather", "difficulty": "hard", "tags": ["tornado", "warning", "danger"]}
+{"text": "rainbow after the storm", "expectedTitleIds": ["17", "19", "35", "44"], "category": "weather", "difficulty": "medium", "tags": ["rainbow", "after storm", "hope"]}
+{"text": "blizzard shutting everything down", "expectedTitleIds": ["44", "15", "27", "47"], "category": "weather", "difficulty": "hard", "tags": ["blizzard", "shutdown", "extreme weather"]}
+
+{"text": "love this city so much", "expectedTitleIds": ["19", "17", "3", "37"], "category": "cities", "difficulty": "medium", "tags": ["city love", "urban", "appreciation"]}
+{"text": "new york state of mind", "expectedTitleIds": ["19", "25", "13", "5"], "category": "cities", "difficulty": "medium", "tags": ["new york", "urban", "city life"]}
+{"text": "california dreaming again", "expectedTitleIds": ["3", "37", "13", "29"], "category": "cities", "difficulty": "medium", "tags": ["california", "dreaming", "west coast"]}
+{"text": "miami beach party tonight", "expectedTitleIds": ["39", "37", "4", "26"], "category": "cities", "difficulty": "medium", "tags": ["miami", "beach", "party"]}
+{"text": "small town boring life", "expectedTitleIds": ["19", "33", "15", "27"], "category": "cities", "difficulty": "medium", "tags": ["small town", "boring", "rural"]}
+{"text": "london calling me back", "expectedTitleIds": ["21", "15", "44", "19"], "category": "cities", "difficulty": "hard", "tags": ["london", "calling", "returning"]}
+{"text": "paris city of love", "expectedTitleIds": ["18", "8", "39", "22"], "category": "cities", "difficulty": "medium", "tags": ["paris", "love", "romance"]}
+{"text": "tokyo neon lights", "expectedTitleIds": ["13", "50", "28", "30"], "category": "cities", "difficulty": "medium", "tags": ["tokyo", "neon", "lights"]}
+{"text": "vegas what happens here", "expectedTitleIds": ["12", "26", "4", "17"], "category": "cities", "difficulty": "medium", "tags": ["vegas", "party", "secrets"]}
+{"text": "hometown memories flooding back", "expectedTitleIds": ["15", "20", "19", "44"], "category": "cities", "difficulty": "medium", "tags": ["hometown", "memories", "nostalgia"]}
+
+{"text": "deadline stress overwhelming", "expectedTitleIds": ["27", "25", "24", "19"], "category": "work stress", "difficulty": "easy", "tags": ["deadline", "stress", "overwhelmed"]}
+{"text": "boss is driving me crazy", "expectedTitleIds": ["27", "25", "9", "24"], "category": "work stress", "difficulty": "easy", "tags": ["boss", "crazy", "workplace"]}
+{"text": "overtime again this week", "expectedTitleIds": ["27", "25", "19", "35"], "category": "work stress", "difficulty": "medium", "tags": ["overtime", "work hours", "exhaustion"]}
+{"text": "monday morning blues", "expectedTitleIds": ["27", "15", "19", "44"], "category": "work stress", "difficulty": "medium", "tags": ["monday", "blues", "work week"]}
+{"text": "performance review anxiety", "expectedTitleIds": ["27", "25", "19", "40"], "category": "work stress", "difficulty": "medium", "tags": ["performance review", "anxiety", "evaluation"]}
+{"text": "coworker drama exhausting", "expectedTitleIds": ["27", "25", "16", "40"], "category": "work stress", "difficulty": "medium", "tags": ["coworker", "drama", "workplace conflict"]}
+{"text": "promotion passed me over", "expectedTitleIds": ["27", "16", "25", "40"], "category": "work stress", "difficulty": "medium", "tags": ["promotion", "passed over", "disappointment"]}
+{"text": "workload impossible today", "expectedTitleIds": ["25", "27", "19", "35"], "category": "work stress", "difficulty": "medium", "tags": ["workload", "impossible", "overwhelmed"]}
+{"text": "meetings all day long", "expectedTitleIds": ["27", "25", "19", "24"], "category": "work stress", "difficulty": "medium", "tags": ["meetings", "all day", "corporate"]}
+{"text": "thinking about quitting job", "expectedTitleIds": ["27", "19", "25", "41"], "category": "work stress", "difficulty": "medium", "tags": ["quitting", "job dissatisfaction", "career change"]}
+
+{"text": "want to join us tonight?", "expectedTitleIds": ["4", "17", "26", "12"], "category": "invitations", "difficulty": "easy", "tags": ["invitation", "tonight", "social"]}
+{"text": "party at my place friday", "expectedTitleIds": ["4", "26", "17", "12"], "category": "invitations", "difficulty": "easy", "tags": ["party", "my place", "friday"]}
+{"text": "dinner reservations for two", "expectedTitleIds": ["18", "8", "39", "32"], "category": "invitations", "difficulty": "medium", "tags": ["dinner", "reservations", "romantic"]}
+{"text": "concert tickets available", "expectedTitleIds": ["2", "7", "21", "25"], "category": "invitations", "difficulty": "medium", "tags": ["concert", "tickets", "live music"]}
+{"text": "beach day this weekend", "expectedTitleIds": ["29", "31", "17", "46"], "category": "invitations", "difficulty": "easy", "tags": ["beach", "weekend", "outdoor"]}
+{"text": "wedding plus one needed", "expectedTitleIds": ["4", "22", "8", "18"], "category": "invitations", "difficulty": "medium", "tags": ["wedding", "plus one", "formal"]}
+{"text": "road trip adventure calling", "expectedTitleIds": ["33", "19", "3", "13"], "category": "invitations", "difficulty": "medium", "tags": ["road trip", "adventure", "travel"]}
+{"text": "game night at sarah's", "expectedTitleIds": ["17", "34", "20", "4"], "category": "invitations", "difficulty": "medium", "tags": ["game night", "friends", "casual"]}
+{"text": "karaoke bar lets go", "expectedTitleIds": ["20", "2", "1", "19"], "category": "invitations", "difficulty": "medium", "tags": ["karaoke", "bar", "singing"]}
+{"text": "double date this saturday", "expectedTitleIds": ["18", "8", "4", "39"], "category": "invitations", "difficulty": "medium", "tags": ["double date", "saturday", "couples"]}
