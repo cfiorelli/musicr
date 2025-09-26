@@ -1,0 +1,468 @@
+✅ Phrase lexicon loaded with 297 phrases
+prisma:info Starting a postgresql pool with 17 connections.
+prisma:query SELECT "public"."rooms"."id", "public"."rooms"."name", "public"."rooms"."allowExplicit", "public"."rooms"."createdAt" FROM "public"."rooms" WHERE ("public"."rooms"."name" = $1 AND 1=1) LIMIT $2 OFFSET $3
+[13:46:49 UTC] [32mINFO[39m: [36mConfiguration loaded[39m
+    server: {
+      "port": 4000,
+      "host": "localhost",
+      "frontendOrigin": "http://localhost:5173"
+    }
+    nodeEnv: "development"
+    hasOpenAIKey: true
+[13:46:50 UTC] [32mINFO[39m: [36mConnection manager initialized[39m
+[13:46:50 UTC] [34mDEBUG[39m: [36mDefault room 'main' already exists[39m
+[13:46:50 UTC] [32mINFO[39m: [36mRoom service initialized with default room[39m
+[13:46:50 UTC] [32mINFO[39m: [36m✅ Database connected successfully[39m
+[13:46:50 UTC] [32mINFO[39m: [36m✅ Database connected successfully[39m
+[13:46:50 UTC] [32mINFO[39m: [36mServer listening on http://0.0.0.0:4000[39m
+[13:46:50 UPC] [32mINFO[39m: [36mServer listening at http://0.0.0.0:4000[39m
+[13:46:51 UPC] [32mINFO[39m: [36mincoming request[39m
+    req: {
+      "method": "GET",
+      "url": "/health",
+      "hostname": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 55479
+    }
+[13:46:51 UPC] [32mINFO[39m: [36mrequest completed[39m
+prisma:query SELECT "public"."messages"."id", "public"."messages"."userId", "public"."messages"."roomId", "public"."messages"."text", "public"."messages"."chosenSongId", "public"."messages"."scores", "public"."messages"."createdAt" FROM "public"."messages" WHERE 1=1 ORDER BY "public"."messages"."createdAt" DESC LIMIT $1 OFFSET $2
+prisma:query SELECT "public"."users"."id", "public"."users"."anonHandle" FROM "public"."users" WHERE "public"."users"."id" IN ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) OFFSET $13
+prisma:query SELECT "public"."rooms"."id", "public"."rooms"."name" FROM "public"."rooms" WHERE "public"."rooms"."id" IN ($1) OFFSET $2
+prisma:query SELECT COUNT("public"."messages"."chosenSongId"), "public"."messages"."chosenSongId" FROM "public"."messages" WHERE "public"."messages"."chosenSongId" IS NOT NULL GROUP BY "public"."messages"."chosenSongId" ORDER BY COUNT("public"."messages"."chosenSongId") DESC LIMIT $1 OFFSET $2
+[13:46:57 UPC] [32mINFO[39m: [36mincoming request[39m
+    req: {
+      "method": "GET",
+      "url": "/api/admin/analytics",
+      "hostname": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 55496
+    }
+[13:46:57 UPC] [32mINFO[39m: [36mrequest completed[39m
+prisma:query SELECT 1
+prisma:query SELECT "public"."rooms"."id", "public"."rooms"."name", "public"."rooms"."allowExplicit", "public"."rooms"."createdAt" FROM "public"."rooms" WHERE ("public"."rooms"."name" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."songs"."id", "public"."songs"."title", "public"."songs"."artist", "public"."songs"."year", "public"."songs"."popularity", "public"."songs"."tags", "public"."songs"."phrases", "public"."songs"."mbid", "public"."songs"."createdAt", "public"."songs"."updatedAt" FROM "public"."songs" WHERE ("public"."songs"."title" ILIKE $1 OR "public"."songs"."artist" ILIKE $2) ORDER BY "public"."songs"."popularity" DESC LIMIT $3 OFFSET $4
+prisma:query SELECT "public"."rooms"."id", "public"."rooms"."name", "public"."rooms"."allowExplicit", "public"."rooms"."createdAt" FROM "public"."rooms" WHERE ("public"."rooms"."name" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."songs"."id", "public"."songs"."title", "public"."songs"."artist", "public"."songs"."year", "public"."songs"."popularity", "public"."songs"."tags", "public"."songs"."phrases", "public"."songs"."mbid", "public"."songs"."createdAt", "public"."songs"."updatedAt" FROM "public"."songs" WHERE ("public"."songs"."title" ILIKE $1 OR "public"."songs"."artist" ILIKE $2) ORDER BY "public"."songs"."popularity" DESC LIMIT $3 OFFSET $4
+prisma:query SELECT "public"."rooms"."id", "public"."rooms"."name", "public"."rooms"."allowExplicit", "public"."rooms"."createdAt" FROM "public"."rooms" WHERE ("public"."rooms"."name" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."songs"."id", "public"."songs"."title", "public"."songs"."artist", "public"."songs"."year", "public"."songs"."popularity", "public"."songs"."tags", "public"."songs"."phrases", "public"."songs"."mbid", "public"."songs"."createdAt", "public"."songs"."updatedAt" FROM "public"."songs" WHERE ("public"."songs"."title" ILIKE $1 OR "public"."songs"."artist" ILIKE $2) ORDER BY "public"."songs"."popularity" DESC LIMIT $3 OFFSET $4
+prisma:query SELECT "public"."messages"."id", "public"."messages"."userId", "public"."messages"."roomId", "public"."messages"."text", "public"."messages"."chosenSongId", "public"."messages"."scores", "public"."messages"."createdAt" FROM "public"."messages" WHERE "public"."messages"."userId" = $1 ORDER BY "public"."messages"."createdAt" DESC LIMIT $2 OFFSET $3
+prisma:error 
+Invalid `this.prisma.message.findMany()` invocation in
+/Users/lolmach/musicr/apps/api/src/services/song-matching-service.ts:101:53
+
+   98 let userRecentPicks: any[] = [];
+   99 if (userId) {
+  100   try {
+→ 101     userRecentPicks = await this.prisma.message.findMany(
+Inconsistent column data: Error creating UUID, invalid character: expected an optional prefix of `urn:uuid:` followed by [0-9a-fA-F-], found `p` at 2
+[13:47:07 UPC] [32mINFO[39m: [36mincoming request[39m
+    req: {
+      "method": "POST",
+      "url": "/api/map",
+      "hostname": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 55522
+    }
+[13:47:07 UPC] [32mINFO[39m: [36mrequest completed[39m
+[13:47:07 UPC] [32mINFO[39m: [36mincoming request[39m
+    req: {
+      "method": "POST",
+      "url": "/api/map",
+      "hostname": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 55524
+    }
+[13:47:07 UPC] [32mINFO[39m: [36mrequest completed[39m
+[13:47:07 UPC] [32mINFO[39m: [36mincoming request[39m
+    req: {
+      "method": "POST",
+      "url": "/api/map",
+      "hostname": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 55526
+    }
+[13:47:07 UPC] [32mINFO[39m: [36mrequest completed[39m
+[13:47:07 UTC] [34mDEBUG[39m: [36mStarting song matching process[39m
+    text: "hey jude"
+    allowExplicit: false
+    userId: "api-user"
+[13:47:07 UTC] [32mINFO[39m: [36mSong matching completed[39m
+    text: "hey jude"
+    primarySong: "The Beatles - Hey Jude"
+    strategy: "exact"
+    score: 1.097
+    confidence: 0.95
+    alternatesCount: 0
+[13:47:07 UTC] [34mDEBUG[39m: [36mStarting song matching process[39m
+    text: "bohemian rhapsody"
+    allowExplicit: false
+    userId: "api-user"
+[13:47:07 UTC] [32mINFO[39m: [36mSong matching completed[39m
+    text: "bohemian rhapsody"
+    primarySong: "Queen - Bohemian Rhapsody"
+    strategy: "exact"
+    score: 1.1
+    confidence: 0.95
+    alternatesCount: 0
+[13:47:07 UTC] [34mDEBUG[39m: [36mStarting song matching process[39m
+    text: "michael jackson"
+    allowExplicit: false
+    userId: "api-user"
+[13:47:07 UTC] [34mDEBUG[39m: [36mCould not fetch user recent picks[39m
+    error: {
+      "name": "PrismaClientKnownRequestError",
+      "code": "P2023",
+      "clientVersion": "5.22.0",
+      "meta": {
+        "modelName": "Message",
+        "message": "Error creating UUID, invalid character: expected an optional prefix of `urn:uuid:` followed by [0-9a-fA-F-], found `p` at 2"
+      }
+    }
+[13:47:07 UTC] [32mINFO[39m: [36mSong matching completed[39m
+    text: "michael jackson"
+    primarySong: "Michael Jackson - Billie Jean"
+    strategy: "exact"
+    score: 1.096
+    confidence: 0.5
+    alternatesCount: 0
+prisma:query SELECT "public"."messages"."id", "public"."messages"."userId", "public"."messages"."roomId", "public"."messages"."text", "public"."messages"."chosenSongId", "public"."messages"."scores", "public"."messages"."createdAt" FROM "public"."messages" WHERE 1=1 ORDER BY "public"."messages"."createdAt" DESC LIMIT $1 OFFSET $2
+prisma:query SELECT "public"."users"."id", "public"."users"."anonHandle" FROM "public"."users" WHERE "public"."users"."id" IN ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) OFFSET $13
+prisma:query SELECT "public"."rooms"."id", "public"."rooms"."name" FROM "public"."rooms" WHERE "public"."rooms"."id" IN ($1) OFFSET $2
+prisma:query SELECT COUNT("public"."messages"."chosenSongId"), "public"."messages"."chosenSongId" FROM "public"."messages" WHERE "public"."messages"."chosenSongId" IS NOT NULL GROUP BY "public"."messages"."chosenSongId" ORDER BY COUNT("public"."messages"."chosenSongId") DESC LIMIT $1 OFFSET $2
+[13:47:13 UPC] [32mINFO[39m: [36mincoming request[39m
+    req: {
+      "method": "GET",
+      "url": "/api/admin/analytics",
+      "hostname": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 55542
+    }
+[13:47:13 UPC] [32mINFO[39m: [36mrequest completed[39m
+prisma:query SELECT 1
+prisma:query SELECT "public"."rooms"."id", "public"."rooms"."name", "public"."rooms"."allowExplicit", "public"."rooms"."createdAt" FROM "public"."rooms" WHERE ("public"."rooms"."name" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."songs"."id", "public"."songs"."title", "public"."songs"."artist", "public"."songs"."year", "public"."songs"."popularity", "public"."songs"."tags", "public"."songs"."phrases", "public"."songs"."mbid", "public"."songs"."createdAt", "public"."songs"."updatedAt" FROM "public"."songs" WHERE ("public"."songs"."title" ILIKE $1 OR "public"."songs"."artist" ILIKE $2) ORDER BY "public"."songs"."popularity" DESC LIMIT $3 OFFSET $4
+prisma:query SELECT "public"."rooms"."id", "public"."rooms"."name", "public"."rooms"."allowExplicit", "public"."rooms"."createdAt" FROM "public"."rooms" WHERE ("public"."rooms"."name" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."songs"."id", "public"."songs"."title", "public"."songs"."artist", "public"."songs"."year", "public"."songs"."popularity", "public"."songs"."tags", "public"."songs"."phrases", "public"."songs"."mbid", "public"."songs"."createdAt", "public"."songs"."updatedAt" FROM "public"."songs" WHERE ("public"."songs"."title" ILIKE $1 OR "public"."songs"."artist" ILIKE $2) ORDER BY "public"."songs"."popularity" DESC LIMIT $3 OFFSET $4
+prisma:query SELECT "public"."rooms"."id", "public"."rooms"."name", "public"."rooms"."allowExplicit", "public"."rooms"."createdAt" FROM "public"."rooms" WHERE ("public"."rooms"."name" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."songs"."id", "public"."songs"."title", "public"."songs"."artist", "public"."songs"."year", "public"."songs"."popularity", "public"."songs"."tags", "public"."songs"."phrases", "public"."songs"."mbid", "public"."songs"."createdAt", "public"."songs"."updatedAt" FROM "public"."songs" WHERE ("public"."songs"."title" ILIKE $1 OR "public"."songs"."artist" ILIKE $2) ORDER BY "public"."songs"."popularity" DESC LIMIT $3 OFFSET $4
+prisma:query SELECT "public"."messages"."id", "public"."messages"."userId", "public"."messages"."roomId", "public"."messages"."text", "public"."messages"."chosenSongId", "public"."messages"."scores", "public"."messages"."createdAt" FROM "public"."messages" WHERE "public"."messages"."userId" = $1 ORDER BY "public"."messages"."createdAt" DESC LIMIT $2 OFFSET $3
+prisma:error 
+Invalid `this.prisma.message.findMany()` invocation in
+/Users/lolmach/musicr/apps/api/src/services/song-matching-service.ts:101:53
+
+   98 let userRecentPicks: any[] = [];
+   99 if (userId) {
+  100   try {
+→ 101     userRecentPicks = await this.prisma.message.findMany(
+Inconsistent column data: Error creating UUID, invalid character: expected an optional prefix of `urn:uuid:` followed by [0-9a-fA-F-], found `p` at 2
+prisma:query SELECT "public"."rooms"."id", "public"."rooms"."name", "public"."rooms"."allowExplicit", "public"."rooms"."createdAt" FROM "public"."rooms" WHERE ("public"."rooms"."name" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."songs"."id", "public"."songs"."title", "public"."songs"."artist", "public"."songs"."year", "public"."songs"."popularity", "public"."songs"."tags", "public"."songs"."phrases", "public"."songs"."mbid", "public"."songs"."createdAt", "public"."songs"."updatedAt" FROM "public"."songs" WHERE ("public"."songs"."title" ILIKE $1 OR "public"."songs"."artist" ILIKE $2) ORDER BY "public"."songs"."popularity" DESC LIMIT $3 OFFSET $4
+prisma:query SELECT "public"."messages"."id", "public"."messages"."userId", "public"."messages"."roomId", "public"."messages"."text", "public"."messages"."chosenSongId", "public"."messages"."scores", "public"."messages"."createdAt" FROM "public"."messages" WHERE 1=1 ORDER BY "public"."messages"."createdAt" DESC LIMIT $1 OFFSET $2
+prisma:query SELECT "public"."users"."id", "public"."users"."anonHandle" FROM "public"."users" WHERE "public"."users"."id" IN ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) OFFSET $13
+prisma:query SELECT "public"."rooms"."id", "public"."rooms"."name" FROM "public"."rooms" WHERE "public"."rooms"."id" IN ($1) OFFSET $2
+prisma:query SELECT COUNT("public"."messages"."chosenSongId"), "public"."messages"."chosenSongId" FROM "public"."messages" WHERE "public"."messages"."chosenSongId" IS NOT NULL GROUP BY "public"."messages"."chosenSongId" ORDER BY COUNT("public"."messages"."chosenSongId") DESC LIMIT $1 OFFSET $2
+[13:48:02 UTC] [34mDEBUG[39m: [36mStarting song matching process[39m
+    text: "hey jude"
+    allowExplicit: false
+    userId: "api-user"
+[13:48:02 UTC] [32mINFO[39m: [36mSong matching completed[39m
+    text: "hey jude"
+    primarySong: "The Beatles - Hey Jude"
+    strategy: "exact"
+    score: 1.097
+    confidence: 0.95
+    alternatesCount: 0
+[13:48:02 UTC] [34mDEBUG[39m: [36mStarting song matching process[39m
+    text: "bohemian rhapsody"
+    allowExplicit: false
+    userId: "api-user"
+[13:48:02 UTC] [32mINFO[39m: [36mSong matching completed[39m
+    text: "bohemian rhapsody"
+    primarySong: "Queen - Bohemian Rhapsody"
+    strategy: "exact"
+    score: 1.1
+    confidence: 0.95
+    alternatesCount: 0
+[13:48:02 UTC] [34mDEBUG[39m: [36mStarting song matching process[39m
+    text: "michael jackson"
+    allowExplicit: false
+    userId: "api-user"
+[13:48:02 UTC] [34mDEBUG[39m: [36mCould not fetch user recent picks[39m
+    error: {
+      "name": "PrismaClientKnownRequestError",
+      "code": "P2023",
+      "clientVersion": "5.22.0",
+      "meta": {
+        "modelName": "Message",
+        "message": "Error creating UUID, invalid character: expected an optional prefix of `urn:uuid:` followed by [0-9a-fA-F-], found `p` at 2"
+      }
+    }
+[13:48:02 UTC] [32mINFO[39m: [36mSong matching completed[39m
+    text: "michael jackson"
+    primarySong: "Michael Jackson - Billie Jean"
+    strategy: "exact"
+    score: 1.096
+    confidence: 0.5
+    alternatesCount: 0
+[13:48:02 UTC] [34mDEBUG[39m: [36mStarting song matching process[39m
+    text: "dancing queen"
+    allowExplicit: false
+    userId: "api-user"
+[13:48:02 UTC] [32mINFO[39m: [36mSong matching completed[39m
+    text: "dancing queen"
+    primarySong: "ABBA - Dancing Queen"
+    strategy: "exact"
+    score: 1.089
+    confidence: 0.95
+    alternatesCount: 0
+[13:48:02 UPC] [32mINFO[39m: [36mincoming request[39m
+    req: {
+      "method": "GET",
+      "url": "/health",
+      "hostname": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 55661
+    }
+[13:48:02 UPC] [32mINFO[39m: [36mrequest completed[39m
+[13:48:02 UPC] [32mINFO[39m: [36mincoming request[39m
+    req: {
+      "method": "POST",
+      "url": "/api/map",
+      "hostname": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 55663
+    }
+[13:48:02 UPC] [32mINFO[39m: [36mrequest completed[39m
+[13:48:02 UPC] [32mINFO[39m: [36mincoming request[39m
+    req: {
+      "method": "POST",
+      "url": "/api/map",
+      "hostname": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 55665
+    }
+[13:48:02 UPC] [32mINFO[39m: [36mrequest completed[39m
+[13:48:02 UPC] [32mINFO[39m: [36mincoming request[39m
+    req: {
+      "method": "POST",
+      "url": "/api/map",
+      "hostname": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 55667
+    }
+[13:48:02 UPC] [32mINFO[39m: [36mrequest completed[39m
+[13:48:02 UPC] [32mINFO[39m: [36mincoming request[39m
+    req: {
+      "method": "POST",
+      "url": "/api/map",
+      "hostname": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 55669
+    }
+[13:48:02 UPC] [32mINFO[39m: [36mrequest completed[39m
+[13:48:02 UPC] [32mINFO[39m: [36mincoming request[39m
+    req: {
+      "method": "GET",
+      "url": "/api/admin/analytics",
+      "hostname": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 55671
+    }
+[13:48:02 UPC] [32mINFO[39m: [36mrequest completed[39m
+prisma:query SELECT "public"."rooms"."id", "public"."rooms"."name", "public"."rooms"."allowExplicit", "public"."rooms"."createdAt" FROM "public"."rooms" WHERE ("public"."rooms"."name" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."songs"."id", "public"."songs"."title", "public"."songs"."artist", "public"."songs"."year", "public"."songs"."popularity", "public"."songs"."tags", "public"."songs"."phrases", "public"."songs"."mbid", "public"."songs"."createdAt", "public"."songs"."updatedAt" FROM "public"."songs" WHERE ("public"."songs"."title" ILIKE $1 OR "public"."songs"."artist" ILIKE $2) ORDER BY "public"."songs"."popularity" DESC LIMIT $3 OFFSET $4
+prisma:query SELECT "public"."songs"."id", "public"."songs"."title", "public"."songs"."artist", "public"."songs"."year", "public"."songs"."popularity", "public"."songs"."tags", "public"."songs"."phrases", "public"."songs"."mbid", "public"."songs"."createdAt", "public"."songs"."updatedAt" FROM "public"."songs" WHERE "public"."songs"."phrases" && $1 ORDER BY "public"."songs"."popularity" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."songs"."id", "public"."songs"."title", "public"."songs"."artist", "public"."songs"."year", "public"."songs"."popularity", "public"."songs"."tags", "public"."songs"."phrases", "public"."songs"."mbid", "public"."songs"."createdAt", "public"."songs"."updatedAt" FROM "public"."songs" WHERE "public"."songs"."tags" && $1 ORDER BY "public"."songs"."popularity" DESC LIMIT $2 OFFSET $3
+prisma:query SELECT "public"."songs"."id", "public"."songs"."title", "public"."songs"."artist", "public"."songs"."year", "public"."songs"."popularity", "public"."songs"."tags", "public"."songs"."phrases", "public"."songs"."mbid", "public"."songs"."createdAt", "public"."songs"."updatedAt" FROM "public"."songs" WHERE 1=1 ORDER BY "public"."songs"."popularity" DESC LIMIT $1 OFFSET $2
+prisma:query SELECT "public"."messages"."id", "public"."messages"."userId", "public"."messages"."roomId", "public"."messages"."text", "public"."messages"."chosenSongId", "public"."messages"."scores", "public"."messages"."createdAt" FROM "public"."messages" WHERE "public"."messages"."userId" = $1 ORDER BY "public"."messages"."createdAt" DESC LIMIT $2 OFFSET $3
+prisma:error 
+Invalid `this.prisma.message.findMany()` invocation in
+/Users/lolmach/musicr/apps/api/src/services/song-matching-service.ts:101:53
+
+   98 let userRecentPicks: any[] = [];
+   99 if (userId) {
+  100   try {
+→ 101     userRecentPicks = await this.prisma.message.findMany(
+Inconsistent column data: Error creating UUID, invalid character: expected an optional prefix of `urn:uuid:` followed by [0-9a-fA-F-], found `p` at 2
+[14:34:32 UPC] [32mINFO[39m: [36mincoming request[39m
+    req: {
+      "method": "POST",
+      "url": "/api/map",
+      "hostname": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 62374
+    }
+[14:34:32 UTC] [34mDEBUG[39m: [36mStarting song matching process[39m
+    text: "Beach weekend, zero plans"
+    allowExplicit: false
+    userId: "api-user"
+[14:34:32 UPC] [32mINFO[39m: [36mrequest completed[39m
+[14:34:32 UTC] [34mDEBUG[39m: [36mFound phrase lexicon matches[39m
+    matches: 0
+[14:34:32 UTC] [33mWARN[39m: [36mEmbedding matching failed, falling back[39m
+    error: {}
+[14:34:32 UTC] [34mDEBUG[39m: [36mCould not fetch user recent picks[39m
+    error: {
+      "name": "PrismaClientKnownRequestError",
+      "code": "P2023",
+      "clientVersion": "5.22.0",
+      "meta": {
+        "modelName": "Message",
+        "message": "Error creating UUID, invalid character: expected an optional prefix of `urn:uuid:` followed by [0-9a-fA-F-], found `p` at 2"
+      }
+    }
+[14:34:32 UTC] [32mINFO[39m: [36mSong matching completed[39m
+    text: "beach weekend zero plans"
+    primarySong: "Queen - Bohemian Rhapsody"
+    strategy: "semantic"
+    score: 0.5
+    confidence: 0.5
+    alternatesCount: 1
+[14:37:53 UPC] [32mINFO[39m: [36mincoming request[39m
+    req: {
+      "method": "GET",
+      "url": "/api/user/session",
+      "hostname": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 62885
+    }
+[14:37:53 UPC] [32mINFO[39m: [36mRoute GET:/api/user/session not found[39m
+[14:37:53 UPC] [32mINFO[39m: [36mrequest completed[39m
+[14:37:53 UPC] [32mINFO[39m: [36mincoming request[39m
+    req: {
+      "method": "GET",
+      "url": "/api/user/session",
+      "hostname": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 62885
+    }
+[14:37:53 UPC] [32mINFO[39m: [36mRoute GET:/api/user/session not found[39m
+[14:37:53 UPC] [32mINFO[39m: [36mrequest completed[39m
+[14:37:53 UPC] [32mINFO[39m: [36mincoming request[39m
+    req: {
+      "method": "GET",
+      "url": "/ws",
+      "hostname": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 62887
+    }
+[14:37:53 UPC] [32mINFO[39m: [36mRoute GET:/ws not found[39m
+[14:37:53 UPC] [32mINFO[39m: [36mrequest completed[39m
+[14:37:53 UPC] [32mINFO[39m: [36mincoming request[39m
+    req: {
+      "method": "GET",
+      "url": "/ws",
+      "hostname": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 62891
+    }
+[14:37:53 UPC] [32mINFO[39m: [36mRoute GET:/ws not found[39m
+[14:37:53 UPC] [32mINFO[39m: [36mrequest completed[39m
+[14:38:24 UPC] [32mINFO[39m: [36mincoming request[39m
+    req: {
+      "method": "GET",
+      "url": "/health",
+      "hostname": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 62954
+    }
+[14:38:24 UPC] [32mINFO[39m: [36mrequest completed[39m
+[14:42:51 UPC] [32mINFO[39m: [36mincoming request[39m
+    req: {
+      "method": "GET",
+      "url": "/api/user/session",
+      "hostname": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 63301
+    }
+[14:42:51 UPC] [32mINFO[39m: [36mRoute GET:/api/user/session not found[39m
+[14:42:51 UPC] [32mINFO[39m: [36mrequest completed[39m
+[14:42:51 UPC] [32mINFO[39m: [36mincoming request[39m
+    req: {
+      "method": "GET",
+      "url": "/api/user/session",
+      "hostname": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 63301
+    }
+[14:42:51 UPC] [32mINFO[39m: [36mRoute GET:/api/user/session not found[39m
+[14:42:51 UPC] [32mINFO[39m: [36mrequest completed[39m
+[14:42:51 UPC] [32mINFO[39m: [36mincoming request[39m
+    req: {
+      "method": "GET",
+      "url": "/ws",
+      "hostname": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 63302
+    }
+[14:42:51 UPC] [32mINFO[39m: [36mRoute GET:/ws not found[39m
+[14:42:51 UPC] [32mINFO[39m: [36mrequest completed[39m
+[14:42:51 UPC] [32mINFO[39m: [36mincoming request[39m
+    req: {
+      "method": "GET",
+      "url": "/ws",
+      "hostname": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 63304
+    }
+[14:42:51 UPC] [32mINFO[39m: [36mRoute GET:/ws not found[39m
+[14:42:51 UPC] [32mINFO[39m: [36mrequest completed[39m
+[14:43:06 UPC] [32mINFO[39m: [36mincoming request[39m
+    req: {
+      "method": "GET",
+      "url": "/api/user/session",
+      "hostname": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 63312
+    }
+[14:43:06 UPC] [32mINFO[39m: [36mRoute GET:/api/user/session not found[39m
+[14:43:06 UPC] [32mINFO[39m: [36mrequest completed[39m
+[14:43:06 UPC] [32mINFO[39m: [36mincoming request[39m
+    req: {
+      "method": "GET",
+      "url": "/api/user/session",
+      "hostname": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 63312
+    }
+[14:43:06 UPC] [32mINFO[39m: [36mRoute GET:/api/user/session not found[39m
+[14:43:06 UPC] [32mINFO[39m: [36mrequest completed[39m
+[14:43:06 UPC] [32mINFO[39m: [36mincoming request[39m
+    req: {
+      "method": "GET",
+      "url": "/ws",
+      "hostname": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 63313
+    }
+[14:43:06 UPC] [32mINFO[39m: [36mRoute GET:/ws not found[39m
+[14:43:06 UPC] [32mINFO[39m: [36mrequest completed[39m
+[14:43:06 UPC] [32mINFO[39m: [36mincoming request[39m
+    req: {
+      "method": "GET",
+      "url": "/ws",
+      "hostname": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 63317
+    }
+[14:43:06 UPC] [32mINFO[39m: [36mRoute GET:/ws not found[39m
+[14:43:06 UPC] [32mINFO[39m: [36mrequest completed[39m
+[14:44:36 UPC] [32mINFO[39m: [36mincoming request[39m
+    req: {
+      "method": "GET",
+      "url": "/health",
+      "hostname": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 63377
+    }
+[14:44:36 UPC] [32mINFO[39m: [36mrequest completed[39m
+[14:45:56 UPC] [32mINFO[39m: [36mincoming request[39m
+    req: {
+      "method": "GET",
+      "url": "/ws",
+      "hostname": "localhost:4000",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 63408
+    }
+[14:45:56 UPC] [32mINFO[39m: [36mRoute GET:/ws not found[39m
+[14:45:56 UPC] [32mINFO[39m: [36mrequest completed[39m

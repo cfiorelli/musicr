@@ -1,0 +1,1012 @@
+{
+  "summary": {
+    "totalTests": 31,
+    "top1HitRate": 51.61290322580645,
+    "top3HitRate": 51.61290322580645,
+    "meanReciprocalRank": 0.5161290322580645,
+    "averageConfidence": 0.7212903225806451,
+    "strategyBreakdown": {
+      "exact": {
+        "count": 5,
+        "hitRate": 100
+      },
+      "phrase": {
+        "count": 21,
+        "hitRate": 52.38095238095239
+      },
+      "semantic": {
+        "count": 5,
+        "hitRate": 0
+      }
+    },
+    "tagBreakdown": {
+      "exact_match": {
+        "count": 4,
+        "hitRate": 100,
+        "mrr": 1
+      },
+      "classic": {
+        "count": 4,
+        "hitRate": 75,
+        "mrr": 0.75
+      },
+      "rock": {
+        "count": 2,
+        "hitRate": 50,
+        "mrr": 0.5
+      },
+      "artist_match": {
+        "count": 2,
+        "hitRate": 100,
+        "mrr": 1
+      },
+      "pop": {
+        "count": 3,
+        "hitRate": 66.66666666666666,
+        "mrr": 0.6666666666666666
+      },
+      "descriptive": {
+        "count": 5,
+        "hitRate": 0,
+        "mrr": 0
+      },
+      "mood_match": {
+        "count": 3,
+        "hitRate": 33.33333333333333,
+        "mrr": 0.3333333333333333
+      },
+      "ballad": {
+        "count": 1,
+        "hitRate": 100,
+        "mrr": 1
+      },
+      "upbeat": {
+        "count": 1,
+        "hitRate": 0,
+        "mrr": 0
+      },
+      "decade_match": {
+        "count": 1,
+        "hitRate": 0,
+        "mrr": 0
+      },
+      "genre_match": {
+        "count": 3,
+        "hitRate": 0,
+        "mrr": 0
+      },
+      "guitar": {
+        "count": 2,
+        "hitRate": 0,
+        "mrr": 0
+      },
+      "mixed_cues": {
+        "count": 1,
+        "hitRate": 100,
+        "mrr": 1
+      },
+      "modern": {
+        "count": 2,
+        "hitRate": 100,
+        "mrr": 1
+      },
+      "90s": {
+        "count": 1,
+        "hitRate": 0,
+        "mrr": 0
+      },
+      "indie": {
+        "count": 1,
+        "hitRate": 100,
+        "mrr": 1
+      },
+      "60s": {
+        "count": 1,
+        "hitRate": 0,
+        "mrr": 0
+      },
+      "title_artist": {
+        "count": 7,
+        "hitRate": 85.71428571428571,
+        "mrr": 0.8571428571428571
+      },
+      "vocals": {
+        "count": 1,
+        "hitRate": 0,
+        "mrr": 0
+      },
+      "theme_match": {
+        "count": 1,
+        "hitRate": 100,
+        "mrr": 1
+      },
+      "horror": {
+        "count": 1,
+        "hitRate": 100,
+        "mrr": 1
+      },
+      "peace": {
+        "count": 1,
+        "hitRate": 100,
+        "mrr": 1
+      },
+      "viral": {
+        "count": 1,
+        "hitRate": 0,
+        "mrr": 0
+      },
+      "epic": {
+        "count": 1,
+        "hitRate": 100,
+        "mrr": 1
+      },
+      "empowerment": {
+        "count": 1,
+        "hitRate": 0,
+        "mrr": 0
+      },
+      "movie": {
+        "count": 1,
+        "hitRate": 0,
+        "mrr": 0
+      },
+      "breakup": {
+        "count": 1,
+        "hitRate": 0,
+        "mrr": 0
+      },
+      "genre_instrument": {
+        "count": 1,
+        "hitRate": 0,
+        "mrr": 0
+      },
+      "mood_genre": {
+        "count": 1,
+        "hitRate": 0,
+        "mrr": 0
+      },
+      "confident": {
+        "count": 1,
+        "hitRate": 0,
+        "mrr": 0
+      },
+      "title_mood": {
+        "count": 1,
+        "hitRate": 100,
+        "mrr": 1
+      },
+      "heartbreak": {
+        "count": 1,
+        "hitRate": 100,
+        "mrr": 1
+      },
+      "psychedelic": {
+        "count": 1,
+        "hitRate": 100,
+        "mrr": 1
+      },
+      "80s": {
+        "count": 1,
+        "hitRate": 100,
+        "mrr": 1
+      },
+      "genre_theme": {
+        "count": 1,
+        "hitRate": 0,
+        "mrr": 0
+      },
+      "protest": {
+        "count": 1,
+        "hitRate": 0,
+        "mrr": 0
+      }
+    },
+    "difficultyBreakdown": {
+      "easy": {
+        "count": 13,
+        "hitRate": 92.3076923076923,
+        "mrr": 0.9230769230769231
+      },
+      "medium": {
+        "count": 11,
+        "hitRate": 36.36363636363637,
+        "mrr": 0.36363636363636365
+      },
+      "hard": {
+        "count": 7,
+        "hitRate": 0,
+        "mrr": 0
+      }
+    },
+    "errorRate": 0,
+    "averageProcessingTime": 3.4516129032258065
+  },
+  "timestamp": "2025-09-26T13:48:03.450Z",
+  "results": [
+    {
+      "fixture": {
+        "text": "hey jude",
+        "expectedTitleIds": [
+          "c6686d62-b357-4582-9587-ac027aa43430"
+        ],
+        "tags": [
+          "exact_match",
+          "classic"
+        ],
+        "description": "Exact song title match",
+        "difficulty": "easy"
+      },
+      "actualTitleId": "c6686d62-b357-4582-9587-ac027aa43430",
+      "actualTitle": "Hey Jude",
+      "actualArtist": "The Beatles",
+      "alternateIds": [],
+      "top1Hit": true,
+      "top3Hit": true,
+      "reciprocalRank": 1,
+      "confidence": 0.95,
+      "strategy": "exact",
+      "processingTimeMs": 23
+    },
+    {
+      "fixture": {
+        "text": "bohemian rhapsody",
+        "expectedTitleIds": [
+          "2e020e15-4195-4914-9efc-25bc471f6971"
+        ],
+        "tags": [
+          "exact_match",
+          "rock"
+        ],
+        "description": "Exact song title match with unique title",
+        "difficulty": "easy"
+      },
+      "actualTitleId": "2e020e15-4195-4914-9efc-25bc471f6971",
+      "actualTitle": "Bohemian Rhapsody",
+      "actualArtist": "Queen",
+      "alternateIds": [],
+      "top1Hit": true,
+      "top3Hit": true,
+      "reciprocalRank": 1,
+      "confidence": 0.95,
+      "strategy": "exact",
+      "processingTimeMs": 1
+    },
+    {
+      "fixture": {
+        "text": "michael jackson",
+        "expectedTitleIds": [
+          "a84f7e37-e973-434d-9722-44a61661d52c",
+          "e09b78fa-3706-4334-a2aa-f926f28f3444",
+          "1b37fe15-82a1-4e0a-9417-cde0f1984298"
+        ],
+        "tags": [
+          "artist_match",
+          "pop"
+        ],
+        "description": "Artist name should match any MJ song",
+        "difficulty": "medium"
+      },
+      "actualTitleId": "a84f7e37-e973-434d-9722-44a61661d52c",
+      "actualTitle": "Billie Jean",
+      "actualArtist": "Michael Jackson",
+      "alternateIds": [],
+      "top1Hit": true,
+      "top3Hit": true,
+      "reciprocalRank": 1,
+      "confidence": 0.5,
+      "strategy": "exact",
+      "processingTimeMs": 2
+    },
+    {
+      "fixture": {
+        "text": "the beatles",
+        "expectedTitleIds": [
+          "c6686d62-b357-4582-9587-ac027aa43430"
+        ],
+        "tags": [
+          "artist_match",
+          "classic"
+        ],
+        "description": "Artist name match",
+        "difficulty": "medium"
+      },
+      "actualTitleId": "c6686d62-b357-4582-9587-ac027aa43430",
+      "actualTitle": "Hey Jude",
+      "actualArtist": "The Beatles",
+      "alternateIds": [],
+      "top1Hit": true,
+      "top3Hit": true,
+      "reciprocalRank": 1,
+      "confidence": 0.52,
+      "strategy": "exact",
+      "processingTimeMs": 1
+    },
+    {
+      "fixture": {
+        "text": "queen rock opera",
+        "expectedTitleIds": [
+          "2e020e15-4195-4914-9efc-25bc471f6971"
+        ],
+        "tags": [
+          "descriptive",
+          "rock"
+        ],
+        "description": "Genre and descriptive match",
+        "difficulty": "medium"
+      },
+      "actualTitleId": "7672c95e-b872-4077-92ae-4e9c149d13fb",
+      "actualTitle": "Dancing Queen",
+      "actualArtist": "ABBA",
+      "alternateIds": [
+        "12aef1dc-4970-445e-b15b-59beafcffdf0"
+      ],
+      "top1Hit": false,
+      "top3Hit": false,
+      "reciprocalRank": 0,
+      "confidence": 0.5,
+      "strategy": "phrase",
+      "processingTimeMs": 5
+    },
+    {
+      "fixture": {
+        "text": "sad song about love",
+        "expectedTitleIds": [
+          "53b12056-8632-4b04-a74e-fef9502b134d",
+          "c6686d62-b357-4582-9587-ac027aa43430",
+          "41e9f73b-0c38-4f4f-86fb-9d705a56062f"
+        ],
+        "tags": [
+          "mood_match",
+          "ballad"
+        ],
+        "description": "Mood-based matching for emotional ballads",
+        "difficulty": "medium"
+      },
+      "actualTitleId": "c6686d62-b357-4582-9587-ac027aa43430",
+      "actualTitle": "Hey Jude",
+      "actualArtist": "The Beatles",
+      "alternateIds": [],
+      "top1Hit": true,
+      "top3Hit": true,
+      "reciprocalRank": 1,
+      "confidence": 0.95,
+      "strategy": "phrase",
+      "processingTimeMs": 2
+    },
+    {
+      "fixture": {
+        "text": "happy dance song",
+        "expectedTitleIds": [
+          "4a093dd1-154a-46e6-89ec-ac5861f66acb",
+          "a84f7e37-e973-434d-9722-44a61661d52c",
+          "386ce22d-0195-4f6e-b52b-7637b741df59"
+        ],
+        "tags": [
+          "mood_match",
+          "upbeat"
+        ],
+        "description": "Upbeat mood matching",
+        "difficulty": "medium"
+      },
+      "actualTitleId": "c6686d62-b357-4582-9587-ac027aa43430",
+      "actualTitle": "Hey Jude",
+      "actualArtist": "The Beatles",
+      "alternateIds": [
+        "e365526e-db53-4374-b321-22d764148beb"
+      ],
+      "top1Hit": false,
+      "top3Hit": false,
+      "reciprocalRank": 0,
+      "confidence": 0.53,
+      "strategy": "phrase",
+      "processingTimeMs": 3
+    },
+    {
+      "fixture": {
+        "text": "80s pop music",
+        "expectedTitleIds": [
+          "a84f7e37-e973-434d-9722-44a61661d52c",
+          "e09b78fa-3706-4334-a2aa-f926f28f3444",
+          "1b37fe15-82a1-4e0a-9417-cde0f1984298"
+        ],
+        "tags": [
+          "decade_match",
+          "pop"
+        ],
+        "description": "Decade and genre matching",
+        "difficulty": "medium"
+      },
+      "actualTitleId": "00c1ac34-e149-4ce2-9a70-a6c423de7404",
+      "actualTitle": "Lose Control",
+      "actualArtist": "Missy Elliott",
+      "alternateIds": [
+        "da0e95cd-891d-4aee-ae0e-e1efe3d61d72",
+        "e365526e-db53-4374-b321-22d764148beb"
+      ],
+      "top1Hit": false,
+      "top3Hit": false,
+      "reciprocalRank": 0,
+      "confidence": 0.51,
+      "strategy": "phrase",
+      "processingTimeMs": 4
+    },
+    {
+      "fixture": {
+        "text": "rock classic",
+        "expectedTitleIds": [
+          "2e020e15-4195-4914-9efc-25bc471f6971",
+          "c6a55bd7-f591-4ecb-a0a0-40a055c73d8c",
+          "c6686d62-b357-4582-9587-ac027aa43430"
+        ],
+        "tags": [
+          "genre_match",
+          "classic"
+        ],
+        "description": "Classic rock genre matching",
+        "difficulty": "medium"
+      },
+      "actualTitleId": "12aef1dc-4970-445e-b15b-59beafcffdf0",
+      "actualTitle": "Rock Your Body",
+      "actualArtist": "Justin Timberlake",
+      "alternateIds": [
+        "65dfb25e-3cfe-4647-9dbe-d5149707b55b"
+      ],
+      "top1Hit": false,
+      "top3Hit": false,
+      "reciprocalRank": 0,
+      "confidence": 0.5,
+      "strategy": "phrase",
+      "processingTimeMs": 3
+    },
+    {
+      "fixture": {
+        "text": "guitar solo epic",
+        "expectedTitleIds": [
+          "c6a55bd7-f591-4ecb-a0a0-40a055c73d8c",
+          "80b7dd8f-c2c5-46bc-939a-f6ea7b015cf0",
+          "f0337ce8-0a29-47c2-b4a4-a21130b1e3df"
+        ],
+        "tags": [
+          "descriptive",
+          "guitar"
+        ],
+        "description": "Instrumental focus matching",
+        "difficulty": "hard"
+      },
+      "actualTitleId": "25e21116-1d53-4770-9599-bf1552f33f1e",
+      "actualTitle": "While My Guitar Gently Weeps",
+      "actualArtist": "The Beatles",
+      "alternateIds": [],
+      "top1Hit": false,
+      "top3Hit": false,
+      "reciprocalRank": 0,
+      "confidence": 0.95,
+      "strategy": "phrase",
+      "processingTimeMs": 2
+    },
+    {
+      "fixture": {
+        "text": "billie jean king of pop",
+        "expectedTitleIds": [
+          "a84f7e37-e973-434d-9722-44a61661d52c"
+        ],
+        "tags": [
+          "mixed_cues",
+          "pop"
+        ],
+        "description": "Song title + artist description",
+        "difficulty": "easy"
+      },
+      "actualTitleId": "a84f7e37-e973-434d-9722-44a61661d52c",
+      "actualTitle": "Billie Jean",
+      "actualArtist": "Michael Jackson",
+      "alternateIds": [],
+      "top1Hit": true,
+      "top3Hit": true,
+      "reciprocalRank": 1,
+      "confidence": 0.95,
+      "strategy": "phrase",
+      "processingTimeMs": 2
+    },
+    {
+      "fixture": {
+        "text": "call me maybe pop song",
+        "expectedTitleIds": [
+          "eebad671-476f-4dbf-aa33-aa459f202202"
+        ],
+        "tags": [
+          "exact_match",
+          "modern"
+        ],
+        "description": "Modern pop song exact match",
+        "difficulty": "easy"
+      },
+      "actualTitleId": "eebad671-476f-4dbf-aa33-aa459f202202",
+      "actualTitle": "Call Me Maybe",
+      "actualArtist": "Carly Rae Jepsen",
+      "alternateIds": [],
+      "top1Hit": true,
+      "top3Hit": true,
+      "reciprocalRank": 1,
+      "confidence": 0.5,
+      "strategy": "phrase",
+      "processingTimeMs": 2
+    },
+    {
+      "fixture": {
+        "text": "grunge 90s alternative",
+        "expectedTitleIds": [
+          "0a4c20f6-d89d-42d6-b745-6627bca67d10"
+        ],
+        "tags": [
+          "genre_match",
+          "90s"
+        ],
+        "description": "Genre-decade-style combination",
+        "difficulty": "medium"
+      },
+      "actualTitleId": "2e020e15-4195-4914-9efc-25bc471f6971",
+      "actualTitle": "Bohemian Rhapsody",
+      "actualArtist": "Queen",
+      "alternateIds": [
+        "c6686d62-b357-4582-9587-ac027aa43430"
+      ],
+      "top1Hit": false,
+      "top3Hit": false,
+      "reciprocalRank": 0,
+      "confidence": 0.5,
+      "strategy": "semantic",
+      "processingTimeMs": 10
+    },
+    {
+      "fixture": {
+        "text": "somebody that i used to know",
+        "expectedTitleIds": [
+          "2fd867c7-7ab8-4f6b-ac2b-ece6c8b68775"
+        ],
+        "tags": [
+          "exact_match",
+          "indie"
+        ],
+        "description": "Long exact title match",
+        "difficulty": "easy"
+      },
+      "actualTitleId": "2fd867c7-7ab8-4f6b-ac2b-ece6c8b68775",
+      "actualTitle": "Somebody That I Used to Know",
+      "actualArtist": "Gotye ft. Kimberly",
+      "alternateIds": [],
+      "top1Hit": true,
+      "top3Hit": true,
+      "reciprocalRank": 1,
+      "confidence": 0.95,
+      "strategy": "exact",
+      "processingTimeMs": 2
+    },
+    {
+      "fixture": {
+        "text": "psychedelic guitar 60s",
+        "expectedTitleIds": [
+          "f0337ce8-0a29-47c2-b4a4-a21130b1e3df"
+        ],
+        "tags": [
+          "genre_match",
+          "60s"
+        ],
+        "description": "Specific genre-decade combination",
+        "difficulty": "hard"
+      },
+      "actualTitleId": "25e21116-1d53-4770-9599-bf1552f33f1e",
+      "actualTitle": "While My Guitar Gently Weeps",
+      "actualArtist": "The Beatles",
+      "alternateIds": [],
+      "top1Hit": false,
+      "top3Hit": false,
+      "reciprocalRank": 0,
+      "confidence": 0.95,
+      "strategy": "phrase",
+      "processingTimeMs": 1
+    },
+    {
+      "fixture": {
+        "text": "hotel california eagles",
+        "expectedTitleIds": [
+          "80b7dd8f-c2c5-46bc-939a-f6ea7b015cf0"
+        ],
+        "tags": [
+          "title_artist",
+          "classic"
+        ],
+        "description": "Title and artist combination",
+        "difficulty": "easy"
+      },
+      "actualTitleId": "80b7dd8f-c2c5-46bc-939a-f6ea7b015cf0",
+      "actualTitle": "Hotel California",
+      "actualArtist": "Eagles",
+      "alternateIds": [
+        "68fef696-a303-4798-ad1d-4bfbb4d7e11a"
+      ],
+      "top1Hit": true,
+      "top3Hit": true,
+      "reciprocalRank": 1,
+      "confidence": 0.5,
+      "strategy": "phrase",
+      "processingTimeMs": 3
+    },
+    {
+      "fixture": {
+        "text": "powerful vocal ballad",
+        "expectedTitleIds": [
+          "53b12056-8632-4b04-a74e-fef9502b134d"
+        ],
+        "tags": [
+          "descriptive",
+          "vocals"
+        ],
+        "description": "Vocal style description",
+        "difficulty": "hard"
+      },
+      "actualTitleId": "a84f7e37-e973-434d-9722-44a61661d52c",
+      "actualTitle": "Billie Jean",
+      "actualArtist": "Michael Jackson",
+      "alternateIds": [
+        "a7ed6610-18d8-4f82-9559-be7089c9e149"
+      ],
+      "top1Hit": false,
+      "top3Hit": false,
+      "reciprocalRank": 0,
+      "confidence": 0.5,
+      "strategy": "semantic",
+      "processingTimeMs": 5
+    },
+    {
+      "fixture": {
+        "text": "thriller halloween",
+        "expectedTitleIds": [
+          "e09b78fa-3706-4334-a2aa-f926f28f3444"
+        ],
+        "tags": [
+          "theme_match",
+          "horror"
+        ],
+        "description": "Thematic association",
+        "difficulty": "medium"
+      },
+      "actualTitleId": "e09b78fa-3706-4334-a2aa-f926f28f3444",
+      "actualTitle": "Thriller",
+      "actualArtist": "Michael Jackson",
+      "alternateIds": [],
+      "top1Hit": true,
+      "top3Hit": true,
+      "reciprocalRank": 1,
+      "confidence": 0.95,
+      "strategy": "phrase",
+      "processingTimeMs": 3
+    },
+    {
+      "fixture": {
+        "text": "imagine peace john lennon",
+        "expectedTitleIds": [
+          "6ee7e810-ce70-479e-a7e9-7582fcaead9b"
+        ],
+        "tags": [
+          "title_artist",
+          "peace"
+        ],
+        "description": "Title, theme, and artist",
+        "difficulty": "easy"
+      },
+      "actualTitleId": "6ee7e810-ce70-479e-a7e9-7582fcaead9b",
+      "actualTitle": "Imagine",
+      "actualArtist": "John Lennon",
+      "alternateIds": [],
+      "top1Hit": true,
+      "top3Hit": true,
+      "reciprocalRank": 1,
+      "confidence": 0.95,
+      "strategy": "phrase",
+      "processingTimeMs": 5
+    },
+    {
+      "fixture": {
+        "text": "viral dance k-pop",
+        "expectedTitleIds": [
+          "a7ed6610-18d8-4f82-9559-be7089c9e149"
+        ],
+        "tags": [
+          "descriptive",
+          "viral"
+        ],
+        "description": "Cultural and viral context",
+        "difficulty": "hard"
+      },
+      "actualTitleId": "e365526e-db53-4374-b321-22d764148beb",
+      "actualTitle": "Into the Groove",
+      "actualArtist": "Madonna",
+      "alternateIds": [],
+      "top1Hit": false,
+      "top3Hit": false,
+      "reciprocalRank": 0,
+      "confidence": 0.95,
+      "strategy": "phrase",
+      "processingTimeMs": 1
+    },
+    {
+      "fixture": {
+        "text": "stairway to heaven led zeppelin",
+        "expectedTitleIds": [
+          "c6a55bd7-f591-4ecb-a0a0-40a055c73d8c"
+        ],
+        "tags": [
+          "title_artist",
+          "epic"
+        ],
+        "description": "Exact title and artist",
+        "difficulty": "easy"
+      },
+      "actualTitleId": "c6a55bd7-f591-4ecb-a0a0-40a055c73d8c",
+      "actualTitle": "Stairway to Heaven",
+      "actualArtist": "Led Zeppelin",
+      "alternateIds": [
+        "c561cd90-b70e-4a94-bd67-e22f3cea3719"
+      ],
+      "top1Hit": true,
+      "top3Hit": true,
+      "reciprocalRank": 1,
+      "confidence": 0.55,
+      "strategy": "phrase",
+      "processingTimeMs": 2
+    },
+    {
+      "fixture": {
+        "text": "respect aretha franklin",
+        "expectedTitleIds": [
+          "749aeb93-e637-44ec-ab22-d4a2f729e210"
+        ],
+        "tags": [
+          "title_artist",
+          "empowerment"
+        ],
+        "description": "Title and artist match",
+        "difficulty": "easy"
+      },
+      "actualTitleId": "c61e73a8-10c3-4d02-96e4-313447a484a7",
+      "actualTitle": "Express Yourself",
+      "actualArtist": "Madonna",
+      "alternateIds": [],
+      "top1Hit": false,
+      "top3Hit": false,
+      "reciprocalRank": 0,
+      "confidence": 0.95,
+      "strategy": "phrase",
+      "processingTimeMs": 2
+    },
+    {
+      "fixture": {
+        "text": "uplifting movie soundtrack",
+        "expectedTitleIds": [
+          "386ce22d-0195-4f6e-b52b-7637b741df59",
+          "4a093dd1-154a-46e6-89ec-ac5861f66acb"
+        ],
+        "tags": [
+          "descriptive",
+          "movie"
+        ],
+        "description": "Context-based matching",
+        "difficulty": "hard"
+      },
+      "actualTitleId": "2e020e15-4195-4914-9efc-25bc471f6971",
+      "actualTitle": "Bohemian Rhapsody",
+      "actualArtist": "Queen",
+      "alternateIds": [
+        "c6686d62-b357-4582-9587-ac027aa43430"
+      ],
+      "top1Hit": false,
+      "top3Hit": false,
+      "reciprocalRank": 0,
+      "confidence": 0.5,
+      "strategy": "semantic",
+      "processingTimeMs": 2
+    },
+    {
+      "fixture": {
+        "text": "breakup song indie",
+        "expectedTitleIds": [
+          "2fd867c7-7ab8-4f6b-ac2b-ece6c8b68775"
+        ],
+        "tags": [
+          "mood_match",
+          "breakup"
+        ],
+        "description": "Emotional theme in indie genre",
+        "difficulty": "medium"
+      },
+      "actualTitleId": "2e020e15-4195-4914-9efc-25bc471f6971",
+      "actualTitle": "Bohemian Rhapsody",
+      "actualArtist": "Queen",
+      "alternateIds": [
+        "c6686d62-b357-4582-9587-ac027aa43430"
+      ],
+      "top1Hit": false,
+      "top3Hit": false,
+      "reciprocalRank": 0,
+      "confidence": 0.5,
+      "strategy": "semantic",
+      "processingTimeMs": 4
+    },
+    {
+      "fixture": {
+        "text": "classic rock guitar",
+        "expectedTitleIds": [
+          "c6a55bd7-f591-4ecb-a0a0-40a055c73d8c",
+          "80b7dd8f-c2c5-46bc-939a-f6ea7b015cf0",
+          "f0337ce8-0a29-47c2-b4a4-a21130b1e3df"
+        ],
+        "tags": [
+          "genre_instrument",
+          "guitar"
+        ],
+        "description": "Genre and instrument focus",
+        "difficulty": "medium"
+      },
+      "actualTitleId": "12aef1dc-4970-445e-b15b-59beafcffdf0",
+      "actualTitle": "Rock Your Body",
+      "actualArtist": "Justin Timberlake",
+      "alternateIds": [
+        "65dfb25e-3cfe-4647-9dbe-d5149707b55b",
+        "25e21116-1d53-4770-9599-bf1552f33f1e"
+      ],
+      "top1Hit": false,
+      "top3Hit": false,
+      "reciprocalRank": 0,
+      "confidence": 0.5,
+      "strategy": "phrase",
+      "processingTimeMs": 3
+    },
+    {
+      "fixture": {
+        "text": "can't stop the feeling justin",
+        "expectedTitleIds": [
+          "386ce22d-0195-4f6e-b52b-7637b741df59"
+        ],
+        "tags": [
+          "title_artist",
+          "modern"
+        ],
+        "description": "Partial title with artist",
+        "difficulty": "easy"
+      },
+      "actualTitleId": "386ce22d-0195-4f6e-b52b-7637b741df59",
+      "actualTitle": "Can't Stop the Feeling!",
+      "actualArtist": "Justin Timberlake",
+      "alternateIds": [],
+      "top1Hit": true,
+      "top3Hit": true,
+      "reciprocalRank": 1,
+      "confidence": 0.95,
+      "strategy": "phrase",
+      "processingTimeMs": 3
+    },
+    {
+      "fixture": {
+        "text": "sexy confident r&b",
+        "expectedTitleIds": [
+          "ee425be6-9a3b-4977-b16f-6fdff6dd6ae96"
+        ],
+        "tags": [
+          "mood_genre",
+          "confident"
+        ],
+        "description": "Mood and genre combination",
+        "difficulty": "hard"
+      },
+      "actualTitleId": "0f0b187c-ccde-497a-9a2a-c419f29e7ed6",
+      "actualTitle": "Instant Crush",
+      "actualArtist": "Daft Punk ft. Julian Casablancas",
+      "alternateIds": [],
+      "top1Hit": false,
+      "top3Hit": false,
+      "reciprocalRank": 0,
+      "confidence": 0.95,
+      "strategy": "phrase",
+      "processingTimeMs": 1
+    },
+    {
+      "fixture": {
+        "text": "cry me a river heartbreak",
+        "expectedTitleIds": [
+          "41e9f73b-0c38-4f4f-86fb-9d705a56062f"
+        ],
+        "tags": [
+          "title_mood",
+          "heartbreak"
+        ],
+        "description": "Title with emotional context",
+        "difficulty": "easy"
+      },
+      "actualTitleId": "41e9f73b-0c38-4f4f-86fb-9d705a56062f",
+      "actualTitle": "Cry Me a River",
+      "actualArtist": "Justin Timberlake",
+      "alternateIds": [],
+      "top1Hit": true,
+      "top3Hit": true,
+      "reciprocalRank": 1,
+      "confidence": 0.5,
+      "strategy": "phrase",
+      "processingTimeMs": 2
+    },
+    {
+      "fixture": {
+        "text": "purple haze hendrix",
+        "expectedTitleIds": [
+          "f0337ce8-0a29-47c2-b4a4-a21130b1e3df"
+        ],
+        "tags": [
+          "title_artist",
+          "psychedelic"
+        ],
+        "description": "Classic rock title-artist",
+        "difficulty": "easy"
+      },
+      "actualTitleId": "f0337ce8-0a29-47c2-b4a4-a21130b1e3df",
+      "actualTitle": "Purple Haze",
+      "actualArtist": "Jimi Hendrix",
+      "alternateIds": [],
+      "top1Hit": true,
+      "top3Hit": true,
+      "reciprocalRank": 1,
+      "confidence": 0.95,
+      "strategy": "phrase",
+      "processingTimeMs": 1
+    },
+    {
+      "fixture": {
+        "text": "beat it michael jackson",
+        "expectedTitleIds": [
+          "1b37fe15-82a1-4e0a-9417-cde0f1984298"
+        ],
+        "tags": [
+          "title_artist",
+          "80s"
+        ],
+        "description": "80s pop title-artist",
+        "difficulty": "easy"
+      },
+      "actualTitleId": "1b37fe15-82a1-4e0a-9417-cde0f1984298",
+      "actualTitle": "Beat It",
+      "actualArtist": "Michael Jackson",
+      "alternateIds": [],
+      "top1Hit": true,
+      "top3Hit": true,
+      "reciprocalRank": 1,
+      "confidence": 0.95,
+      "strategy": "phrase",
+      "processingTimeMs": 3
+    },
+    {
+      "fixture": {
+        "text": "folk protest bob dylan",
+        "expectedTitleIds": [
+          "e4721565-401d-421d-8917-b1e2600dd104"
+        ],
+        "tags": [
+          "genre_theme",
+          "protest"
+        ],
+        "description": "Genre and thematic matching",
+        "difficulty": "hard"
+      },
+      "actualTitleId": "2e020e15-4195-4914-9efc-25bc471f6971",
+      "actualTitle": "Bohemian Rhapsody",
+      "actualArtist": "Queen",
+      "alternateIds": [
+        "c6686d62-b357-4582-9587-ac027aa43430"
+      ],
+      "top1Hit": false,
+      "top3Hit": false,
+      "reciprocalRank": 0,
+      "confidence": 0.5,
+      "strategy": "semantic",
+      "processingTimeMs": 4
+    }
+  ]
+}

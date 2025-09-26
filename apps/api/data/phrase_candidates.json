@@ -1,0 +1,7135 @@
+[
+  {
+    "phrase": "can't stop",
+    "songId": "386ce22d-0195-4f6e-b52b-7637b741df59",
+    "title": "Can't Stop the Feeling!",
+    "artist": "Justin Timberlake",
+    "year": 2016,
+    "popularity": 91,
+    "score": 162.3,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "common_expression",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "love you",
+    "songId": "53b12056-8632-4b04-a74e-fef9502b134d",
+    "title": "I Will Always Love You",
+    "artist": "Whitney Houston",
+    "year": 1992,
+    "popularity": 94,
+    "score": 158.2,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "common_expression",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "around the world",
+    "songId": "67bffd35-cc81-4fe9-b0f6-74b9699dac1b",
+    "title": "Around the World",
+    "artist": "Daft Punk",
+    "year": 1997,
+    "popularity": 79,
+    "score": 153.7,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "common_expression",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "california",
+    "songId": "80b7dd8f-c2c5-46bc-939a-f6ea7b015cf0",
+    "title": "Hotel California",
+    "artist": "Eagles",
+    "year": 1976,
+    "popularity": 93,
+    "score": 147.9,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "common_expression",
+      "ngram"
+    ],
+    "frequency": 2
+  },
+  {
+    "phrase": "yesterday",
+    "songId": "4f0138d8-61b4-4e49-92da-4f316864bbb6",
+    "title": "Yesterday",
+    "artist": "The Beatles",
+    "year": 1965,
+    "popularity": 77,
+    "score": 143.1,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "common_expression",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "california",
+    "songId": "68fef696-a303-4798-ad1d-4bfbb4d7e11a",
+    "title": "California Gurls",
+    "artist": "Katy Perry",
+    "year": 2010,
+    "popularity": 60,
+    "score": 138,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "common_expression",
+      "ngram"
+    ],
+    "frequency": 2
+  },
+  {
+    "phrase": "uptown",
+    "songId": "2ffe95cb-34a5-4cec-93ee-727789ff9654",
+    "title": "Uptown Funk",
+    "artist": "Mark Ronson ft. Bruno Mars",
+    "year": 2014,
+    "popularity": 53,
+    "score": 135.9,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "common_expression",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "hold on",
+    "songId": "402540e5-1c14-49c0-a1c0-48f150e181c6",
+    "title": "Don't Stop Believin'",
+    "artist": "Journey",
+    "year": 1981,
+    "popularity": 88,
+    "score": 131.4,
+    "sources": [
+      "explicit_phrases",
+      "common_expression",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "hollywood",
+    "songId": "3bd3be4a-d85e-4733-a2b0-a596e80d1507",
+    "title": "Hollywood",
+    "artist": "Madonna",
+    "year": 2003,
+    "popularity": 10,
+    "score": 123,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "common_expression",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "bohemian rhapsody",
+    "songId": "2e020e15-4195-4914-9efc-25bc471f6971",
+    "title": "Bohemian Rhapsody",
+    "artist": "Queen",
+    "year": 1975,
+    "popularity": 100,
+    "score": 95,
+    "sources": [
+      "title",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "stairway heaven",
+    "songId": "c6a55bd7-f591-4ecb-a0a0-40a055c73d8c",
+    "title": "Stairway to Heaven",
+    "artist": "Led Zeppelin",
+    "year": 1971,
+    "popularity": 98,
+    "score": 94.4,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "hey jude",
+    "songId": "c6686d62-b357-4582-9587-ac027aa43430",
+    "title": "Hey Jude",
+    "artist": "The Beatles",
+    "year": 1968,
+    "popularity": 97,
+    "score": 94.1,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "don't be afraid",
+    "songId": "c6686d62-b357-4582-9587-ac027aa43430",
+    "title": "Hey Jude",
+    "artist": "The Beatles",
+    "year": 1968,
+    "popularity": 97,
+    "score": 94.1,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "sad song",
+    "songId": "c6686d62-b357-4582-9587-ac027aa43430",
+    "title": "Hey Jude",
+    "artist": "The Beatles",
+    "year": 1968,
+    "popularity": 97,
+    "score": 94.1,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "billie jean",
+    "songId": "a84f7e37-e973-434d-9722-44a61661d52c",
+    "title": "Billie Jean",
+    "artist": "Michael Jackson",
+    "year": 1982,
+    "popularity": 96,
+    "score": 93.8,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "kid is not my son",
+    "songId": "a84f7e37-e973-434d-9722-44a61661d52c",
+    "title": "Billie Jean",
+    "artist": "Michael Jackson",
+    "year": 1982,
+    "popularity": 96,
+    "score": 93.8,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "rolling stone",
+    "songId": "e4721565-401d-421d-8917-b1e2600dd104",
+    "title": "Like a Rolling Stone",
+    "artist": "Bob Dylan",
+    "year": 1965,
+    "popularity": 95,
+    "score": 93.5,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "complete unknown",
+    "songId": "e4721565-401d-421d-8917-b1e2600dd104",
+    "title": "Like a Rolling Stone",
+    "artist": "Bob Dylan",
+    "year": 1965,
+    "popularity": 95,
+    "score": 93.5,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "how does it feel",
+    "songId": "e4721565-401d-421d-8917-b1e2600dd104",
+    "title": "Like a Rolling Stone",
+    "artist": "Bob Dylan",
+    "year": 1965,
+    "popularity": 95,
+    "score": 93.5,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "like rolling",
+    "songId": "e4721565-401d-421d-8917-b1e2600dd104",
+    "title": "Like a Rolling Stone",
+    "artist": "Bob Dylan",
+    "year": 1965,
+    "popularity": 95,
+    "score": 93.5,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "like rolling stone",
+    "songId": "e4721565-401d-421d-8917-b1e2600dd104",
+    "title": "Like a Rolling Stone",
+    "artist": "Bob Dylan",
+    "year": 1965,
+    "popularity": 95,
+    "score": 93.5,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "didn't have to cut",
+    "songId": "2fd867c7-7ab8-4f6b-ac2b-ece6c8b68775",
+    "title": "Somebody That I Used to Know",
+    "artist": "Gotye ft. Kimberly",
+    "year": 2011,
+    "popularity": 95,
+    "score": 93.5,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "somebody used",
+    "songId": "2fd867c7-7ab8-4f6b-ac2b-ece6c8b68775",
+    "title": "Somebody That I Used to Know",
+    "artist": "Gotye ft. Kimberly",
+    "year": 2011,
+    "popularity": 95,
+    "score": 93.5,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "used know",
+    "songId": "2fd867c7-7ab8-4f6b-ac2b-ece6c8b68775",
+    "title": "Somebody That I Used to Know",
+    "artist": "Gotye ft. Kimberly",
+    "year": 2011,
+    "popularity": 95,
+    "score": 93.5,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "somebody used know",
+    "songId": "2fd867c7-7ab8-4f6b-ac2b-ece6c8b68775",
+    "title": "Somebody That I Used to Know",
+    "artist": "Gotye ft. Kimberly",
+    "year": 2011,
+    "popularity": 95,
+    "score": 93.5,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "something evil",
+    "songId": "e09b78fa-3706-4334-a2aa-f926f28f3444",
+    "title": "Thriller",
+    "artist": "Michael Jackson",
+    "year": 1982,
+    "popularity": 95,
+    "score": 93.5,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "teen spirit",
+    "songId": "0a4c20f6-d89d-42d6-b745-6627bca67d10",
+    "title": "Smells Like Teen Spirit",
+    "artist": "Nirvana",
+    "year": 1991,
+    "popularity": 94,
+    "score": 93.2,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "here we are",
+    "songId": "0a4c20f6-d89d-42d6-b745-6627bca67d10",
+    "title": "Smells Like Teen Spirit",
+    "artist": "Nirvana",
+    "year": 1991,
+    "popularity": 94,
+    "score": 93.2,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "smells like",
+    "songId": "0a4c20f6-d89d-42d6-b745-6627bca67d10",
+    "title": "Smells Like Teen Spirit",
+    "artist": "Nirvana",
+    "year": 1991,
+    "popularity": 94,
+    "score": 93.2,
+    "sources": [
+      "title",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "like teen",
+    "songId": "0a4c20f6-d89d-42d6-b745-6627bca67d10",
+    "title": "Smells Like Teen Spirit",
+    "artist": "Nirvana",
+    "year": 1991,
+    "popularity": 94,
+    "score": 93.2,
+    "sources": [
+      "title",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "smells like teen",
+    "songId": "0a4c20f6-d89d-42d6-b745-6627bca67d10",
+    "title": "Smells Like Teen Spirit",
+    "artist": "Nirvana",
+    "year": 1991,
+    "popularity": 94,
+    "score": 93.2,
+    "sources": [
+      "title",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "like teen spirit",
+    "songId": "0a4c20f6-d89d-42d6-b745-6627bca67d10",
+    "title": "Smells Like Teen Spirit",
+    "artist": "Nirvana",
+    "year": 1991,
+    "popularity": 94,
+    "score": 93.2,
+    "sources": [
+      "title",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "call me maybe",
+    "songId": "eebad671-476f-4dbf-aa33-aa459f202202",
+    "title": "Call Me Maybe",
+    "artist": "Carly Rae Jepsen",
+    "year": 2012,
+    "popularity": 94,
+    "score": 93.2,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "hey i just met you",
+    "songId": "eebad671-476f-4dbf-aa33-aa459f202202",
+    "title": "Call Me Maybe",
+    "artist": "Carly Rae Jepsen",
+    "year": 2012,
+    "popularity": 94,
+    "score": 93.2,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "this is crazy",
+    "songId": "eebad671-476f-4dbf-aa33-aa459f202202",
+    "title": "Call Me Maybe",
+    "artist": "Carly Rae Jepsen",
+    "year": 2012,
+    "popularity": 94,
+    "score": 93.2,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "call maybe",
+    "songId": "eebad671-476f-4dbf-aa33-aa459f202202",
+    "title": "Call Me Maybe",
+    "artist": "Carly Rae Jepsen",
+    "year": 2012,
+    "popularity": 94,
+    "score": 93.2,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "call me",
+    "songId": "eebad671-476f-4dbf-aa33-aa459f202202",
+    "title": "Call Me Maybe",
+    "artist": "Carly Rae Jepsen",
+    "year": 2012,
+    "popularity": 94,
+    "score": 93.2,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "all me",
+    "songId": "eebad671-476f-4dbf-aa33-aa459f202202",
+    "title": "Call Me Maybe",
+    "artist": "Carly Rae Jepsen",
+    "year": 2012,
+    "popularity": 94,
+    "score": 93.2,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "bittersweet memories",
+    "songId": "53b12056-8632-4b04-a74e-fef9502b134d",
+    "title": "I Will Always Love You",
+    "artist": "Whitney Houston",
+    "year": 1992,
+    "popularity": 94,
+    "score": 93.2,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "wish you joy",
+    "songId": "53b12056-8632-4b04-a74e-fef9502b134d",
+    "title": "I Will Always Love You",
+    "artist": "Whitney Houston",
+    "year": 1992,
+    "popularity": 94,
+    "score": 93.2,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "gangnam style",
+    "songId": "a7ed6610-18d8-4f82-9559-be7089c9e149",
+    "title": "Gangnam Style",
+    "artist": "PSY",
+    "year": 2012,
+    "popularity": 93,
+    "score": 92.9,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "oppan gangnam style",
+    "songId": "a7ed6610-18d8-4f82-9559-be7089c9e149",
+    "title": "Gangnam Style",
+    "artist": "PSY",
+    "year": 2012,
+    "popularity": 93,
+    "score": 92.9,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "hey sexy lady",
+    "songId": "a7ed6610-18d8-4f82-9559-be7089c9e149",
+    "title": "Gangnam Style",
+    "artist": "PSY",
+    "year": 2012,
+    "popularity": 93,
+    "score": 92.9,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "hotel california",
+    "songId": "80b7dd8f-c2c5-46bc-939a-f6ea7b015cf0",
+    "title": "Hotel California",
+    "artist": "Eagles",
+    "year": 1976,
+    "popularity": 93,
+    "score": 92.9,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "check out",
+    "songId": "80b7dd8f-c2c5-46bc-939a-f6ea7b015cf0",
+    "title": "Hotel California",
+    "artist": "Eagles",
+    "year": 1976,
+    "popularity": 93,
+    "score": 92.9,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "never leave",
+    "songId": "80b7dd8f-c2c5-46bc-939a-f6ea7b015cf0",
+    "title": "Hotel California",
+    "artist": "Eagles",
+    "year": 1976,
+    "popularity": 93,
+    "score": 92.9,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "beat it",
+    "songId": "1b37fe15-82a1-4e0a-9417-cde0f1984298",
+    "title": "Beat It",
+    "artist": "Michael Jackson",
+    "year": 1982,
+    "popularity": 92,
+    "score": 92.6,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "just beat it",
+    "songId": "1b37fe15-82a1-4e0a-9417-cde0f1984298",
+    "title": "Beat It",
+    "artist": "Michael Jackson",
+    "year": 1982,
+    "popularity": 92,
+    "score": 92.6,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "no heaven",
+    "songId": "6ee7e810-ce70-479e-a7e9-7582fcaead9b",
+    "title": "Imagine",
+    "artist": "John Lennon",
+    "year": 1971,
+    "popularity": 92,
+    "score": 92.6,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "no countries",
+    "songId": "6ee7e810-ce70-479e-a7e9-7582fcaead9b",
+    "title": "Imagine",
+    "artist": "John Lennon",
+    "year": 1971,
+    "popularity": 92,
+    "score": 92.6,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "living for today",
+    "songId": "6ee7e810-ce70-479e-a7e9-7582fcaead9b",
+    "title": "Imagine",
+    "artist": "John Lennon",
+    "year": 1971,
+    "popularity": 92,
+    "score": 92.6,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "purple haze",
+    "songId": "f0337ce8-0a29-47c2-b4a4-a21130b1e3df",
+    "title": "Purple Haze",
+    "artist": "Jimi Hendrix",
+    "year": 1967,
+    "popularity": 91,
+    "score": 92.3,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "all in my brain",
+    "songId": "f0337ce8-0a29-47c2-b4a4-a21130b1e3df",
+    "title": "Purple Haze",
+    "artist": "Jimi Hendrix",
+    "year": 1967,
+    "popularity": 91,
+    "score": 92.3,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "excuse me",
+    "songId": "f0337ce8-0a29-47c2-b4a4-a21130b1e3df",
+    "title": "Purple Haze",
+    "artist": "Jimi Hendrix",
+    "year": 1967,
+    "popularity": 91,
+    "score": 92.3,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "got that sunshine",
+    "songId": "386ce22d-0195-4f6e-b52b-7637b741df59",
+    "title": "Can't Stop the Feeling!",
+    "artist": "Justin Timberlake",
+    "year": 2016,
+    "popularity": 91,
+    "score": 92.3,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "in my pocket",
+    "songId": "386ce22d-0195-4f6e-b52b-7637b741df59",
+    "title": "Can't Stop the Feeling!",
+    "artist": "Justin Timberlake",
+    "year": 2016,
+    "popularity": 91,
+    "score": 92.3,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "stop feeling",
+    "songId": "386ce22d-0195-4f6e-b52b-7637b741df59",
+    "title": "Can't Stop the Feeling!",
+    "artist": "Justin Timberlake",
+    "year": 2016,
+    "popularity": 91,
+    "score": 92.3,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "can't stop feeling",
+    "songId": "386ce22d-0195-4f6e-b52b-7637b741df59",
+    "title": "Can't Stop the Feeling!",
+    "artist": "Justin Timberlake",
+    "year": 2016,
+    "popularity": 91,
+    "score": 92.3,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "bringing sexy back",
+    "songId": "ee425be6-9a3b-4977-b16f-6fdffdd6ae96",
+    "title": "SexyBack",
+    "artist": "Justin Timberlake",
+    "year": 2006,
+    "popularity": 90,
+    "score": 92,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "cry me a river",
+    "songId": "41e9f73b-0c38-4f4f-86fb-9d705a56062f",
+    "title": "Cry Me a River",
+    "artist": "Justin Timberlake",
+    "year": 2002,
+    "popularity": 89,
+    "score": 91.7,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "bridges were burned",
+    "songId": "41e9f73b-0c38-4f4f-86fb-9d705a56062f",
+    "title": "Cry Me a River",
+    "artist": "Justin Timberlake",
+    "year": 2002,
+    "popularity": 89,
+    "score": 91.7,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "now you say",
+    "songId": "41e9f73b-0c38-4f4f-86fb-9d705a56062f",
+    "title": "Cry Me a River",
+    "artist": "Justin Timberlake",
+    "year": 2002,
+    "popularity": 89,
+    "score": 91.7,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "cry river",
+    "songId": "41e9f73b-0c38-4f4f-86fb-9d705a56062f",
+    "title": "Cry Me a River",
+    "artist": "Justin Timberlake",
+    "year": 2002,
+    "popularity": 89,
+    "score": 91.7,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "cry me",
+    "songId": "41e9f73b-0c38-4f4f-86fb-9d705a56062f",
+    "title": "Cry Me a River",
+    "artist": "Justin Timberlake",
+    "year": 2002,
+    "popularity": 89,
+    "score": 91.7,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "good vibrations",
+    "songId": "d2f5f0c7-0e39-46ff-bd77-723b149d528d",
+    "title": "Good Vibrations",
+    "artist": "The Beach Boys",
+    "year": 1966,
+    "popularity": 89,
+    "score": 91.7,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "close my eyes",
+    "songId": "d2f5f0c7-0e39-46ff-bd77-723b149d528d",
+    "title": "Good Vibrations",
+    "artist": "The Beach Boys",
+    "year": 1966,
+    "popularity": 89,
+    "score": 91.7,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "dancing queen",
+    "songId": "7672c95e-b872-4077-92ae-4e9c149d13fb",
+    "title": "Dancing Queen",
+    "artist": "ABBA",
+    "year": 1976,
+    "popularity": 89,
+    "score": 91.7,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "only seventeen",
+    "songId": "7672c95e-b872-4077-92ae-4e9c149d13fb",
+    "title": "Dancing Queen",
+    "artist": "ABBA",
+    "year": 1976,
+    "popularity": 89,
+    "score": 91.7,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "feel the beat",
+    "songId": "7672c95e-b872-4077-92ae-4e9c149d13fb",
+    "title": "Dancing Queen",
+    "artist": "ABBA",
+    "year": 1976,
+    "popularity": 89,
+    "score": 91.7,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "rock your body",
+    "songId": "12aef1dc-4970-445e-b15b-59beafcffdf0",
+    "title": "Rock Your Body",
+    "artist": "Justin Timberlake",
+    "year": 2003,
+    "popularity": 88,
+    "score": 91.4,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "don't be so quick",
+    "songId": "12aef1dc-4970-445e-b15b-59beafcffdf0",
+    "title": "Rock Your Body",
+    "artist": "Justin Timberlake",
+    "year": 2003,
+    "popularity": 88,
+    "score": 91.4,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "to walk away",
+    "songId": "12aef1dc-4970-445e-b15b-59beafcffdf0",
+    "title": "Rock Your Body",
+    "artist": "Justin Timberlake",
+    "year": 2003,
+    "popularity": 88,
+    "score": 91.4,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "rock body",
+    "songId": "12aef1dc-4970-445e-b15b-59beafcffdf0",
+    "title": "Rock Your Body",
+    "artist": "Justin Timberlake",
+    "year": 2003,
+    "popularity": 88,
+    "score": 91.4,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "rock you",
+    "songId": "12aef1dc-4970-445e-b15b-59beafcffdf0",
+    "title": "Rock Your Body",
+    "artist": "Justin Timberlake",
+    "year": 2003,
+    "popularity": 88,
+    "score": 91.4,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 2
+  },
+  {
+    "phrase": "born to run",
+    "songId": "64a2b436-d2a1-4b69-bd92-0bad173e9623",
+    "title": "Born to Run",
+    "artist": "Bruce Springsteen",
+    "year": 1975,
+    "popularity": 88,
+    "score": 91.4,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "tramps like us",
+    "songId": "64a2b436-d2a1-4b69-bd92-0bad173e9623",
+    "title": "Born to Run",
+    "artist": "Bruce Springsteen",
+    "year": 1975,
+    "popularity": 88,
+    "score": 91.4,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "born run",
+    "songId": "64a2b436-d2a1-4b69-bd92-0bad173e9623",
+    "title": "Born to Run",
+    "artist": "Bruce Springsteen",
+    "year": 1975,
+    "popularity": 88,
+    "score": 91.4,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "don't stop believing",
+    "songId": "402540e5-1c14-49c0-a1c0-48f150e181c6",
+    "title": "Don't Stop Believin'",
+    "artist": "Journey",
+    "year": 1981,
+    "popularity": 88,
+    "score": 91.4,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "streetlight people",
+    "songId": "402540e5-1c14-49c0-a1c0-48f150e181c6",
+    "title": "Don't Stop Believin'",
+    "artist": "Journey",
+    "year": 1981,
+    "popularity": 88,
+    "score": 91.4,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "don't stop",
+    "songId": "402540e5-1c14-49c0-a1c0-48f150e181c6",
+    "title": "Don't Stop Believin'",
+    "artist": "Journey",
+    "year": 1981,
+    "popularity": 88,
+    "score": 91.4,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "stop believin'",
+    "songId": "402540e5-1c14-49c0-a1c0-48f150e181c6",
+    "title": "Don't Stop Believin'",
+    "artist": "Journey",
+    "year": 1981,
+    "popularity": 88,
+    "score": 91.4,
+    "sources": [
+      "title",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "don't stop believin'",
+    "songId": "402540e5-1c14-49c0-a1c0-48f150e181c6",
+    "title": "Don't Stop Believin'",
+    "artist": "Journey",
+    "year": 1981,
+    "popularity": 88,
+    "score": 91.4,
+    "sources": [
+      "title",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "my generation",
+    "songId": "b007006f-9a90-4eb5-9d9a-84aa0ed7bbed",
+    "title": "My Generation",
+    "artist": "The Who",
+    "year": 1965,
+    "popularity": 87,
+    "score": 91.1,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "hope i die",
+    "songId": "b007006f-9a90-4eb5-9d9a-84aa0ed7bbed",
+    "title": "My Generation",
+    "artist": "The Who",
+    "year": 1965,
+    "popularity": 87,
+    "score": 91.1,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "before i get old",
+    "songId": "b007006f-9a90-4eb5-9d9a-84aa0ed7bbed",
+    "title": "My Generation",
+    "artist": "The Who",
+    "year": 1965,
+    "popularity": 87,
+    "score": 91.1,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "ain't another woman",
+    "songId": "c6ecf815-d787-4d85-9c7b-5ac7bd9d556c",
+    "title": "My Love",
+    "artist": "Justin Timberlake ft. T.I.",
+    "year": 2006,
+    "popularity": 87,
+    "score": 91.1,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "you're looking at me",
+    "songId": "d05fb78e-5b63-4096-a9a4-4d9bdf80d2e9",
+    "title": "Mirrors",
+    "artist": "Justin Timberlake",
+    "year": 2013,
+    "popularity": 86,
+    "score": 90.8,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "i'm looking at you",
+    "songId": "d05fb78e-5b63-4096-a9a4-4d9bdf80d2e9",
+    "title": "Mirrors",
+    "artist": "Justin Timberlake",
+    "year": 2013,
+    "popularity": 86,
+    "score": 90.8,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "sweet child",
+    "songId": "3b80c928-4a5d-4a35-a394-f0dbc9e45849",
+    "title": "Sweet Child O' Mine",
+    "artist": "Guns N' Roses",
+    "year": 1987,
+    "popularity": 86,
+    "score": 90.8,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "where do we go",
+    "songId": "3b80c928-4a5d-4a35-a394-f0dbc9e45849",
+    "title": "Sweet Child O' Mine",
+    "artist": "Guns N' Roses",
+    "year": 1987,
+    "popularity": 86,
+    "score": 90.8,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "blue eyes",
+    "songId": "3b80c928-4a5d-4a35-a394-f0dbc9e45849",
+    "title": "Sweet Child O' Mine",
+    "artist": "Guns N' Roses",
+    "year": 1987,
+    "popularity": 86,
+    "score": 90.8,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "child o'",
+    "songId": "3b80c928-4a5d-4a35-a394-f0dbc9e45849",
+    "title": "Sweet Child O' Mine",
+    "artist": "Guns N' Roses",
+    "year": 1987,
+    "popularity": 86,
+    "score": 90.8,
+    "sources": [
+      "title",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "o' mine",
+    "songId": "3b80c928-4a5d-4a35-a394-f0dbc9e45849",
+    "title": "Sweet Child O' Mine",
+    "artist": "Guns N' Roses",
+    "year": 1987,
+    "popularity": 86,
+    "score": 90.8,
+    "sources": [
+      "title",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "sweet child o'",
+    "songId": "3b80c928-4a5d-4a35-a394-f0dbc9e45849",
+    "title": "Sweet Child O' Mine",
+    "artist": "Guns N' Roses",
+    "year": 1987,
+    "popularity": 86,
+    "score": 90.8,
+    "sources": [
+      "title",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "child o' mine",
+    "songId": "3b80c928-4a5d-4a35-a394-f0dbc9e45849",
+    "title": "Sweet Child O' Mine",
+    "artist": "Guns N' Roses",
+    "year": 1987,
+    "popularity": 86,
+    "score": 90.8,
+    "sources": [
+      "title",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "sweet child o' mine",
+    "songId": "3b80c928-4a5d-4a35-a394-f0dbc9e45849",
+    "title": "Sweet Child O' Mine",
+    "artist": "Guns N' Roses",
+    "year": 1987,
+    "popularity": 86,
+    "score": 90.8,
+    "sources": [
+      "title",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "rock you",
+    "songId": "65dfb25e-3cfe-4647-9dbe-d5149707b55b",
+    "title": "We Will Rock You",
+    "artist": "Queen",
+    "year": 1977,
+    "popularity": 86,
+    "score": 90.8,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 2
+  },
+  {
+    "phrase": "gonna be",
+    "songId": "65dfb25e-3cfe-4647-9dbe-d5149707b55b",
+    "title": "We Will Rock You",
+    "artist": "Queen",
+    "year": 1977,
+    "popularity": 86,
+    "score": 90.8,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "big man",
+    "songId": "65dfb25e-3cfe-4647-9dbe-d5149707b55b",
+    "title": "We Will Rock You",
+    "artist": "Queen",
+    "year": 1977,
+    "popularity": 86,
+    "score": 90.8,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "is he everything",
+    "songId": "d31e4920-7c60-4aae-842d-0978677ff584",
+    "title": "What Goes Around... Comes Around",
+    "artist": "Justin Timberlake",
+    "year": 2006,
+    "popularity": 85,
+    "score": 90.5,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "what goes",
+    "songId": "d31e4920-7c60-4aae-842d-0978677ff584",
+    "title": "What Goes Around... Comes Around",
+    "artist": "Justin Timberlake",
+    "year": 2006,
+    "popularity": 85,
+    "score": 90.5,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "goes around",
+    "songId": "d31e4920-7c60-4aae-842d-0978677ff584",
+    "title": "What Goes Around... Comes Around",
+    "artist": "Justin Timberlake",
+    "year": 2006,
+    "popularity": 85,
+    "score": 90.5,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "around comes",
+    "songId": "d31e4920-7c60-4aae-842d-0978677ff584",
+    "title": "What Goes Around... Comes Around",
+    "artist": "Justin Timberlake",
+    "year": 2006,
+    "popularity": 85,
+    "score": 90.5,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "comes around",
+    "songId": "d31e4920-7c60-4aae-842d-0978677ff584",
+    "title": "What Goes Around... Comes Around",
+    "artist": "Justin Timberlake",
+    "year": 2006,
+    "popularity": 85,
+    "score": 90.5,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "what goes around",
+    "songId": "d31e4920-7c60-4aae-842d-0978677ff584",
+    "title": "What Goes Around... Comes Around",
+    "artist": "Justin Timberlake",
+    "year": 2006,
+    "popularity": 85,
+    "score": 90.5,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "goes around comes",
+    "songId": "d31e4920-7c60-4aae-842d-0978677ff584",
+    "title": "What Goes Around... Comes Around",
+    "artist": "Justin Timberlake",
+    "year": 2006,
+    "popularity": 85,
+    "score": 90.5,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "sweet caroline",
+    "songId": "d6b422e5-2fd8-436a-8aa8-c3c3f9a26191",
+    "title": "Sweet Caroline",
+    "artist": "Neil Diamond",
+    "year": 1969,
+    "popularity": 85,
+    "score": 90.5,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "brick in the wall",
+    "songId": "bc84b65c-bd06-4820-bcbd-a203c42e8165",
+    "title": "Another Brick in the Wall",
+    "artist": "Pink Floyd",
+    "year": 1979,
+    "popularity": 84,
+    "score": 90.2,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "we don't need",
+    "songId": "bc84b65c-bd06-4820-bcbd-a203c42e8165",
+    "title": "Another Brick in the Wall",
+    "artist": "Pink Floyd",
+    "year": 1979,
+    "popularity": 84,
+    "score": 90.2,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "another brick",
+    "songId": "bc84b65c-bd06-4820-bcbd-a203c42e8165",
+    "title": "Another Brick in the Wall",
+    "artist": "Pink Floyd",
+    "year": 1979,
+    "popularity": 84,
+    "score": 90.2,
+    "sources": [
+      "title",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "brick wall",
+    "songId": "bc84b65c-bd06-4820-bcbd-a203c42e8165",
+    "title": "Another Brick in the Wall",
+    "artist": "Pink Floyd",
+    "year": 1979,
+    "popularity": 84,
+    "score": 90.2,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "another brick wall",
+    "songId": "bc84b65c-bd06-4820-bcbd-a203c42e8165",
+    "title": "Another Brick in the Wall",
+    "artist": "Pink Floyd",
+    "year": 1979,
+    "popularity": 84,
+    "score": 90.2,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "suit and tie",
+    "songId": "54a04796-4883-42de-a96c-d165801886ff",
+    "title": "Suit & Tie",
+    "artist": "Justin Timberlake ft. Jay-Z",
+    "year": 2013,
+    "popularity": 84,
+    "score": 90.2,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "let me show you",
+    "songId": "54a04796-4883-42de-a96c-d165801886ff",
+    "title": "Suit & Tie",
+    "artist": "Justin Timberlake ft. Jay-Z",
+    "year": 2013,
+    "popularity": 84,
+    "score": 90.2,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "few things",
+    "songId": "54a04796-4883-42de-a96c-d165801886ff",
+    "title": "Suit & Tie",
+    "artist": "Justin Timberlake ft. Jay-Z",
+    "year": 2013,
+    "popularity": 84,
+    "score": 90.2,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "suit tie",
+    "songId": "54a04796-4883-42de-a96c-d165801886ff",
+    "title": "Suit & Tie",
+    "artist": "Justin Timberlake ft. Jay-Z",
+    "year": 2013,
+    "popularity": 84,
+    "score": 90.2,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "it's a gas",
+    "songId": "1f3a281a-6823-4d99-91c6-0def17f27d52",
+    "title": "Money",
+    "artist": "Pink Floyd",
+    "year": 1973,
+    "popularity": 83,
+    "score": 89.9,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "share it fairly",
+    "songId": "1f3a281a-6823-4d99-91c6-0def17f27d52",
+    "title": "Money",
+    "artist": "Pink Floyd",
+    "year": 1973,
+    "popularity": 83,
+    "score": 89.9,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "blurred lines",
+    "songId": "c90237c8-5212-4347-99c4-4db4fc540a06",
+    "title": "Blurred Lines",
+    "artist": "Robin Thicke ft. T.I.",
+    "year": 2013,
+    "popularity": 83,
+    "score": 89.9,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "know you want it",
+    "songId": "c90237c8-5212-4347-99c4-4db4fc540a06",
+    "title": "Blurred Lines",
+    "artist": "Robin Thicke ft. T.I.",
+    "year": 2013,
+    "popularity": 83,
+    "score": 89.9,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "comfortably numb",
+    "songId": "956608b2-9572-42fd-bac1-5bce01b3ecc6",
+    "title": "Comfortably Numb",
+    "artist": "Pink Floyd",
+    "year": 1979,
+    "popularity": 82,
+    "score": 89.6,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "is there anybody",
+    "songId": "956608b2-9572-42fd-bac1-5bce01b3ecc6",
+    "title": "Comfortably Numb",
+    "artist": "Pink Floyd",
+    "year": 1979,
+    "popularity": 82,
+    "score": 89.6,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "hands are warm",
+    "songId": "956608b2-9572-42fd-bac1-5bce01b3ecc6",
+    "title": "Comfortably Numb",
+    "artist": "Pink Floyd",
+    "year": 1979,
+    "popularity": 82,
+    "score": 89.6,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "get lucky",
+    "songId": "a59d3ed1-25b6-46c4-9882-fabfb88058ff",
+    "title": "Get Lucky",
+    "artist": "Daft Punk ft. Pharrell",
+    "year": 2013,
+    "popularity": 82,
+    "score": 89.6,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "we're up all night",
+    "songId": "a59d3ed1-25b6-46c4-9882-fabfb88058ff",
+    "title": "Get Lucky",
+    "artist": "Daft Punk ft. Pharrell",
+    "year": 2013,
+    "popularity": 82,
+    "score": 89.6,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "to get lucky",
+    "songId": "a59d3ed1-25b6-46c4-9882-fabfb88058ff",
+    "title": "Get Lucky",
+    "artist": "Daft Punk ft. Pharrell",
+    "year": 2013,
+    "popularity": 82,
+    "score": 89.6,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "one more",
+    "songId": "b7bbb1cf-ecaa-4804-a69d-0c7ffe9c8105",
+    "title": "One More Time",
+    "artist": "Daft Punk",
+    "year": 2000,
+    "popularity": 81,
+    "score": 89.3,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 3
+  },
+  {
+    "phrase": "smoke on the water",
+    "songId": "e1dcb124-c25f-4573-9cec-1fba753055cc",
+    "title": "Smoke on the Water",
+    "artist": "Deep Purple",
+    "year": 1972,
+    "popularity": 81,
+    "score": 89.3,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "fire in the sky",
+    "songId": "e1dcb124-c25f-4573-9cec-1fba753055cc",
+    "title": "Smoke on the Water",
+    "artist": "Deep Purple",
+    "year": 1972,
+    "popularity": 81,
+    "score": 89.3,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "smoke water",
+    "songId": "e1dcb124-c25f-4573-9cec-1fba753055cc",
+    "title": "Smoke on the Water",
+    "artist": "Deep Purple",
+    "year": 1972,
+    "popularity": 81,
+    "score": 89.3,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "free bird",
+    "songId": "f82f7160-8046-4d62-9333-1072b7c096ec",
+    "title": "Free Bird",
+    "artist": "Lynyrd Skynyrd",
+    "year": 1974,
+    "popularity": 80,
+    "score": 89,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "lord help me",
+    "songId": "f82f7160-8046-4d62-9333-1072b7c096ec",
+    "title": "Free Bird",
+    "artist": "Lynyrd Skynyrd",
+    "year": 1974,
+    "popularity": 80,
+    "score": 89,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "can't change",
+    "songId": "f82f7160-8046-4d62-9333-1072b7c096ec",
+    "title": "Free Bird",
+    "artist": "Lynyrd Skynyrd",
+    "year": 1974,
+    "popularity": 80,
+    "score": 89,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "harder better",
+    "songId": "97d6a0b2-213f-471f-a8a4-d34549851c0f",
+    "title": "Harder Better Faster Stronger",
+    "artist": "Daft Punk",
+    "year": 2001,
+    "popularity": 80,
+    "score": 89,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "better faster",
+    "songId": "97d6a0b2-213f-471f-a8a4-d34549851c0f",
+    "title": "Harder Better Faster Stronger",
+    "artist": "Daft Punk",
+    "year": 2001,
+    "popularity": 80,
+    "score": 89,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "faster stronger",
+    "songId": "97d6a0b2-213f-471f-a8a4-d34549851c0f",
+    "title": "Harder Better Faster Stronger",
+    "artist": "Daft Punk",
+    "year": 2001,
+    "popularity": 80,
+    "score": 89,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "harder better faster",
+    "songId": "97d6a0b2-213f-471f-a8a4-d34549851c0f",
+    "title": "Harder Better Faster Stronger",
+    "artist": "Daft Punk",
+    "year": 2001,
+    "popularity": 80,
+    "score": 89,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "not my lover",
+    "songId": "a84f7e37-e973-434d-9722-44a61661d52c",
+    "title": "Billie Jean",
+    "artist": "Michael Jackson",
+    "year": 1982,
+    "popularity": 96,
+    "score": 88.8,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "got me on my knees",
+    "songId": "4171839b-626a-4af3-a232-9dd43c61220c",
+    "title": "Layla",
+    "artist": "Derek and the Dominos",
+    "year": 1970,
+    "popularity": 79,
+    "score": 88.7,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "please darling",
+    "songId": "4171839b-626a-4af3-a232-9dd43c61220c",
+    "title": "Layla",
+    "artist": "Derek and the Dominos",
+    "year": 1970,
+    "popularity": 79,
+    "score": 88.7,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "guitar gently weeps",
+    "songId": "25e21116-1d53-4770-9599-bf1552f33f1e",
+    "title": "While My Guitar Gently Weeps",
+    "artist": "The Beatles",
+    "year": 1968,
+    "popularity": 78,
+    "score": 88.4,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "look at you all",
+    "songId": "25e21116-1d53-4770-9599-bf1552f33f1e",
+    "title": "While My Guitar Gently Weeps",
+    "artist": "The Beatles",
+    "year": 1968,
+    "popularity": 78,
+    "score": 88.4,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "sitting there",
+    "songId": "25e21116-1d53-4770-9599-bf1552f33f1e",
+    "title": "While My Guitar Gently Weeps",
+    "artist": "The Beatles",
+    "year": 1968,
+    "popularity": 78,
+    "score": 88.4,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "while guitar",
+    "songId": "25e21116-1d53-4770-9599-bf1552f33f1e",
+    "title": "While My Guitar Gently Weeps",
+    "artist": "The Beatles",
+    "year": 1968,
+    "popularity": 78,
+    "score": 88.4,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "guitar gently",
+    "songId": "25e21116-1d53-4770-9599-bf1552f33f1e",
+    "title": "While My Guitar Gently Weeps",
+    "artist": "The Beatles",
+    "year": 1968,
+    "popularity": 78,
+    "score": 88.4,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "gently weeps",
+    "songId": "25e21116-1d53-4770-9599-bf1552f33f1e",
+    "title": "While My Guitar Gently Weeps",
+    "artist": "The Beatles",
+    "year": 1968,
+    "popularity": 78,
+    "score": 88.4,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "while guitar gently",
+    "songId": "25e21116-1d53-4770-9599-bf1552f33f1e",
+    "title": "While My Guitar Gently Weeps",
+    "artist": "The Beatles",
+    "year": 1968,
+    "popularity": 78,
+    "score": 88.4,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "always love you",
+    "songId": "53b12056-8632-4b04-a74e-fef9502b134d",
+    "title": "I Will Always Love You",
+    "artist": "Whitney Houston",
+    "year": 1992,
+    "popularity": 94,
+    "score": 88.2,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "always love",
+    "songId": "53b12056-8632-4b04-a74e-fef9502b134d",
+    "title": "I Will Always Love You",
+    "artist": "Whitney Houston",
+    "year": 1992,
+    "popularity": 94,
+    "score": 88.2,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "all my troubles",
+    "songId": "4f0138d8-61b4-4e49-92da-4f316864bbb6",
+    "title": "Yesterday",
+    "artist": "The Beatles",
+    "year": 1965,
+    "popularity": 77,
+    "score": 88.1,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "seemed so far away",
+    "songId": "4f0138d8-61b4-4e49-92da-4f316864bbb6",
+    "title": "Yesterday",
+    "artist": "The Beatles",
+    "year": 1965,
+    "popularity": 77,
+    "score": 88.1,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "something about us",
+    "songId": "6f1a4f26-59e9-40ed-bd00-1ef13b282aed",
+    "title": "Something About Us",
+    "artist": "Daft Punk",
+    "year": 2005,
+    "popularity": 76,
+    "score": 87.8,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "might not be",
+    "songId": "6f1a4f26-59e9-40ed-bd00-1ef13b282aed",
+    "title": "Something About Us",
+    "artist": "Daft Punk",
+    "year": 2005,
+    "popularity": 76,
+    "score": 87.8,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "let it be",
+    "songId": "ee2244a3-a4c5-4107-9e77-559e895fe87b",
+    "title": "Let It Be",
+    "artist": "The Beatles",
+    "year": 1970,
+    "popularity": 76,
+    "score": 87.8,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "mother mary",
+    "songId": "ee2244a3-a4c5-4107-9e77-559e895fe87b",
+    "title": "Let It Be",
+    "artist": "The Beatles",
+    "year": 1970,
+    "popularity": 76,
+    "score": 87.8,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "instant crush",
+    "songId": "0f0b187c-ccde-497a-9a2a-c419f29e7ed6",
+    "title": "Instant Crush",
+    "artist": "Daft Punk ft. Julian Casablancas",
+    "year": 2013,
+    "popularity": 75,
+    "score": 87.5,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "the way",
+    "songId": "0f0b187c-ccde-497a-9a2a-c419f29e7ed6",
+    "title": "Instant Crush",
+    "artist": "Daft Punk ft. Julian Casablancas",
+    "year": 2013,
+    "popularity": 75,
+    "score": 87.5,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "come as you are",
+    "songId": "cce3fcd6-036a-4758-b66e-ec11f4fb153d",
+    "title": "Come As You Are",
+    "artist": "Nirvana",
+    "year": 1991,
+    "popularity": 75,
+    "score": 87.5,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "as you were",
+    "songId": "cce3fcd6-036a-4758-b66e-ec11f4fb153d",
+    "title": "Come As You Are",
+    "artist": "Nirvana",
+    "year": 1991,
+    "popularity": 75,
+    "score": 87.5,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "come as",
+    "songId": "cce3fcd6-036a-4758-b66e-ec11f4fb153d",
+    "title": "Come As You Are",
+    "artist": "Nirvana",
+    "year": 1991,
+    "popularity": 75,
+    "score": 87.5,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "as you",
+    "songId": "cce3fcd6-036a-4758-b66e-ec11f4fb153d",
+    "title": "Come As You Are",
+    "artist": "Nirvana",
+    "year": 1991,
+    "popularity": 75,
+    "score": 87.5,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "untouched sheets",
+    "songId": "0e4cb66f-3733-4d1a-a347-c9d703e2ca36",
+    "title": "Black",
+    "artist": "Pearl Jam",
+    "year": 1991,
+    "popularity": 74,
+    "score": 87.2,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "lose control",
+    "songId": "00c1ac34-e149-4ce2-9a70-a6c423de7404",
+    "title": "Lose Control",
+    "artist": "Missy Elliott",
+    "year": 2005,
+    "popularity": 74,
+    "score": 87.2,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "music make you",
+    "songId": "00c1ac34-e149-4ce2-9a70-a6c423de7404",
+    "title": "Lose Control",
+    "artist": "Missy Elliott",
+    "year": 2005,
+    "popularity": 74,
+    "score": 87.2,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "i'm still alive",
+    "songId": "9bcc3acf-b012-45f8-8dcc-f9328b2f1873",
+    "title": "Alive",
+    "artist": "Pearl Jam",
+    "year": 1991,
+    "popularity": 73,
+    "score": 86.9,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "son she said",
+    "songId": "9bcc3acf-b012-45f8-8dcc-f9328b2f1873",
+    "title": "Alive",
+    "artist": "Pearl Jam",
+    "year": 1991,
+    "popularity": 73,
+    "score": 86.9,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "work it",
+    "songId": "52d2dd45-a8af-452d-bda6-e4e9731a1835",
+    "title": "Work It",
+    "artist": "Missy Elliott",
+    "year": 2002,
+    "popularity": 73,
+    "score": 86.9,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "put your thing down",
+    "songId": "52d2dd45-a8af-452d-bda6-e4e9731a1835",
+    "title": "Work It",
+    "artist": "Missy Elliott",
+    "year": 2002,
+    "popularity": 73,
+    "score": 86.9,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "flip it and reverse",
+    "songId": "52d2dd45-a8af-452d-bda6-e4e9731a1835",
+    "title": "Work It",
+    "artist": "Missy Elliott",
+    "year": 2002,
+    "popularity": 73,
+    "score": 86.9,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "spoke in class today",
+    "songId": "f6cd0770-db94-4aeb-bcb6-6bbc00b2dd52",
+    "title": "Jeremy",
+    "artist": "Pearl Jam",
+    "year": 1991,
+    "popularity": 72,
+    "score": 86.6,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "clearly i remember",
+    "songId": "f6cd0770-db94-4aeb-bcb6-6bbc00b2dd52",
+    "title": "Jeremy",
+    "artist": "Pearl Jam",
+    "year": 1991,
+    "popularity": 72,
+    "score": 86.6,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "get your freak on",
+    "songId": "b0065fa1-7fa3-48f8-934f-d5dd1f596a55",
+    "title": "Get Ur Freak On",
+    "artist": "Missy Elliott",
+    "year": 2001,
+    "popularity": 72,
+    "score": 86.6,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "copy me now",
+    "songId": "b0065fa1-7fa3-48f8-934f-d5dd1f596a55",
+    "title": "Get Ur Freak On",
+    "artist": "Missy Elliott",
+    "year": 2001,
+    "popularity": 72,
+    "score": 86.6,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "get ur",
+    "songId": "b0065fa1-7fa3-48f8-934f-d5dd1f596a55",
+    "title": "Get Ur Freak On",
+    "artist": "Missy Elliott",
+    "year": 2001,
+    "popularity": 72,
+    "score": 86.6,
+    "sources": [
+      "title",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "ur freak",
+    "songId": "b0065fa1-7fa3-48f8-934f-d5dd1f596a55",
+    "title": "Get Ur Freak On",
+    "artist": "Missy Elliott",
+    "year": 2001,
+    "popularity": 72,
+    "score": 86.6,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "get ur freak",
+    "songId": "b0065fa1-7fa3-48f8-934f-d5dd1f596a55",
+    "title": "Get Ur Freak On",
+    "artist": "Missy Elliott",
+    "year": 2001,
+    "popularity": 72,
+    "score": 86.6,
+    "sources": [
+      "title",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "baby we were",
+    "songId": "64a2b436-d2a1-4b69-bd92-0bad173e9623",
+    "title": "Born to Run",
+    "artist": "Bruce Springsteen",
+    "year": 1975,
+    "popularity": 88,
+    "score": 86.4,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "supa dupa fly",
+    "songId": "d2f73bdd-5763-4c83-b374-d793742d003f",
+    "title": "The Rain (Supa Dupa Fly)",
+    "artist": "Missy Elliott",
+    "year": 1997,
+    "popularity": 71,
+    "score": 86.3,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "can you stand",
+    "songId": "d2f73bdd-5763-4c83-b374-d793742d003f",
+    "title": "The Rain (Supa Dupa Fly)",
+    "artist": "Missy Elliott",
+    "year": 1997,
+    "popularity": 71,
+    "score": 86.3,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "rain supa",
+    "songId": "d2f73bdd-5763-4c83-b374-d793742d003f",
+    "title": "The Rain (Supa Dupa Fly)",
+    "artist": "Missy Elliott",
+    "year": 1997,
+    "popularity": 71,
+    "score": 86.3,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "supa dupa",
+    "songId": "d2f73bdd-5763-4c83-b374-d793742d003f",
+    "title": "The Rain (Supa Dupa Fly)",
+    "artist": "Missy Elliott",
+    "year": 1997,
+    "popularity": 71,
+    "score": 86.3,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "dupa fly",
+    "songId": "d2f73bdd-5763-4c83-b374-d793742d003f",
+    "title": "The Rain (Supa Dupa Fly)",
+    "artist": "Missy Elliott",
+    "year": 1997,
+    "popularity": 71,
+    "score": 86.3,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "rain supa dupa",
+    "songId": "d2f73bdd-5763-4c83-b374-d793742d003f",
+    "title": "The Rain (Supa Dupa Fly)",
+    "artist": "Missy Elliott",
+    "year": 1997,
+    "popularity": 71,
+    "score": 86.3,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "rain supa dupa fly",
+    "songId": "d2f73bdd-5763-4c83-b374-d793742d003f",
+    "title": "The Rain (Supa Dupa Fly)",
+    "artist": "Missy Elliott",
+    "year": 1997,
+    "popularity": 71,
+    "score": 86.3,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "what the hell",
+    "songId": "e25563a7-39b8-4414-b879-186a90977edc",
+    "title": "Creep",
+    "artist": "Radiohead",
+    "year": 1992,
+    "popularity": 71,
+    "score": 86.3,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "doing here",
+    "songId": "e25563a7-39b8-4414-b879-186a90977edc",
+    "title": "Creep",
+    "artist": "Radiohead",
+    "year": 1992,
+    "popularity": 71,
+    "score": 86.3,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "no time for losers",
+    "songId": "6812aad7-878e-4fcf-82e5-91eca4297b3f",
+    "title": "We Are the Champions",
+    "artist": "Queen",
+    "year": 1977,
+    "popularity": 87,
+    "score": 86.1,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "we are the world",
+    "songId": "6812aad7-878e-4fcf-82e5-91eca4297b3f",
+    "title": "We Are the Champions",
+    "artist": "Queen",
+    "year": 1977,
+    "popularity": 87,
+    "score": 86.1,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "my love",
+    "songId": "c6ecf815-d787-4d85-9c7b-5ac7bd9d556c",
+    "title": "My Love",
+    "artist": "Justin Timberlake ft. T.I.",
+    "year": 2006,
+    "popularity": 87,
+    "score": 86.1,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "pass that dutch",
+    "songId": "5f65cd80-77c6-44cb-835e-f9d40c64adf0",
+    "title": "Pass That Dutch",
+    "artist": "Missy Elliott",
+    "year": 2003,
+    "popularity": 70,
+    "score": 86,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "pass dutch",
+    "songId": "5f65cd80-77c6-44cb-835e-f9d40c64adf0",
+    "title": "Pass That Dutch",
+    "artist": "Missy Elliott",
+    "year": 2003,
+    "popularity": 70,
+    "score": 86,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "losing my religion",
+    "songId": "9bc296d7-0d92-4d29-9672-25c2fa933176",
+    "title": "Losing My Religion",
+    "artist": "R.E.M.",
+    "year": 1991,
+    "popularity": 70,
+    "score": 86,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "that's me",
+    "songId": "9bc296d7-0d92-4d29-9672-25c2fa933176",
+    "title": "Losing My Religion",
+    "artist": "R.E.M.",
+    "year": 1991,
+    "popularity": 70,
+    "score": 86,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "in the corner",
+    "songId": "9bc296d7-0d92-4d29-9672-25c2fa933176",
+    "title": "Losing My Religion",
+    "artist": "R.E.M.",
+    "year": 1991,
+    "popularity": 70,
+    "score": 86,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "losing religion",
+    "songId": "9bc296d7-0d92-4d29-9672-25c2fa933176",
+    "title": "Losing My Religion",
+    "artist": "R.E.M.",
+    "year": 1991,
+    "popularity": 70,
+    "score": 86,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "is it getting better",
+    "songId": "00d61095-316b-43d5-9b50-7860e70cc4b3",
+    "title": "One",
+    "artist": "U2",
+    "year": 1991,
+    "popularity": 69,
+    "score": 85.7,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "gossip folks",
+    "songId": "fcb4da96-61d9-4130-89fa-5d7da259a270",
+    "title": "Gossip Folks",
+    "artist": "Missy Elliott",
+    "year": 2003,
+    "popularity": 69,
+    "score": 85.7,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "on the floor",
+    "songId": "fcb4da96-61d9-4130-89fa-5d7da259a270",
+    "title": "Gossip Folks",
+    "artist": "Missy Elliott",
+    "year": 2003,
+    "popularity": 69,
+    "score": 85.7,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "i hear dem",
+    "songId": "fcb4da96-61d9-4130-89fa-5d7da259a270",
+    "title": "Gossip Folks",
+    "artist": "Missy Elliott",
+    "year": 2003,
+    "popularity": 69,
+    "score": 85.7,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "hey girl",
+    "songId": "d31e4920-7c60-4aae-842d-0978677ff584",
+    "title": "What Goes Around... Comes Around",
+    "artist": "Justin Timberlake",
+    "year": 2006,
+    "popularity": 85,
+    "score": 85.5,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "4 minutes",
+    "songId": "1308bdb0-d008-46c9-a90e-f1e9f1295490",
+    "title": "4 Minutes",
+    "artist": "Madonna ft. Justin Timberlake",
+    "year": 2008,
+    "popularity": 68,
+    "score": 85.4,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "no hesitating",
+    "songId": "1308bdb0-d008-46c9-a90e-f1e9f1295490",
+    "title": "4 Minutes",
+    "artist": "Madonna ft. Justin Timberlake",
+    "year": 2008,
+    "popularity": 68,
+    "score": 85.4,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "streets have no name",
+    "songId": "a058fddb-97e4-4e7b-bd29-905ff1dc57a5",
+    "title": "Where the Streets Have No Name",
+    "artist": "U2",
+    "year": 1987,
+    "popularity": 68,
+    "score": 85.4,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "want to run",
+    "songId": "a058fddb-97e4-4e7b-bd29-905ff1dc57a5",
+    "title": "Where the Streets Have No Name",
+    "artist": "U2",
+    "year": 1987,
+    "popularity": 68,
+    "score": 85.4,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "feel the earth",
+    "songId": "a058fddb-97e4-4e7b-bd29-905ff1dc57a5",
+    "title": "Where the Streets Have No Name",
+    "artist": "U2",
+    "year": 1987,
+    "popularity": 68,
+    "score": 85.4,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "where streets",
+    "songId": "a058fddb-97e4-4e7b-bd29-905ff1dc57a5",
+    "title": "Where the Streets Have No Name",
+    "artist": "U2",
+    "year": 1987,
+    "popularity": 68,
+    "score": 85.4,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "streets no",
+    "songId": "a058fddb-97e4-4e7b-bd29-905ff1dc57a5",
+    "title": "Where the Streets Have No Name",
+    "artist": "U2",
+    "year": 1987,
+    "popularity": 68,
+    "score": 85.4,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "no name",
+    "songId": "a058fddb-97e4-4e7b-bd29-905ff1dc57a5",
+    "title": "Where the Streets Have No Name",
+    "artist": "U2",
+    "year": 1987,
+    "popularity": 68,
+    "score": 85.4,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "where streets no",
+    "songId": "a058fddb-97e4-4e7b-bd29-905ff1dc57a5",
+    "title": "Where the Streets Have No Name",
+    "artist": "U2",
+    "year": 1987,
+    "popularity": 68,
+    "score": 85.4,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "streets no name",
+    "songId": "a058fddb-97e4-4e7b-bd29-905ff1dc57a5",
+    "title": "Where the Streets Have No Name",
+    "artist": "U2",
+    "year": 1987,
+    "popularity": 68,
+    "score": 85.4,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "hung up",
+    "songId": "2749d698-68b8-4ec7-9fbf-82e60e8b2918",
+    "title": "Hung Up",
+    "artist": "Madonna",
+    "year": 2005,
+    "popularity": 67,
+    "score": 85.1,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "so slowly",
+    "songId": "2749d698-68b8-4ec7-9fbf-82e60e8b2918",
+    "title": "Hung Up",
+    "artist": "Madonna",
+    "year": 2005,
+    "popularity": 67,
+    "score": 85.1,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "with or without you",
+    "songId": "e6c06d52-02e1-4c02-acd2-509fa53cf614",
+    "title": "With or Without You",
+    "artist": "U2",
+    "year": 1987,
+    "popularity": 67,
+    "score": 85.1,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "can't live",
+    "songId": "e6c06d52-02e1-4c02-acd2-509fa53cf614",
+    "title": "With or Without You",
+    "artist": "U2",
+    "year": 1987,
+    "popularity": 67,
+    "score": 85.1,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "sleight of hand",
+    "songId": "e6c06d52-02e1-4c02-acd2-509fa53cf614",
+    "title": "With or Without You",
+    "artist": "U2",
+    "year": 1987,
+    "popularity": 67,
+    "score": 85.1,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "without you",
+    "songId": "e6c06d52-02e1-4c02-acd2-509fa53cf614",
+    "title": "With or Without You",
+    "artist": "U2",
+    "year": 1987,
+    "popularity": 67,
+    "score": 85.1,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "good girl",
+    "songId": "c90237c8-5212-4347-99c4-4db4fc540a06",
+    "title": "Blurred Lines",
+    "artist": "Robin Thicke ft. T.I.",
+    "year": 2013,
+    "popularity": 83,
+    "score": 84.9,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "makes the people",
+    "songId": "eaf0fd7f-590a-4cc7-92d1-2df4860a56ea",
+    "title": "Music",
+    "artist": "Madonna",
+    "year": 2000,
+    "popularity": 66,
+    "score": 84.8,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "come together",
+    "songId": "eaf0fd7f-590a-4cc7-92d1-2df4860a56ea",
+    "title": "Music",
+    "artist": "Madonna",
+    "year": 2000,
+    "popularity": 66,
+    "score": 84.8,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "sweet home alabama",
+    "songId": "6fa436eb-5f66-4ec0-852e-2766a2cdca85",
+    "title": "Sweet Home Alabama",
+    "artist": "Lynyrd Skynyrd",
+    "year": 1974,
+    "popularity": 66,
+    "score": 84.8,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "where skies are blue",
+    "songId": "6fa436eb-5f66-4ec0-852e-2766a2cdca85",
+    "title": "Sweet Home Alabama",
+    "artist": "Lynyrd Skynyrd",
+    "year": 1974,
+    "popularity": 66,
+    "score": 84.8,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "southern man",
+    "songId": "6fa436eb-5f66-4ec0-852e-2766a2cdca85",
+    "title": "Sweet Home Alabama",
+    "artist": "Lynyrd Skynyrd",
+    "year": 1974,
+    "popularity": 66,
+    "score": 84.8,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "sweet home",
+    "songId": "6fa436eb-5f66-4ec0-852e-2766a2cdca85",
+    "title": "Sweet Home Alabama",
+    "artist": "Lynyrd Skynyrd",
+    "year": 1974,
+    "popularity": 66,
+    "score": 84.8,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "home alabama",
+    "songId": "6fa436eb-5f66-4ec0-852e-2766a2cdca85",
+    "title": "Sweet Home Alabama",
+    "artist": "Lynyrd Skynyrd",
+    "year": 1974,
+    "popularity": 66,
+    "score": 84.8,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "ray of light",
+    "songId": "acf83569-d0e6-43ee-a183-ce73c5d7b1ca",
+    "title": "Ray of Light",
+    "artist": "Madonna",
+    "year": 1998,
+    "popularity": 65,
+    "score": 84.5,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "zephyr in the sky",
+    "songId": "acf83569-d0e6-43ee-a183-ce73c5d7b1ca",
+    "title": "Ray of Light",
+    "artist": "Madonna",
+    "year": 1998,
+    "popularity": 65,
+    "score": 84.5,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "at night",
+    "songId": "acf83569-d0e6-43ee-a183-ce73c5d7b1ca",
+    "title": "Ray of Light",
+    "artist": "Madonna",
+    "year": 1998,
+    "popularity": 65,
+    "score": 84.5,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "ray light",
+    "songId": "acf83569-d0e6-43ee-a183-ce73c5d7b1ca",
+    "title": "Ray of Light",
+    "artist": "Madonna",
+    "year": 1998,
+    "popularity": 65,
+    "score": 84.5,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "piano man",
+    "songId": "8a9bb14b-78d6-4796-95a0-587bbfaef0c1",
+    "title": "Piano Man",
+    "artist": "Billy Joel",
+    "year": 1973,
+    "popularity": 65,
+    "score": 84.5,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "sharing a drink",
+    "songId": "8a9bb14b-78d6-4796-95a0-587bbfaef0c1",
+    "title": "Piano Man",
+    "artist": "Billy Joel",
+    "year": 1973,
+    "popularity": 65,
+    "score": 84.5,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "one more time",
+    "songId": "b7bbb1cf-ecaa-4804-a69d-0c7ffe9c8105",
+    "title": "One More Time",
+    "artist": "Daft Punk",
+    "year": 2000,
+    "popularity": 81,
+    "score": 84.3,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 2
+  },
+  {
+    "phrase": "more time",
+    "songId": "b7bbb1cf-ecaa-4804-a69d-0c7ffe9c8105",
+    "title": "One More Time",
+    "artist": "Daft Punk",
+    "year": 2000,
+    "popularity": 81,
+    "score": 84.3,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 2
+  },
+  {
+    "phrase": "american pie",
+    "songId": "da0e95cd-891d-4aee-ae0e-e1efe3d61d72",
+    "title": "American Pie",
+    "artist": "Don McLean",
+    "year": 1971,
+    "popularity": 64,
+    "score": 84.2,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "day the music died",
+    "songId": "da0e95cd-891d-4aee-ae0e-e1efe3d61d72",
+    "title": "American Pie",
+    "artist": "Don McLean",
+    "year": 1971,
+    "popularity": 64,
+    "score": 84.2,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "drove my chevy",
+    "songId": "da0e95cd-891d-4aee-ae0e-e1efe3d61d72",
+    "title": "American Pie",
+    "artist": "Don McLean",
+    "year": 1971,
+    "popularity": 64,
+    "score": 84.2,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "sound of silence",
+    "songId": "0e5a3ea1-bfa0-4d0e-8966-5ec35991c9c4",
+    "title": "The Sound of Silence",
+    "artist": "Simon and Garfunkel",
+    "year": 1964,
+    "popularity": 63,
+    "score": 83.9,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "hello darkness",
+    "songId": "0e5a3ea1-bfa0-4d0e-8966-5ec35991c9c4",
+    "title": "The Sound of Silence",
+    "artist": "Simon and Garfunkel",
+    "year": 1964,
+    "popularity": 63,
+    "score": 83.9,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "old friend",
+    "songId": "0e5a3ea1-bfa0-4d0e-8966-5ec35991c9c4",
+    "title": "The Sound of Silence",
+    "artist": "Simon and Garfunkel",
+    "year": 1964,
+    "popularity": 63,
+    "score": 83.9,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 2
+  },
+  {
+    "phrase": "sound silence",
+    "songId": "0e5a3ea1-bfa0-4d0e-8966-5ec35991c9c4",
+    "title": "The Sound of Silence",
+    "artist": "Simon and Garfunkel",
+    "year": 1964,
+    "popularity": 63,
+    "score": 83.9,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "like a virgin",
+    "songId": "1cd37d66-d60a-466f-84ba-188cce445182",
+    "title": "Like a Virgin",
+    "artist": "Madonna",
+    "year": 1984,
+    "popularity": 63,
+    "score": 83.9,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "like virgin",
+    "songId": "1cd37d66-d60a-466f-84ba-188cce445182",
+    "title": "Like a Virgin",
+    "artist": "Madonna",
+    "year": 1984,
+    "popularity": 63,
+    "score": 83.9,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "around world",
+    "songId": "67bffd35-cc81-4fe9-b0f6-74b9699dac1b",
+    "title": "Around the World",
+    "artist": "Daft Punk",
+    "year": 1997,
+    "popularity": 79,
+    "score": 83.7,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "strike a pose",
+    "songId": "7bef8d77-ab73-49fc-bfef-6292bcbf658a",
+    "title": "Vogue",
+    "artist": "Madonna",
+    "year": 1990,
+    "popularity": 62,
+    "score": 83.6,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "when you're weary",
+    "songId": "40aa2ca3-4170-457c-92ef-98691dd367d4",
+    "title": "Bridge Over Troubled Water",
+    "artist": "Simon and Garfunkel",
+    "year": 1970,
+    "popularity": 62,
+    "score": 83.6,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "bridge over",
+    "songId": "40aa2ca3-4170-457c-92ef-98691dd367d4",
+    "title": "Bridge Over Troubled Water",
+    "artist": "Simon and Garfunkel",
+    "year": 1970,
+    "popularity": 62,
+    "score": 83.6,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "over troubled",
+    "songId": "40aa2ca3-4170-457c-92ef-98691dd367d4",
+    "title": "Bridge Over Troubled Water",
+    "artist": "Simon and Garfunkel",
+    "year": 1970,
+    "popularity": 62,
+    "score": 83.6,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "troubled water",
+    "songId": "40aa2ca3-4170-457c-92ef-98691dd367d4",
+    "title": "Bridge Over Troubled Water",
+    "artist": "Simon and Garfunkel",
+    "year": 1970,
+    "popularity": 62,
+    "score": 83.6,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "bridge over troubled",
+    "songId": "40aa2ca3-4170-457c-92ef-98691dd367d4",
+    "title": "Bridge Over Troubled Water",
+    "artist": "Simon and Garfunkel",
+    "year": 1970,
+    "popularity": 62,
+    "score": 83.6,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "over troubled water",
+    "songId": "40aa2ca3-4170-457c-92ef-98691dd367d4",
+    "title": "Bridge Over Troubled Water",
+    "artist": "Simon and Garfunkel",
+    "year": 1970,
+    "popularity": 62,
+    "score": 83.6,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "like a prayer",
+    "songId": "e8242f3f-134e-464a-a55a-542fdc54a5ce",
+    "title": "Like a Prayer",
+    "artist": "Madonna",
+    "year": 1989,
+    "popularity": 61,
+    "score": 83.3,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "your voice can",
+    "songId": "e8242f3f-134e-464a-a55a-542fdc54a5ce",
+    "title": "Like a Prayer",
+    "artist": "Madonna",
+    "year": 1989,
+    "popularity": 61,
+    "score": 83.3,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "take me there",
+    "songId": "e8242f3f-134e-464a-a55a-542fdc54a5ce",
+    "title": "Like a Prayer",
+    "artist": "Madonna",
+    "year": 1989,
+    "popularity": 61,
+    "score": 83.3,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "like prayer",
+    "songId": "e8242f3f-134e-464a-a55a-542fdc54a5ce",
+    "title": "Like a Prayer",
+    "artist": "Madonna",
+    "year": 1989,
+    "popularity": 61,
+    "score": 83.3,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "mrs robinson",
+    "songId": "c561cd90-b70e-4a94-bd67-e22f3cea3719",
+    "title": "Mrs. Robinson",
+    "artist": "Simon and Garfunkel",
+    "year": 1968,
+    "popularity": 61,
+    "score": 83.3,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "heaven hold",
+    "songId": "c561cd90-b70e-4a94-bd67-e22f3cea3719",
+    "title": "Mrs. Robinson",
+    "artist": "Simon and Garfunkel",
+    "year": 1968,
+    "popularity": 61,
+    "score": 83.3,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "digital love",
+    "songId": "d2a4c40f-4ffe-4f64-936f-4d61c3f3ccd0",
+    "title": "Digital Love",
+    "artist": "Daft Punk",
+    "year": 2001,
+    "popularity": 77,
+    "score": 83.1,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "papa don't preach",
+    "songId": "bb234bd4-4c89-43b1-be0a-e36186e0922c",
+    "title": "Papa Don't Preach",
+    "artist": "Madonna",
+    "year": 1986,
+    "popularity": 60,
+    "score": 83,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "i'm in trouble deep",
+    "songId": "bb234bd4-4c89-43b1-be0a-e36186e0922c",
+    "title": "Papa Don't Preach",
+    "artist": "Madonna",
+    "year": 1986,
+    "popularity": 60,
+    "score": 83,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "papa don't",
+    "songId": "bb234bd4-4c89-43b1-be0a-e36186e0922c",
+    "title": "Papa Don't Preach",
+    "artist": "Madonna",
+    "year": 1986,
+    "popularity": 60,
+    "score": 83,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "don't preach",
+    "songId": "bb234bd4-4c89-43b1-be0a-e36186e0922c",
+    "title": "Papa Don't Preach",
+    "artist": "Madonna",
+    "year": 1986,
+    "popularity": 60,
+    "score": 83,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "daisy dukes",
+    "songId": "68fef696-a303-4798-ad1d-4bfbb4d7e11a",
+    "title": "California Gurls",
+    "artist": "Katy Perry",
+    "year": 2010,
+    "popularity": 60,
+    "score": 83,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "california gurls",
+    "songId": "68fef696-a303-4798-ad1d-4bfbb4d7e11a",
+    "title": "California Gurls",
+    "artist": "Katy Perry",
+    "year": 2010,
+    "popularity": 60,
+    "score": 83,
+    "sources": [
+      "title",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "the right time",
+    "songId": "6f1a4f26-59e9-40ed-bd00-1ef13b282aed",
+    "title": "Something About Us",
+    "artist": "Daft Punk",
+    "year": 2005,
+    "popularity": 76,
+    "score": 82.8,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "times of trouble",
+    "songId": "ee2244a3-a4c5-4107-9e77-559e895fe87b",
+    "title": "Let It Be",
+    "artist": "The Beatles",
+    "year": 1970,
+    "popularity": 76,
+    "score": 82.8,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "express yourself",
+    "songId": "c61e73a8-10c3-4d02-96e4-313447a484a7",
+    "title": "Express Yourself",
+    "artist": "Madonna",
+    "year": 1989,
+    "popularity": 59,
+    "score": 82.7,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "respect yourself",
+    "songId": "c61e73a8-10c3-4d02-96e4-313447a484a7",
+    "title": "Express Yourself",
+    "artist": "Madonna",
+    "year": 1989,
+    "popularity": 59,
+    "score": 82.7,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "express you",
+    "songId": "c61e73a8-10c3-4d02-96e4-313447a484a7",
+    "title": "Express Yourself",
+    "artist": "Madonna",
+    "year": 1989,
+    "popularity": 59,
+    "score": 82.7,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "eye of the tiger",
+    "songId": "dc299c80-a7bb-44cc-9e4e-d7c374e0dc19",
+    "title": "Roar",
+    "artist": "Katy Perry",
+    "year": 2013,
+    "popularity": 59,
+    "score": 82.7,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "louder than a lion",
+    "songId": "dc299c80-a7bb-44cc-9e4e-d7c374e0dc19",
+    "title": "Roar",
+    "artist": "Katy Perry",
+    "year": 2013,
+    "popularity": 59,
+    "score": 82.7,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "shape of you",
+    "songId": "351c9b90-4e89-44a9-8f9f-50929d345574",
+    "title": "Shape of You",
+    "artist": "Ed Sheeran",
+    "year": 2017,
+    "popularity": 58,
+    "score": 82.4,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "of you",
+    "songId": "351c9b90-4e89-44a9-8f9f-50929d345574",
+    "title": "Shape of You",
+    "artist": "Ed Sheeran",
+    "year": 2017,
+    "popularity": 58,
+    "score": 82.4,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "feels like i'm",
+    "songId": "239ffa3d-f7f4-463d-a39f-bd683be4fcdd",
+    "title": "Borderline",
+    "artist": "Madonna",
+    "year": 1983,
+    "popularity": 58,
+    "score": 82.4,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "it would be so nice",
+    "songId": "541e8e0c-3b11-4030-ad15-b938e191f1b2",
+    "title": "Holiday",
+    "artist": "Madonna",
+    "year": 1983,
+    "popularity": 57,
+    "score": 82.1,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "thinking out loud",
+    "songId": "e25eb808-23bc-4acd-a20f-550291e524c8",
+    "title": "Thinking Out Loud",
+    "artist": "Ed Sheeran",
+    "year": 2014,
+    "popularity": 57,
+    "score": 82.1,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "when your legs",
+    "songId": "e25eb808-23bc-4acd-a20f-550291e524c8",
+    "title": "Thinking Out Loud",
+    "artist": "Ed Sheeran",
+    "year": 2014,
+    "popularity": 57,
+    "score": 82.1,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "don't work",
+    "songId": "e25eb808-23bc-4acd-a20f-550291e524c8",
+    "title": "Thinking Out Loud",
+    "artist": "Ed Sheeran",
+    "year": 2014,
+    "popularity": 57,
+    "score": 82.1,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "thinking out",
+    "songId": "e25eb808-23bc-4acd-a20f-550291e524c8",
+    "title": "Thinking Out Loud",
+    "artist": "Ed Sheeran",
+    "year": 2014,
+    "popularity": 57,
+    "score": 82.1,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "out loud",
+    "songId": "e25eb808-23bc-4acd-a20f-550291e524c8",
+    "title": "Thinking Out Loud",
+    "artist": "Ed Sheeran",
+    "year": 2014,
+    "popularity": 57,
+    "score": 82.1,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "into the groove",
+    "songId": "e365526e-db53-4374-b321-22d764148beb",
+    "title": "Into the Groove",
+    "artist": "Madonna",
+    "year": 1985,
+    "popularity": 56,
+    "score": 81.8,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "get up and dance",
+    "songId": "e365526e-db53-4374-b321-22d764148beb",
+    "title": "Into the Groove",
+    "artist": "Madonna",
+    "year": 1985,
+    "popularity": 56,
+    "score": 81.8,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "to the music",
+    "songId": "e365526e-db53-4374-b321-22d764148beb",
+    "title": "Into the Groove",
+    "artist": "Madonna",
+    "year": 1985,
+    "popularity": 56,
+    "score": 81.8,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "rolling in the deep",
+    "songId": "3df424e5-4927-46c3-b747-bf84a801683a",
+    "title": "Rolling in the Deep",
+    "artist": "Adele",
+    "year": 2010,
+    "popularity": 56,
+    "score": 81.8,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "fire starting",
+    "songId": "3df424e5-4927-46c3-b747-bf84a801683a",
+    "title": "Rolling in the Deep",
+    "artist": "Adele",
+    "year": 2010,
+    "popularity": 56,
+    "score": 81.8,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "rolling deep",
+    "songId": "3df424e5-4927-46c3-b747-bf84a801683a",
+    "title": "Rolling in the Deep",
+    "artist": "Adele",
+    "year": 2010,
+    "popularity": 56,
+    "score": 81.8,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "someone like you",
+    "songId": "f5547a8c-94c1-4c31-b184-3cb4147cee5b",
+    "title": "Someone Like You",
+    "artist": "Adele",
+    "year": 2011,
+    "popularity": 55,
+    "score": 81.5,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "never mind",
+    "songId": "f5547a8c-94c1-4c31-b184-3cb4147cee5b",
+    "title": "Someone Like You",
+    "artist": "Adele",
+    "year": 2011,
+    "popularity": 55,
+    "score": 81.5,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "i'll find",
+    "songId": "f5547a8c-94c1-4c31-b184-3cb4147cee5b",
+    "title": "Someone Like You",
+    "artist": "Adele",
+    "year": 2011,
+    "popularity": 55,
+    "score": 81.5,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "old friend",
+    "songId": "f5547a8c-94c1-4c31-b184-3cb4147cee5b",
+    "title": "Someone Like You",
+    "artist": "Adele",
+    "year": 2011,
+    "popularity": 55,
+    "score": 81.5,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 2
+  },
+  {
+    "phrase": "someone like",
+    "songId": "f5547a8c-94c1-4c31-b184-3cb4147cee5b",
+    "title": "Someone Like You",
+    "artist": "Adele",
+    "year": 2011,
+    "popularity": 55,
+    "score": 81.5,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "like you",
+    "songId": "f5547a8c-94c1-4c31-b184-3cb4147cee5b",
+    "title": "Someone Like You",
+    "artist": "Adele",
+    "year": 2011,
+    "popularity": 55,
+    "score": 81.5,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "crazy for you",
+    "songId": "a908b6f1-790d-491c-a4b3-f2da57b16508",
+    "title": "Crazy for You",
+    "artist": "Madonna",
+    "year": 1985,
+    "popularity": 55,
+    "score": 81.5,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "touch me once",
+    "songId": "a908b6f1-790d-491c-a4b3-f2da57b16508",
+    "title": "Crazy for You",
+    "artist": "Madonna",
+    "year": 1985,
+    "popularity": 55,
+    "score": 81.5,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "for you",
+    "songId": "a908b6f1-790d-491c-a4b3-f2da57b16508",
+    "title": "Crazy for You",
+    "artist": "Madonna",
+    "year": 1985,
+    "popularity": 55,
+    "score": 81.5,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "open you",
+    "songId": "934dadbd-4fd2-4816-99b0-179f4985c972",
+    "title": "Open Your Heart",
+    "artist": "Madonna",
+    "year": 1986,
+    "popularity": 54,
+    "score": 81.2,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "it's me",
+    "songId": "bfd25eca-cd89-42cf-91db-99d4a4ec8640",
+    "title": "Hello",
+    "artist": "Adele",
+    "year": 2015,
+    "popularity": 54,
+    "score": 81.2,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 2
+  },
+  {
+    "phrase": "from the other side",
+    "songId": "bfd25eca-cd89-42cf-91db-99d4a4ec8640",
+    "title": "Hello",
+    "artist": "Adele",
+    "year": 2015,
+    "popularity": 54,
+    "score": 81.2,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "it's jess",
+    "songId": "a4fa7e2d-db9a-4a85-b1fb-61323b0d53e0",
+    "title": "Who's That Girl",
+    "artist": "Madonna",
+    "year": 1987,
+    "popularity": 53,
+    "score": 80.9,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "uptown funk",
+    "songId": "2ffe95cb-34a5-4cec-93ee-727789ff9654",
+    "title": "Uptown Funk",
+    "artist": "Mark Ronson ft. Bruno Mars",
+    "year": 2014,
+    "popularity": 53,
+    "score": 80.9,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "don't believe me",
+    "songId": "2ffe95cb-34a5-4cec-93ee-727789ff9654",
+    "title": "Uptown Funk",
+    "artist": "Mark Ronson ft. Bruno Mars",
+    "year": 2014,
+    "popularity": 53,
+    "score": 80.9,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "just watch",
+    "songId": "2ffe95cb-34a5-4cec-93ee-727789ff9654",
+    "title": "Uptown Funk",
+    "artist": "Mark Ronson ft. Bruno Mars",
+    "year": 2014,
+    "popularity": 53,
+    "score": 80.9,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "hot damn",
+    "songId": "2ffe95cb-34a5-4cec-93ee-727789ff9654",
+    "title": "Uptown Funk",
+    "artist": "Mark Ronson ft. Bruno Mars",
+    "year": 2014,
+    "popularity": 53,
+    "score": 80.9,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "causing a commotion",
+    "songId": "aaa1e22c-7a5a-4eae-8253-3b2c384f2a03",
+    "title": "Causing a Commotion",
+    "artist": "Madonna",
+    "year": 1987,
+    "popularity": 52,
+    "score": 80.6,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "i've got",
+    "songId": "aaa1e22c-7a5a-4eae-8253-3b2c384f2a03",
+    "title": "Causing a Commotion",
+    "artist": "Madonna",
+    "year": 1987,
+    "popularity": 52,
+    "score": 80.6,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "causing commotion",
+    "songId": "aaa1e22c-7a5a-4eae-8253-3b2c384f2a03",
+    "title": "Causing a Commotion",
+    "artist": "Madonna",
+    "year": 1987,
+    "popularity": 52,
+    "score": 80.6,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "blinding lights",
+    "songId": "749c601b-9ccc-4e02-9304-e56148dcdccf",
+    "title": "Blinding Lights",
+    "artist": "The Weeknd",
+    "year": 2019,
+    "popularity": 52,
+    "score": 80.6,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "feel like i'm",
+    "songId": "749c601b-9ccc-4e02-9304-e56148dcdccf",
+    "title": "Blinding Lights",
+    "artist": "The Weeknd",
+    "year": 2019,
+    "popularity": 52,
+    "score": 80.6,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "to save the world",
+    "songId": "1308bdb0-d008-46c9-a90e-f1e9f1295490",
+    "title": "4 Minutes",
+    "artist": "Madonna ft. Justin Timberlake",
+    "year": 2008,
+    "popularity": 68,
+    "score": 80.4,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "bad guy",
+    "songId": "c7f275e1-f686-438f-968d-c4e0ac1f632e",
+    "title": "Bad Guy",
+    "artist": "Billie Eilish",
+    "year": 2019,
+    "popularity": 51,
+    "score": 80.3,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "white shirt",
+    "songId": "c7f275e1-f686-438f-968d-c4e0ac1f632e",
+    "title": "Bad Guy",
+    "artist": "Billie Eilish",
+    "year": 2019,
+    "popularity": 51,
+    "score": 80.3,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "bloody nose",
+    "songId": "c7f275e1-f686-438f-968d-c4e0ac1f632e",
+    "title": "Bad Guy",
+    "artist": "Billie Eilish",
+    "year": 2019,
+    "popularity": 51,
+    "score": 80.3,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "the look",
+    "songId": "11b28410-041b-477d-975b-feac3606f655",
+    "title": "The Look of Love",
+    "artist": "Madonna",
+    "year": 1987,
+    "popularity": 51,
+    "score": 80.3,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "time goes by",
+    "songId": "2749d698-68b8-4ec7-9fbf-82e60e8b2918",
+    "title": "Hung Up",
+    "artist": "Madonna",
+    "year": 2005,
+    "popularity": 67,
+    "score": 80.1,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "galileo",
+    "songId": "2e020e15-4195-4914-9efc-25bc471f6971",
+    "title": "Bohemian Rhapsody",
+    "artist": "Queen",
+    "year": 1975,
+    "popularity": 100,
+    "score": 80,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "scaramouche",
+    "songId": "2e020e15-4195-4914-9efc-25bc471f6971",
+    "title": "Bohemian Rhapsody",
+    "artist": "Queen",
+    "year": 1975,
+    "popularity": 100,
+    "score": 80,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "fandango",
+    "songId": "2e020e15-4195-4914-9efc-25bc471f6971",
+    "title": "Bohemian Rhapsody",
+    "artist": "Queen",
+    "year": 1975,
+    "popularity": 100,
+    "score": 80,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "bismillah",
+    "songId": "2e020e15-4195-4914-9efc-25bc471f6971",
+    "title": "Bohemian Rhapsody",
+    "artist": "Queen",
+    "year": 1975,
+    "popularity": 100,
+    "score": 80,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "shake it off",
+    "songId": "babcfc3a-4cdc-4c0c-afbb-3c6eb18b2a80",
+    "title": "Shake It Off",
+    "artist": "Taylor Swift",
+    "year": 2014,
+    "popularity": 50,
+    "score": 80,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "haters gonna hate",
+    "songId": "babcfc3a-4cdc-4c0c-afbb-3c6eb18b2a80",
+    "title": "Shake It Off",
+    "artist": "Taylor Swift",
+    "year": 2014,
+    "popularity": 50,
+    "score": 80,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "players gonna play",
+    "songId": "babcfc3a-4cdc-4c0c-afbb-3c6eb18b2a80",
+    "title": "Shake It Off",
+    "artist": "Taylor Swift",
+    "year": 2014,
+    "popularity": 50,
+    "score": 80,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "shake off",
+    "songId": "babcfc3a-4cdc-4c0c-afbb-3c6eb18b2a80",
+    "title": "Shake It Off",
+    "artist": "Taylor Swift",
+    "year": 2014,
+    "popularity": 50,
+    "score": 80,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "oh father",
+    "songId": "0c87c266-1680-4d04-96d4-157484a52320",
+    "title": "Oh Father",
+    "artist": "Madonna",
+    "year": 1989,
+    "popularity": 49,
+    "score": 79.7,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "i have sinned",
+    "songId": "0c87c266-1680-4d04-96d4-157484a52320",
+    "title": "Oh Father",
+    "artist": "Madonna",
+    "year": 1989,
+    "popularity": 49,
+    "score": 79.7,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "it's me",
+    "songId": "ebbced40-6e35-4392-87e2-a48b194d1ba0",
+    "title": "Anti-Hero",
+    "artist": "Taylor Swift",
+    "year": 2022,
+    "popularity": 49,
+    "score": 79.7,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 2
+  },
+  {
+    "phrase": "i'm the problem",
+    "songId": "ebbced40-6e35-4392-87e2-a48b194d1ba0",
+    "title": "Anti-Hero",
+    "artist": "Taylor Swift",
+    "year": 2022,
+    "popularity": 49,
+    "score": 79.7,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "heaven",
+    "songId": "c6a55bd7-f591-4ecb-a0a0-40a055c73d8c",
+    "title": "Stairway to Heaven",
+    "artist": "Led Zeppelin",
+    "year": 1971,
+    "popularity": 98,
+    "score": 79.4,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "stairway",
+    "songId": "c6a55bd7-f591-4ecb-a0a0-40a055c73d8c",
+    "title": "Stairway to Heaven",
+    "artist": "Led Zeppelin",
+    "year": 1971,
+    "popularity": 98,
+    "score": 79.4,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "glitter",
+    "songId": "c6a55bd7-f591-4ecb-a0a0-40a055c73d8c",
+    "title": "Stairway to Heaven",
+    "artist": "Led Zeppelin",
+    "year": 1971,
+    "popularity": 98,
+    "score": 79.4,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "as it was",
+    "songId": "3e3198c5-1236-4255-a8a4-9498da0570de",
+    "title": "As It Was",
+    "artist": "Harry Styles",
+    "year": 2022,
+    "popularity": 48,
+    "score": 79.4,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "holdin' me back",
+    "songId": "3e3198c5-1236-4255-a8a4-9498da0570de",
+    "title": "As It Was",
+    "artist": "Harry Styles",
+    "year": 2022,
+    "popularity": 48,
+    "score": 79.4,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "gravity's holdin'",
+    "songId": "3e3198c5-1236-4255-a8a4-9498da0570de",
+    "title": "As It Was",
+    "artist": "Harry Styles",
+    "year": 2022,
+    "popularity": 48,
+    "score": 79.4,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "keep it together",
+    "songId": "cf9bb022-7127-4530-889b-1fee7fd45213",
+    "title": "Keep It Together",
+    "artist": "Madonna",
+    "year": 1990,
+    "popularity": 48,
+    "score": 79.4,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "in the family",
+    "songId": "cf9bb022-7127-4530-889b-1fee7fd45213",
+    "title": "Keep It Together",
+    "artist": "Madonna",
+    "year": 1990,
+    "popularity": 48,
+    "score": 79.4,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "they're a testimony",
+    "songId": "cf9bb022-7127-4530-889b-1fee7fd45213",
+    "title": "Keep It Together",
+    "artist": "Madonna",
+    "year": 1990,
+    "popularity": 48,
+    "score": 79.4,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "keep together",
+    "songId": "cf9bb022-7127-4530-889b-1fee7fd45213",
+    "title": "Keep It Together",
+    "artist": "Madonna",
+    "year": 1990,
+    "popularity": 48,
+    "score": 79.4,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "material girl",
+    "songId": "647e7956-3a16-49aa-9d0e-6173e6fbe887",
+    "title": "Material Girl",
+    "artist": "Madonna",
+    "year": 1984,
+    "popularity": 64,
+    "score": 79.2,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "better",
+    "songId": "c6686d62-b357-4582-9587-ac027aa43430",
+    "title": "Hey Jude",
+    "artist": "The Beatles",
+    "year": 1968,
+    "popularity": 97,
+    "score": 79.1,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "rescue me",
+    "songId": "aaa29b4b-e200-4cf2-a2e8-f4eb6413ea1d",
+    "title": "Rescue Me",
+    "artist": "Madonna",
+    "year": 1991,
+    "popularity": 47,
+    "score": 79.1,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "that i never made",
+    "songId": "aaa29b4b-e200-4cf2-a2e8-f4eb6413ea1d",
+    "title": "Rescue Me",
+    "artist": "Madonna",
+    "year": 1991,
+    "popularity": 47,
+    "score": 79.1,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "heat waves",
+    "songId": "8e023048-24d4-4b65-baa3-6d2f1ba222c1",
+    "title": "Heat Waves",
+    "artist": "Glass Animals",
+    "year": 2020,
+    "popularity": 47,
+    "score": 79.1,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "been faking me out",
+    "songId": "8e023048-24d4-4b65-baa3-6d2f1ba222c1",
+    "title": "Heat Waves",
+    "artist": "Glass Animals",
+    "year": 2020,
+    "popularity": 47,
+    "score": 79.1,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "sugar boo",
+    "songId": "220372bd-4994-4317-b1d2-8f5bb23aee89",
+    "title": "Levitating",
+    "artist": "Dua Lipa",
+    "year": 2020,
+    "popularity": 46,
+    "score": 78.8,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "you want me",
+    "songId": "220372bd-4994-4317-b1d2-8f5bb23aee89",
+    "title": "Levitating",
+    "artist": "Dua Lipa",
+    "year": 2020,
+    "popularity": 46,
+    "score": 78.8,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "this used to be",
+    "songId": "fda8a83f-8a60-4a75-aca4-7fdfb4ede0ef",
+    "title": "This Used to Be My Playground",
+    "artist": "Madonna",
+    "year": 1992,
+    "popularity": 46,
+    "score": 78.8,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "my playground",
+    "songId": "fda8a83f-8a60-4a75-aca4-7fdfb4ede0ef",
+    "title": "This Used to Be My Playground",
+    "artist": "Madonna",
+    "year": 1992,
+    "popularity": 46,
+    "score": 78.8,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "used playground",
+    "songId": "fda8a83f-8a60-4a75-aca4-7fdfb4ede0ef",
+    "title": "This Used to Be My Playground",
+    "artist": "Madonna",
+    "year": 1992,
+    "popularity": 46,
+    "score": 78.8,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "thriller",
+    "songId": "e09b78fa-3706-4334-a2aa-f926f28f3444",
+    "title": "Thriller",
+    "artist": "Michael Jackson",
+    "year": 1982,
+    "popularity": 95,
+    "score": 78.5,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "midnight",
+    "songId": "e09b78fa-3706-4334-a2aa-f926f28f3444",
+    "title": "Thriller",
+    "artist": "Michael Jackson",
+    "year": 1982,
+    "popularity": 95,
+    "score": 78.5,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "lurking",
+    "songId": "e09b78fa-3706-4334-a2aa-f926f28f3444",
+    "title": "Thriller",
+    "artist": "Michael Jackson",
+    "year": 1982,
+    "popularity": 95,
+    "score": 78.5,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "i'll remember",
+    "songId": "498528e8-1ea6-46ef-b3a9-5555e7316c3d",
+    "title": "I'll Remember",
+    "artist": "Madonna",
+    "year": 1994,
+    "popularity": 45,
+    "score": 78.5,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "summer evening",
+    "songId": "6875ef6b-ffa2-4b21-8162-6ed1bc653df0",
+    "title": "Watermelon Sugar",
+    "artist": "Harry Styles",
+    "year": 2020,
+    "popularity": 45,
+    "score": 78.5,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "watermelon sugar",
+    "songId": "6875ef6b-ffa2-4b21-8162-6ed1bc653df0",
+    "title": "Watermelon Sugar",
+    "artist": "Harry Styles",
+    "year": 2020,
+    "popularity": 45,
+    "score": 78.5,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "jesus loves you",
+    "songId": "c561cd90-b70e-4a94-bd67-e22f3cea3719",
+    "title": "Mrs. Robinson",
+    "artist": "Simon and Garfunkel",
+    "year": 1968,
+    "popularity": 61,
+    "score": 78.3,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "nevermind",
+    "songId": "0a4c20f6-d89d-42d6-b745-6627bca67d10",
+    "title": "Smells Like Teen Spirit",
+    "artist": "Nirvana",
+    "year": 1991,
+    "popularity": 94,
+    "score": 78.2,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "entertain",
+    "songId": "0a4c20f6-d89d-42d6-b745-6627bca67d10",
+    "title": "Smells Like Teen Spirit",
+    "artist": "Nirvana",
+    "year": 1991,
+    "popularity": 94,
+    "score": 78.2,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "drivers license",
+    "songId": "536415c9-2552-4263-b3b3-0ae0a3355356",
+    "title": "drivers license",
+    "artist": "Olivia Rodrigo",
+    "year": 2021,
+    "popularity": 44,
+    "score": 78.2,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "california girls",
+    "songId": "68fef696-a303-4798-ad1d-4bfbb4d7e11a",
+    "title": "California Gurls",
+    "artist": "Katy Perry",
+    "year": 2010,
+    "popularity": 60,
+    "score": 78,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "good for you",
+    "songId": "8fe00da4-e66e-47d0-a98c-38d50b1d2c65",
+    "title": "good 4 u",
+    "artist": "Olivia Rodrigo",
+    "year": 2021,
+    "popularity": 43,
+    "score": 77.9,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "so happy",
+    "songId": "8fe00da4-e66e-47d0-a98c-38d50b1d2c65",
+    "title": "good 4 u",
+    "artist": "Olivia Rodrigo",
+    "year": 2021,
+    "popularity": 43,
+    "score": 77.9,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "moved on",
+    "songId": "8fe00da4-e66e-47d0-a98c-38d50b1d2c65",
+    "title": "good 4 u",
+    "artist": "Olivia Rodrigo",
+    "year": 2021,
+    "popularity": 43,
+    "score": 77.9,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "take a bow",
+    "songId": "1e763305-54c0-40b2-93f8-b0eceb02e2d9",
+    "title": "Take a Bow",
+    "artist": "Madonna",
+    "year": 1994,
+    "popularity": 43,
+    "score": 77.9,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "the night is over",
+    "songId": "1e763305-54c0-40b2-93f8-b0eceb02e2d9",
+    "title": "Take a Bow",
+    "artist": "Madonna",
+    "year": 1994,
+    "popularity": 43,
+    "score": 77.9,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "this masquerade",
+    "songId": "1e763305-54c0-40b2-93f8-b0eceb02e2d9",
+    "title": "Take a Bow",
+    "artist": "Madonna",
+    "year": 1994,
+    "popularity": 43,
+    "score": 77.9,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "take bow",
+    "songId": "1e763305-54c0-40b2-93f8-b0eceb02e2d9",
+    "title": "Take a Bow",
+    "artist": "Madonna",
+    "year": 1994,
+    "popularity": 43,
+    "score": 77.9,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "imagine",
+    "songId": "6ee7e810-ce70-479e-a7e9-7582fcaead9b",
+    "title": "Imagine",
+    "artist": "John Lennon",
+    "year": 1971,
+    "popularity": 92,
+    "score": 77.6,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "you'll see",
+    "songId": "29074957-fc69-41b3-8486-6e3ea59d63de",
+    "title": "You'll See",
+    "artist": "Madonna",
+    "year": 1995,
+    "popularity": 42,
+    "score": 77.6,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "you think that",
+    "songId": "29074957-fc69-41b3-8486-6e3ea59d63de",
+    "title": "You'll See",
+    "artist": "Madonna",
+    "year": 1995,
+    "popularity": 42,
+    "score": 77.6,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "you know me well",
+    "songId": "29074957-fc69-41b3-8486-6e3ea59d63de",
+    "title": "You'll See",
+    "artist": "Madonna",
+    "year": 1995,
+    "popularity": 42,
+    "score": 77.6,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "i do the same",
+    "songId": "f552d573-b212-497d-8f68-11db2629178b",
+    "title": "Stay",
+    "artist": "The Kid LAROI & Justin Bieber",
+    "year": 2021,
+    "popularity": 42,
+    "score": 77.6,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "if i was you",
+    "songId": "f552d573-b212-497d-8f68-11db2629178b",
+    "title": "Stay",
+    "artist": "The Kid LAROI & Justin Bieber",
+    "year": 2021,
+    "popularity": 42,
+    "score": 77.6,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "falling in love",
+    "songId": "351c9b90-4e89-44a9-8f9f-50929d345574",
+    "title": "Shape of You",
+    "artist": "Ed Sheeran",
+    "year": 2017,
+    "popularity": 58,
+    "score": 77.4,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "told you long ago",
+    "songId": "372e6e39-9bb7-4b08-a6fe-494a29ac338e",
+    "title": "Industry Baby",
+    "artist": "Lil Nas X ft. Jack Harlow",
+    "year": 2021,
+    "popularity": 41,
+    "score": 77.3,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "on the road",
+    "songId": "372e6e39-9bb7-4b08-a6fe-494a29ac338e",
+    "title": "Industry Baby",
+    "artist": "Lil Nas X ft. Jack Harlow",
+    "year": 2021,
+    "popularity": 41,
+    "score": 77.3,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "one more chance",
+    "songId": "2ac71b8a-5dd1-4a58-8d11-12cf19013703",
+    "title": "One More Chance",
+    "artist": "Madonna",
+    "year": 1995,
+    "popularity": 41,
+    "score": 77.3,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "just give me",
+    "songId": "2ac71b8a-5dd1-4a58-8d11-12cf19013703",
+    "title": "One More Chance",
+    "artist": "Madonna",
+    "year": 1995,
+    "popularity": 41,
+    "score": 77.3,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "one more",
+    "songId": "2ac71b8a-5dd1-4a58-8d11-12cf19013703",
+    "title": "One More Chance",
+    "artist": "Madonna",
+    "year": 1995,
+    "popularity": 41,
+    "score": 77.3,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 3
+  },
+  {
+    "phrase": "more chance",
+    "songId": "2ac71b8a-5dd1-4a58-8d11-12cf19013703",
+    "title": "One More Chance",
+    "artist": "Madonna",
+    "year": 1995,
+    "popularity": 41,
+    "score": 77.3,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "respect",
+    "songId": "749aeb93-e637-44ec-ab22-d4a2f729e210",
+    "title": "Respect",
+    "artist": "Aretha Franklin",
+    "year": 1967,
+    "popularity": 90,
+    "score": 77,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "sexyback",
+    "songId": "ee425be6-9a3b-4977-b16f-6fdffdd6ae96",
+    "title": "SexyBack",
+    "artist": "Justin Timberlake",
+    "year": 2006,
+    "popularity": 90,
+    "score": 77,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "call me by your name",
+    "songId": "b6194b2f-b0fa-45f8-b608-bb808286bfc8",
+    "title": "Montero",
+    "artist": "Lil Nas X",
+    "year": 2021,
+    "popularity": 40,
+    "score": 77,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "in the garden",
+    "songId": "b6194b2f-b0fa-45f8-b608-bb808286bfc8",
+    "title": "Montero",
+    "artist": "Lil Nas X",
+    "year": 2021,
+    "popularity": 40,
+    "score": 77,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "excitation",
+    "songId": "d2f5f0c7-0e39-46ff-bd77-723b149d528d",
+    "title": "Good Vibrations",
+    "artist": "The Beach Boys",
+    "year": 1966,
+    "popularity": 89,
+    "score": 76.7,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "don't cry",
+    "songId": "af1b9d1c-75ee-430a-a8c3-0c3da978de38",
+    "title": "Don't Cry for Me Argentina",
+    "artist": "Madonna",
+    "year": 1996,
+    "popularity": 39,
+    "score": 76.7,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "cry argentina",
+    "songId": "af1b9d1c-75ee-430a-a8c3-0c3da978de38",
+    "title": "Don't Cry for Me Argentina",
+    "artist": "Madonna",
+    "year": 1996,
+    "popularity": 39,
+    "score": 76.7,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "don't cry argentina",
+    "songId": "af1b9d1c-75ee-430a-a8c3-0c3da978de38",
+    "title": "Don't Cry for Me Argentina",
+    "artist": "Madonna",
+    "year": 1996,
+    "popularity": 39,
+    "score": 76.7,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "for me",
+    "songId": "af1b9d1c-75ee-430a-a8c3-0c3da978de38",
+    "title": "Don't Cry for Me Argentina",
+    "artist": "Madonna",
+    "year": 1996,
+    "popularity": 39,
+    "score": 76.7,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "another suitcase",
+    "songId": "74611582-a310-49f4-84d1-7f3438bb9b27",
+    "title": "Another Suitcase in Another Hall",
+    "artist": "Madonna",
+    "year": 1996,
+    "popularity": 38,
+    "score": 76.4,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "in another hall",
+    "songId": "74611582-a310-49f4-84d1-7f3438bb9b27",
+    "title": "Another Suitcase in Another Hall",
+    "artist": "Madonna",
+    "year": 1996,
+    "popularity": 38,
+    "score": 76.4,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "so what happens now",
+    "songId": "74611582-a310-49f4-84d1-7f3438bb9b27",
+    "title": "Another Suitcase in Another Hall",
+    "artist": "Madonna",
+    "year": 1996,
+    "popularity": 38,
+    "score": 76.4,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "suitcase another",
+    "songId": "74611582-a310-49f4-84d1-7f3438bb9b27",
+    "title": "Another Suitcase in Another Hall",
+    "artist": "Madonna",
+    "year": 1996,
+    "popularity": 38,
+    "score": 76.4,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "another hall",
+    "songId": "74611582-a310-49f4-84d1-7f3438bb9b27",
+    "title": "Another Suitcase in Another Hall",
+    "artist": "Madonna",
+    "year": 1996,
+    "popularity": 38,
+    "score": 76.4,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "therefore i am",
+    "songId": "3eb647a8-0812-47df-a36f-3dda784b5d37",
+    "title": "Therefore I Am",
+    "artist": "Billie Eilish",
+    "year": 2020,
+    "popularity": 38,
+    "score": 76.4,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "i'm not your friend",
+    "songId": "3eb647a8-0812-47df-a36f-3dda784b5d37",
+    "title": "Therefore I Am",
+    "artist": "Billie Eilish",
+    "year": 2020,
+    "popularity": 38,
+    "score": 76.4,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "therefore am",
+    "songId": "3eb647a8-0812-47df-a36f-3dda784b5d37",
+    "title": "Therefore I Am",
+    "artist": "Billie Eilish",
+    "year": 2020,
+    "popularity": 38,
+    "score": 76.4,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "open your heart",
+    "songId": "934dadbd-4fd2-4816-99b0-179f4985c972",
+    "title": "Open Your Heart",
+    "artist": "Madonna",
+    "year": 1986,
+    "popularity": 54,
+    "score": 76.2,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "open heart",
+    "songId": "934dadbd-4fd2-4816-99b0-179f4985c972",
+    "title": "Open Your Heart",
+    "artist": "Madonna",
+    "year": 1986,
+    "popularity": 54,
+    "score": 76.2,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "million times",
+    "songId": "bfd25eca-cd89-42cf-91db-99d4a4ec8640",
+    "title": "Hello",
+    "artist": "Adele",
+    "year": 2015,
+    "popularity": 54,
+    "score": 76.2,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "champions",
+    "songId": "6812aad7-878e-4fcf-82e5-91eca4297b3f",
+    "title": "We Are the Champions",
+    "artist": "Queen",
+    "year": 1977,
+    "popularity": 87,
+    "score": 76.1,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "rainbow high",
+    "songId": "00ed2e53-407a-45db-9a5e-1104bd45aff6",
+    "title": "Rainbow High",
+    "artist": "Madonna",
+    "year": 1996,
+    "popularity": 37,
+    "score": 76.1,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "i need to be",
+    "songId": "00ed2e53-407a-45db-9a5e-1104bd45aff6",
+    "title": "Rainbow High",
+    "artist": "Madonna",
+    "year": 1996,
+    "popularity": 37,
+    "score": 76.1,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "switching positions",
+    "songId": "11096f25-87cc-4f28-9348-8749efdc6b7b",
+    "title": "positions",
+    "artist": "Ariana Grande",
+    "year": 2020,
+    "popularity": 37,
+    "score": 76.1,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "who's that girl",
+    "songId": "a4fa7e2d-db9a-4a85-b1fb-61323b0d53e0",
+    "title": "Who's That Girl",
+    "artist": "Madonna",
+    "year": 1987,
+    "popularity": 53,
+    "score": 75.9,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "who's girl",
+    "songId": "a4fa7e2d-db9a-4a85-b1fb-61323b0d53e0",
+    "title": "Who's That Girl",
+    "artist": "Madonna",
+    "year": 1987,
+    "popularity": 53,
+    "score": 75.9,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "mirrors",
+    "songId": "d05fb78e-5b63-4096-a9a4-4d9bdf80d2e9",
+    "title": "Mirrors",
+    "artist": "Justin Timberlake",
+    "year": 2013,
+    "popularity": 86,
+    "score": 75.8,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "means i want you",
+    "songId": "8907b395-fad5-4de2-943e-7e620e723097",
+    "title": "34+35",
+    "artist": "Ariana Grande",
+    "year": 2020,
+    "popularity": 36,
+    "score": 75.8,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "you must remember",
+    "songId": "08d9ff50-b734-4cac-86d3-c3be2d657d86",
+    "title": "As Time Goes By",
+    "artist": "Madonna",
+    "year": 2012,
+    "popularity": 36,
+    "score": 75.8,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "this a kiss",
+    "songId": "08d9ff50-b734-4cac-86d3-c3be2d657d86",
+    "title": "As Time Goes By",
+    "artist": "Madonna",
+    "year": 2012,
+    "popularity": 36,
+    "score": 75.8,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "around comes around",
+    "songId": "d31e4920-7c60-4aae-842d-0978677ff584",
+    "title": "What Goes Around... Comes Around",
+    "artist": "Justin Timberlake",
+    "year": 2006,
+    "popularity": 85,
+    "score": 75.5,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "why you always",
+    "songId": "cac5847d-d5fc-4962-bfa5-1d5fab36ed57",
+    "title": "Mood",
+    "artist": "24kGoldn ft. iann dior",
+    "year": 2020,
+    "popularity": 35,
+    "score": 75.5,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "in a mood",
+    "songId": "cac5847d-d5fc-4962-bfa5-1d5fab36ed57",
+    "title": "Mood",
+    "artist": "24kGoldn ft. iann dior",
+    "year": 2020,
+    "popularity": 35,
+    "score": 75.5,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "if you were",
+    "songId": "0fadd5ac-053e-4311-8e2b-345571c1723d",
+    "title": "Masterpiece",
+    "artist": "Madonna",
+    "year": 2011,
+    "popularity": 35,
+    "score": 75.5,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "the mona lisa",
+    "songId": "0fadd5ac-053e-4311-8e2b-345571c1723d",
+    "title": "Masterpiece",
+    "artist": "Madonna",
+    "year": 2011,
+    "popularity": 35,
+    "score": 75.5,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "look of love",
+    "songId": "11b28410-041b-477d-975b-feac3606f655",
+    "title": "The Look of Love",
+    "artist": "Madonna",
+    "year": 1987,
+    "popularity": 51,
+    "score": 75.3,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "the look of love",
+    "songId": "11b28410-041b-477d-975b-feac3606f655",
+    "title": "The Look of Love",
+    "artist": "Madonna",
+    "year": 1987,
+    "popularity": 51,
+    "score": 75.3,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "look love",
+    "songId": "11b28410-041b-477d-975b-feac3606f655",
+    "title": "The Look of Love",
+    "artist": "Madonna",
+    "year": 1987,
+    "popularity": 51,
+    "score": 75.3,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "education",
+    "songId": "bc84b65c-bd06-4820-bcbd-a203c42e8165",
+    "title": "Another Brick in the Wall",
+    "artist": "Pink Floyd",
+    "year": 1979,
+    "popularity": 84,
+    "score": 75.2,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "fuck a cop car",
+    "songId": "98fb838e-381b-416e-822d-8c2e7579a49c",
+    "title": "Rockstar",
+    "artist": "DaBaby ft. Roddy Ricch",
+    "year": 2020,
+    "popularity": 34,
+    "score": 75.2,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "l-u-v madonna",
+    "songId": "2d3787e3-9fcd-469c-b178-0474844d02a3",
+    "title": "Give Me All Your Luvin'",
+    "artist": "Madonna ft. M.I.A.",
+    "year": 2012,
+    "popularity": 34,
+    "score": 75.2,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "y-o-u you wanna",
+    "songId": "2d3787e3-9fcd-469c-b178-0474844d02a3",
+    "title": "Give Me All Your Luvin'",
+    "artist": "Madonna ft. M.I.A.",
+    "year": 2012,
+    "popularity": 34,
+    "score": 75.2,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "give all",
+    "songId": "2d3787e3-9fcd-469c-b178-0474844d02a3",
+    "title": "Give Me All Your Luvin'",
+    "artist": "Madonna ft. M.I.A.",
+    "year": 2012,
+    "popularity": 34,
+    "score": 75.2,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "all luvin'",
+    "songId": "2d3787e3-9fcd-469c-b178-0474844d02a3",
+    "title": "Give Me All Your Luvin'",
+    "artist": "Madonna ft. M.I.A.",
+    "year": 2012,
+    "popularity": 34,
+    "score": 75.2,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "give all luvin'",
+    "songId": "2d3787e3-9fcd-469c-b178-0474844d02a3",
+    "title": "Give Me All Your Luvin'",
+    "artist": "Madonna ft. M.I.A.",
+    "year": 2012,
+    "popularity": 34,
+    "score": 75.2,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "all you",
+    "songId": "2d3787e3-9fcd-469c-b178-0474844d02a3",
+    "title": "Give Me All Your Luvin'",
+    "artist": "Madonna ft. M.I.A.",
+    "year": 2012,
+    "popularity": 34,
+    "score": 75.2,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "give me",
+    "songId": "2d3787e3-9fcd-469c-b178-0474844d02a3",
+    "title": "Give Me All Your Luvin'",
+    "artist": "Madonna ft. M.I.A.",
+    "year": 2012,
+    "popularity": 34,
+    "score": 75.2,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "all your",
+    "songId": "2d3787e3-9fcd-469c-b178-0474844d02a3",
+    "title": "Give Me All Your Luvin'",
+    "artist": "Madonna ft. M.I.A.",
+    "year": 2012,
+    "popularity": 34,
+    "score": 75.2,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "mama just killed a man",
+    "songId": "2e020e15-4195-4914-9efc-25bc471f6971",
+    "title": "Bohemian Rhapsody",
+    "artist": "Queen",
+    "year": 1975,
+    "popularity": 100,
+    "score": 75,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "turn up the radio",
+    "songId": "dc449705-5fcf-4ab7-a28b-c01586188344",
+    "title": "Turn Up the Radio",
+    "artist": "Madonna",
+    "year": 2012,
+    "popularity": 33,
+    "score": 74.9,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "don't ask me",
+    "songId": "dc449705-5fcf-4ab7-a28b-c01586188344",
+    "title": "Turn Up the Radio",
+    "artist": "Madonna",
+    "year": 2012,
+    "popularity": 33,
+    "score": 74.9,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "turn radio",
+    "songId": "dc449705-5fcf-4ab7-a28b-c01586188344",
+    "title": "Turn Up the Radio",
+    "artist": "Madonna",
+    "year": 2012,
+    "popularity": 33,
+    "score": 74.9,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "the box",
+    "songId": "e5780aab-c471-447b-bca4-cacae5373d93",
+    "title": "The Box",
+    "artist": "Roddy Ricch",
+    "year": 2019,
+    "popularity": 33,
+    "score": 74.9,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "pull up",
+    "songId": "e5780aab-c471-447b-bca4-cacae5373d93",
+    "title": "The Box",
+    "artist": "Roddy Ricch",
+    "year": 2019,
+    "popularity": 33,
+    "score": 74.9,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "out the lot",
+    "songId": "e5780aab-c471-447b-bca4-cacae5373d93",
+    "title": "The Box",
+    "artist": "Roddy Ricch",
+    "year": 2019,
+    "popularity": 33,
+    "score": 74.9,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "that's a lease",
+    "songId": "e5780aab-c471-447b-bca4-cacae5373d93",
+    "title": "The Box",
+    "artist": "Roddy Ricch",
+    "year": 2019,
+    "popularity": 33,
+    "score": 74.9,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "seasons change",
+    "songId": "2d29d870-4db2-4645-8687-9e98f70aa656",
+    "title": "Circles",
+    "artist": "Post Malone",
+    "year": 2019,
+    "popularity": 32,
+    "score": 74.6,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "they like it wild",
+    "songId": "062e1b18-7cd3-484b-a651-30d10bfbc433",
+    "title": "Girl Gone Wild",
+    "artist": "Madonna",
+    "year": 2012,
+    "popularity": 32,
+    "score": 74.6,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "gone wild",
+    "songId": "062e1b18-7cd3-484b-a651-30d10bfbc433",
+    "title": "Girl Gone Wild",
+    "artist": "Madonna",
+    "year": 2012,
+    "popularity": 32,
+    "score": 74.6,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "celebrate",
+    "songId": "b7bbb1cf-ecaa-4804-a69d-0c7ffe9c8105",
+    "title": "One More Time",
+    "artist": "Daft Punk",
+    "year": 2000,
+    "popularity": 81,
+    "score": 74.3,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 2
+  },
+  {
+    "phrase": "you're a sunflower",
+    "songId": "9229fb03-cd9c-47b7-b9a3-7c8b7818cbd9",
+    "title": "Sunflower",
+    "artist": "Post Malone & Swae Lee",
+    "year": 2018,
+    "popularity": 31,
+    "score": 74.3,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "needless to say",
+    "songId": "9229fb03-cd9c-47b7-b9a3-7c8b7818cbd9",
+    "title": "Sunflower",
+    "artist": "Post Malone & Swae Lee",
+    "year": 2018,
+    "popularity": 31,
+    "score": 74.3,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "gang bang",
+    "songId": "ffbf1b27-5987-47cc-8d80-44f898691791",
+    "title": "Gang Bang",
+    "artist": "Madonna",
+    "year": 2012,
+    "popularity": 31,
+    "score": 74.3,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "in the head",
+    "songId": "ffbf1b27-5987-47cc-8d80-44f898691791",
+    "title": "Gang Bang",
+    "artist": "Madonna",
+    "year": 2012,
+    "popularity": 31,
+    "score": 74.3,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "from a world",
+    "songId": "aaa29b4b-e200-4cf2-a2e8-f4eb6413ea1d",
+    "title": "Rescue Me",
+    "artist": "Madonna",
+    "year": 1991,
+    "popularity": 47,
+    "score": 74.1,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "change",
+    "songId": "f82f7160-8046-4d62-9333-1072b7c096ec",
+    "title": "Free Bird",
+    "artist": "Lynyrd Skynyrd",
+    "year": 1974,
+    "popularity": 80,
+    "score": 74,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "work it make it",
+    "songId": "97d6a0b2-213f-471f-a8a4-d34549851c0f",
+    "title": "Harder Better Faster Stronger",
+    "artist": "Daft Punk",
+    "year": 2001,
+    "popularity": 80,
+    "score": 74,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "i'm addicted",
+    "songId": "f0efb748-cfea-4c74-bbb1-182f13ae174d",
+    "title": "I'm Addicted",
+    "artist": "Madonna",
+    "year": 2012,
+    "popularity": 30,
+    "score": 74,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "to all the things",
+    "songId": "f0efb748-cfea-4c74-bbb1-182f13ae174d",
+    "title": "I'm Addicted",
+    "artist": "Madonna",
+    "year": 2012,
+    "popularity": 30,
+    "score": 74,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "you do",
+    "songId": "f0efb748-cfea-4c74-bbb1-182f13ae174d",
+    "title": "I'm Addicted",
+    "artist": "Madonna",
+    "year": 2012,
+    "popularity": 30,
+    "score": 74,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "god's plan",
+    "songId": "1f45be61-eaee-48b8-aa48-d5f746c6f474",
+    "title": "God's Plan",
+    "artist": "Drake",
+    "year": 2018,
+    "popularity": 30,
+    "score": 74,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "only partly",
+    "songId": "1f45be61-eaee-48b8-aa48-d5f746c6f474",
+    "title": "God's Plan",
+    "artist": "Drake",
+    "year": 2018,
+    "popularity": 30,
+    "score": 74,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "i don't give a",
+    "songId": "249e94ba-04be-4239-836c-2459f8145ef9",
+    "title": "I Don't Give A",
+    "artist": "Madonna ft. Nicki Minaj",
+    "year": 2012,
+    "popularity": 29,
+    "score": 73.7,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "i don't give",
+    "songId": "249e94ba-04be-4239-836c-2459f8145ef9",
+    "title": "I Don't Give A",
+    "artist": "Madonna ft. Nicki Minaj",
+    "year": 2012,
+    "popularity": 29,
+    "score": 73.7,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "don't give",
+    "songId": "249e94ba-04be-4239-836c-2459f8145ef9",
+    "title": "I Don't Give A",
+    "artist": "Madonna ft. Nicki Minaj",
+    "year": 2012,
+    "popularity": 29,
+    "score": 73.7,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "in my feelings",
+    "songId": "0c1472e6-b02e-4a41-adc5-565baa9de911",
+    "title": "In My Feelings",
+    "artist": "Drake",
+    "year": 2018,
+    "popularity": 29,
+    "score": 73.7,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "somebody that i used to know",
+    "songId": "2fd867c7-7ab8-4f6b-ac2b-ece6c8b68775",
+    "title": "Somebody That I Used to Know",
+    "artist": "Gotye ft. Kimberly",
+    "year": 2011,
+    "popularity": 95,
+    "score": 73.5,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "technologic",
+    "songId": "ef219446-ede2-40da-8ef5-8375824ae64c",
+    "title": "Technologic",
+    "artist": "Daft Punk",
+    "year": 2005,
+    "popularity": 78,
+    "score": 73.4,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "buy it use it",
+    "songId": "ef219446-ede2-40da-8ef5-8375824ae64c",
+    "title": "Technologic",
+    "artist": "Daft Punk",
+    "year": 2005,
+    "popularity": 78,
+    "score": 73.4,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "break it fix it",
+    "songId": "ef219446-ede2-40da-8ef5-8375824ae64c",
+    "title": "Technologic",
+    "artist": "Daft Punk",
+    "year": 2005,
+    "popularity": 78,
+    "score": 73.4,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "i'm a sinner",
+    "songId": "68b27980-cb7e-4501-b537-9bdae0f7cf70",
+    "title": "I'm a Sinner",
+    "artist": "Madonna",
+    "year": 2012,
+    "popularity": 28,
+    "score": 73.4,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "i like it",
+    "songId": "68b27980-cb7e-4501-b537-9bdae0f7cf70",
+    "title": "I'm a Sinner",
+    "artist": "Madonna",
+    "year": 2012,
+    "popularity": 28,
+    "score": 73.4,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "that way",
+    "songId": "68b27980-cb7e-4501-b537-9bdae0f7cf70",
+    "title": "I'm a Sinner",
+    "artist": "Madonna",
+    "year": 2012,
+    "popularity": 28,
+    "score": 73.4,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "i'm sinner",
+    "songId": "68b27980-cb7e-4501-b537-9bdae0f7cf70",
+    "title": "I'm a Sinner",
+    "artist": "Madonna",
+    "year": 2012,
+    "popularity": 28,
+    "score": 73.4,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "nice for what",
+    "songId": "e9d062d3-e554-4dee-9cb4-c19ff73d0b71",
+    "title": "Nice for What",
+    "artist": "Drake",
+    "year": 2018,
+    "popularity": 28,
+    "score": 73.4,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "that's a real one",
+    "songId": "e9d062d3-e554-4dee-9cb4-c19ff73d0b71",
+    "title": "Nice for What",
+    "artist": "Drake",
+    "year": 2018,
+    "popularity": 28,
+    "score": 73.4,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "in your group",
+    "songId": "e9d062d3-e554-4dee-9cb4-c19ff73d0b71",
+    "title": "Nice for What",
+    "artist": "Drake",
+    "year": 2018,
+    "popularity": 28,
+    "score": 73.4,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "nice what",
+    "songId": "e9d062d3-e554-4dee-9cb4-c19ff73d0b71",
+    "title": "Nice for What",
+    "artist": "Drake",
+    "year": 2018,
+    "popularity": 28,
+    "score": 73.4,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "smells like teen spirit",
+    "songId": "0a4c20f6-d89d-42d6-b745-6627bca67d10",
+    "title": "Smells Like Teen Spirit",
+    "artist": "Nirvana",
+    "year": 1991,
+    "popularity": 94,
+    "score": 73.2,
+    "sources": [
+      "title",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "blonde girl",
+    "songId": "536415c9-2552-4263-b3b3-0ae0a3355356",
+    "title": "drivers license",
+    "artist": "Olivia Rodrigo",
+    "year": 2021,
+    "popularity": 44,
+    "score": 73.2,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "you had all of me",
+    "songId": "ed4fa1e5-32b1-4d3a-b410-a1be28141e50",
+    "title": "Love Spent",
+    "artist": "Madonna",
+    "year": 2012,
+    "popularity": 27,
+    "score": 73.1,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "you wanted more",
+    "songId": "ed4fa1e5-32b1-4d3a-b410-a1be28141e50",
+    "title": "Love Spent",
+    "artist": "Madonna",
+    "year": 2012,
+    "popularity": 27,
+    "score": 73.1,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "hotline bling",
+    "songId": "dce340fc-aa74-4019-8d5a-b63c2eb16d07",
+    "title": "Hotline Bling",
+    "artist": "Drake",
+    "year": 2015,
+    "popularity": 27,
+    "score": 73.1,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "call me on my",
+    "songId": "dce340fc-aa74-4019-8d5a-b63c2eb16d07",
+    "title": "Hotline Bling",
+    "artist": "Drake",
+    "year": 2015,
+    "popularity": 27,
+    "score": 73.1,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "cell phone",
+    "songId": "dce340fc-aa74-4019-8d5a-b63c2eb16d07",
+    "title": "Hotline Bling",
+    "artist": "Drake",
+    "year": 2015,
+    "popularity": 27,
+    "score": 73.1,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "one dance",
+    "songId": "c8d0892d-4a24-4c74-b8e5-8c455a42929c",
+    "title": "One Dance",
+    "artist": "Drake",
+    "year": 2016,
+    "popularity": 26,
+    "score": 72.8,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "they like candy",
+    "songId": "fab93e7a-d882-49f7-b882-4ae30015cc51",
+    "title": "Some Girls",
+    "artist": "Madonna",
+    "year": 2012,
+    "popularity": 26,
+    "score": 72.8,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "and others",
+    "songId": "fab93e7a-d882-49f7-b882-4ae30015cc51",
+    "title": "Some Girls",
+    "artist": "Madonna",
+    "year": 2012,
+    "popularity": 26,
+    "score": 72.8,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "no one wants to be defeated",
+    "songId": "1b37fe15-82a1-4e0a-9417-cde0f1984298",
+    "title": "Beat It",
+    "artist": "Michael Jackson",
+    "year": 1982,
+    "popularity": 92,
+    "score": 72.6,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "clap along if you feel",
+    "songId": "4a093dd1-154a-46e6-89ec-ac5861f66acb",
+    "title": "Happy",
+    "artist": "Pharrell Williams",
+    "year": 2013,
+    "popularity": 92,
+    "score": 72.6,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "happiness is the truth",
+    "songId": "4a093dd1-154a-46e6-89ec-ac5861f66acb",
+    "title": "Happy",
+    "artist": "Pharrell Williams",
+    "year": 2013,
+    "popularity": 92,
+    "score": 72.6,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "memoria",
+    "songId": "cce3fcd6-036a-4758-b66e-ec11f4fb153d",
+    "title": "Come As You Are",
+    "artist": "Nirvana",
+    "year": 1991,
+    "popularity": 75,
+    "score": 72.5,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "you're my superstar",
+    "songId": "99dc0800-7508-4459-94ae-e52eb12d2aac",
+    "title": "Superstar",
+    "artist": "Madonna",
+    "year": 2012,
+    "popularity": 25,
+    "score": 72.5,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "he said me haffi",
+    "songId": "0a529315-91f0-4ee4-b2bd-1b5558935583",
+    "title": "Work",
+    "artist": "Rihanna ft. Drake",
+    "year": 2016,
+    "popularity": 25,
+    "score": 72.5,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "can't stop the feeling",
+    "songId": "386ce22d-0195-4f6e-b52b-7637b741df59",
+    "title": "Can't Stop the Feeling!",
+    "artist": "Justin Timberlake",
+    "year": 2016,
+    "popularity": 91,
+    "score": 72.3,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "industry baby",
+    "songId": "372e6e39-9bb7-4b08-a6fe-494a29ac338e",
+    "title": "Industry Baby",
+    "artist": "Lil Nas X ft. Jack Harlow",
+    "year": 2021,
+    "popularity": 41,
+    "score": 72.3,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "when the sun shine",
+    "songId": "aa558e67-3ab7-49a2-8739-444bf35bbc67",
+    "title": "Umbrella",
+    "artist": "Rihanna ft. Jay-Z",
+    "year": 2007,
+    "popularity": 24,
+    "score": 72.2,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "we shine together",
+    "songId": "aa558e67-3ab7-49a2-8739-444bf35bbc67",
+    "title": "Umbrella",
+    "artist": "Rihanna ft. Jay-Z",
+    "year": 2007,
+    "popularity": 24,
+    "score": 72.2,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "i fucked up",
+    "songId": "fbc7ef31-a9d1-4d8c-b051-d238c2a11732",
+    "title": "I Fucked Up",
+    "artist": "Madonna",
+    "year": 2012,
+    "popularity": 24,
+    "score": 72.2,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "let you down",
+    "songId": "fbc7ef31-a9d1-4d8c-b051-d238c2a11732",
+    "title": "I Fucked Up",
+    "artist": "Madonna",
+    "year": 2012,
+    "popularity": 24,
+    "score": 72.2,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "find out what it means",
+    "songId": "749aeb93-e637-44ec-ab22-d4a2f729e210",
+    "title": "Respect",
+    "artist": "Aretha Franklin",
+    "year": 1967,
+    "popularity": 90,
+    "score": 72,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "you must love me",
+    "songId": "482dc1b7-d39b-4ca2-a7a7-b90a59506f2e",
+    "title": "You Must Love Me",
+    "artist": "Madonna",
+    "year": 1996,
+    "popularity": 40,
+    "score": 72,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "love me",
+    "songId": "482dc1b7-d39b-4ca2-a7a7-b90a59506f2e",
+    "title": "You Must Love Me",
+    "artist": "Madonna",
+    "year": 1996,
+    "popularity": 40,
+    "score": 72,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "b-day song",
+    "songId": "7c5e66d2-b4cf-435e-a6a4-a9d8e88bd8f8",
+    "title": "B-Day Song",
+    "artist": "Madonna ft. M.I.A.",
+    "year": 2012,
+    "popularity": 23,
+    "score": 71.9,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "it's your birthday",
+    "songId": "7c5e66d2-b4cf-435e-a6a4-a9d8e88bd8f8",
+    "title": "B-Day Song",
+    "artist": "Madonna ft. M.I.A.",
+    "year": 2012,
+    "popularity": 23,
+    "score": 71.9,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "sing a b-day song",
+    "songId": "7c5e66d2-b4cf-435e-a6a4-a9d8e88bd8f8",
+    "title": "B-Day Song",
+    "artist": "Madonna ft. M.I.A.",
+    "year": 2012,
+    "popularity": 23,
+    "score": 71.9,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "in a hopeless place",
+    "songId": "1623cfae-b107-4b8b-bf40-5bd7ffa0185b",
+    "title": "We Found Love",
+    "artist": "Rihanna",
+    "year": 2011,
+    "popularity": 23,
+    "score": 71.9,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "yellow diamonds",
+    "songId": "1623cfae-b107-4b8b-bf40-5bd7ffa0185b",
+    "title": "We Found Love",
+    "artist": "Rihanna",
+    "year": 2011,
+    "popularity": 23,
+    "score": 71.9,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "jeremy",
+    "songId": "f6cd0770-db94-4aeb-bcb6-6bbc00b2dd52",
+    "title": "Jeremy",
+    "artist": "Pearl Jam",
+    "year": 1991,
+    "popularity": 72,
+    "score": 71.6,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "holla holla",
+    "songId": "b0065fa1-7fa3-48f8-934f-d5dd1f596a55",
+    "title": "Get Ur Freak On",
+    "artist": "Missy Elliott",
+    "year": 2001,
+    "popularity": 72,
+    "score": 71.6,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "beautiful killer",
+    "songId": "43e60651-5f6f-458f-a4a2-af1d3d24a067",
+    "title": "Beautiful Killer",
+    "artist": "Madonna",
+    "year": 2012,
+    "popularity": 22,
+    "score": 71.6,
+    "sources": [
+      "title",
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "you're a",
+    "songId": "43e60651-5f6f-458f-a4a2-af1d3d24a067",
+    "title": "Beautiful Killer",
+    "artist": "Madonna",
+    "year": 2012,
+    "popularity": 22,
+    "score": 71.6,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "weirdo",
+    "songId": "e25563a7-39b8-4414-b879-186a90977edc",
+    "title": "Creep",
+    "artist": "Radiohead",
+    "year": 1992,
+    "popularity": 71,
+    "score": 71.3,
+    "sources": [
+      "explicit_phrases",
+      "ngram"
+    ],
+    "frequency": 1
+  },
+  {
+    "phrase": "way lie",
+    "songId": "e38f18c6-89f8-4eaf-8679-366b1f9f7a6b",
+    "title": "Love the Way You Lie",
+    "artist": "Eminem ft. Rihanna",
+    "year": 2010,
+    "popularity": 21,
+    "score": 71.3,
+    "sources": [
+      "ngram"
+    ],
+    "frequency": 1
+  }
+]

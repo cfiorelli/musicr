@@ -1,0 +1,57 @@
+# Docker Compose override for development
+# This file extends docker-compose.yml with development-specific settings
+
+version: '3.8'
+
+services:
+  # Development database with exposed ports and debug logging
+  database:
+    environment:
+      POSTGRES_DB: musicr_dev
+      POSTGRES_USER: musicr_dev
+      POSTGRES_PASSWORD: dev_password
+    command: postgres -c log_statement=all -c log_destination=stderr -c log_min_messages=info
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+
+  # API service with hot reload and debug features
+  api:
+    build:
+      target: dependencies  # Use dependencies stage for faster dev builds
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://musicr:ROTATED@database:5432/musicr_dev?schema=public
+      LOG_LEVEL: debug
+      FRONTEND_ORIGIN: http://localhost:5173
+    volumes:
+      # Mount source code for hot reload
+      - ./apps/api/src:/app/apps/api/src:ro
+      - ./apps/api/scripts:/app/apps/api/scripts:ro
+      - ./apps/api/fixtures:/app/apps/api/fixtures:ro
+      - api_dev_logs:/app/logs
+    command: ["sh", "-c", "cd apps/api && pnpm run dev"]
+    ports:
+      - "4000:4000"
+      - "9229:9229"  # Debug port
+
+  # Web service with Vite dev server
+  web:
+    build:
+      target: dependencies  # Use dependencies stage for dev
+    environment:
+      NODE_ENV: development
+      VITE_API_URL: http://localhost:4000
+    volumes:
+      # Mount source code for hot reload
+      - ./apps/web/src:/app/apps/web/src:ro
+      - ./apps/web/public:/app/apps/web/public:ro
+      - ./apps/web/index.html:/app/apps/web/index.html:ro
+    command: ["sh", "-c", "cd apps/web && pnpm run dev --host 0.0.0.0"]
+    ports:
+      - "5173:5173"
+
+volumes:
+  postgres_dev_data:
+    driver: local
+  api_dev_logs:
+    driver: local

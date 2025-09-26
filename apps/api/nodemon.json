@@ -1,0 +1,1 @@
+{ "watch":["apps/api/src"], "ext":"ts,json", "ignore":["/*.test.ts","coverage/","dist/",".logs/",".run/**"], "signal":"SIGTERM", "delay":"150" }

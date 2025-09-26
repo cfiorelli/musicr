@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Musicr WebSocket Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 10px 0;
+        }
+        .messages {
+            height: 400px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 10px 0;
+            background: #f9f9f9;
+        }
+        .message {
+            margin: 5px 0;
+            padding: 5px;
+            border-radius: 4px;
+        }
+        .message.user {
+            background: #e3f2fd;
+        }
+        .message.song {
+            background: #f3e5f5;
+        }
+        .message.display {
+            background: #e8f5e8;
+        }
+        .message.error {
+            background: #ffebee;
+            color: #c62828;
+        }
+        .input-container {
+            display: flex;
+            gap: 10px;
+        }
+        input[type="text"] {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 8px 16px;
+            background: #2196f3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #1976d2;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .status.connected {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+        .status.disconnected {
+            background: #ffebee;
+            color: #c62828;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎵 Musicr WebSocket Test</h1>
+    
+    <div class="container">
+        <h3>Connection Status</h3>
+        <div id="status" class="status disconnected">Disconnected</div>
+        <button id="connectBtn" onclick="connect()">Connect</button>
+        <button id="disconnectBtn" onclick="disconnect()" disabled>Disconnect</button>
+    </div>
+
+    <div class="container">
+        <h3>Messages</h3>
+        <div id="messages" class="messages"></div>
+        
+        <div class="input-container">
+            <input type="text" id="messageInput" placeholder="Type a message to find songs..." disabled>
+            <button id="sendBtn" onclick="sendMessage()" disabled>Send</button>
+        </div>
+        <small>Example: "I want something happy and upbeat" or "Play some romantic music"</small>
+    </div>
+
+    <div class="container">
+        <h3>User Info</h3>
+        <div id="userInfo">Not connected</div>
+    </div>
+
+    <script>
+        let ws = null;
+        let userId = null;
+        let userHandle = null;
+
+        function addMessage(type, content) {
+            const messagesDiv = document.getElementById('messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            
+            const timestamp = new Date().toLocaleTimeString();
+            messageDiv.innerHTML = `<strong>[${timestamp}]</strong> ${content}`;
+            
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function updateStatus(status, message) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.className = `status ${status}`;
+            statusDiv.textContent = message;
+        }
+
+        function updateUserInfo(user) {
+            const userInfoDiv = document.getElementById('userInfo');
+            if (user) {
+                userInfoDiv.innerHTML = `
+                    <strong>Handle:</strong> ${user.handle}<br>
+                    <strong>ID:</strong> ${user.id}<br>
+                    <strong>New User:</strong> ${user.isNew ? 'Yes' : 'No'}
+                `;
+                userId = user.id;
+                userHandle = user.handle;
+            } else {
+                userInfoDiv.textContent = 'Not connected';
+                userId = null;
+                userHandle = null;
+            }
+        }
+
+        async function getUserSession() {
+            try {
+                const response = await fetch('/api/user/session', {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                return data.user;
+            } catch (error) {
+                console.error('Failed to get user session:', error);
+                return null;
+            }
+        }
+
+        async function connect() {
+            try {
+                updateStatus('connecting', 'Connecting...');
+                
+                // First get user session
+                const user = await getUserSession();
+                if (!user) {
+                    throw new Error('Failed to establish user session');
+                }
+                
+                updateUserInfo(user);
+                
+                // Connect WebSocket
+                ws = new WebSocket('ws://localhost:4000/ws');
+                
+                ws.onopen = function() {
+                    updateStatus('connected', `Connected as ${user.handle}`);
+                    document.getElementById('connectBtn').disabled = true;
+                    document.getElementById('disconnectBtn').disabled = false;
+                    document.getElementById('messageInput').disabled = false;
+                    document.getElementById('sendBtn').disabled = false;
+                    
+                    addMessage('user', `✅ Connected as <strong>${user.handle}</strong>`);
+                };
+                
+                ws.onmessage = function(event) {
+                    try {
+                        const message = JSON.parse(event.data);
+                        handleMessage(message);
+                    } catch (error) {
+                        addMessage('error', 'Failed to parse message: ' + event.data);
+                    }
+                };
+                
+                ws.onclose = function() {
+                    updateStatus('disconnected', 'Disconnected');
+                    document.getElementById('connectBtn').disabled = false;
+                    document.getElementById('disconnectBtn').disabled = true;
+                    document.getElementById('messageInput').disabled = true;
+                    document.getElementById('sendBtn').disabled = true;
+                    
+                    addMessage('user', '❌ Connection closed');
+                    updateUserInfo(null);
+                };
+                
+                ws.onerror = function(error) {
+                    addMessage('error', 'WebSocket error: ' + error.message);
+                };
+                
+            } catch (error) {
+                updateStatus('disconnected', 'Connection failed');
+                addMessage('error', 'Connection failed: ' + error.message);
+            }
+        }
+
+        function handleMessage(message) {
+            switch (message.type) {
+                case 'song':
+                    addMessage('song', `
+                        🎵 <strong>Song Match:</strong><br>
+                        <strong>${message.primary.artist} - ${message.primary.title}</strong> ${message.primary.year ? `(${message.primary.year})` : ''}<br>
+                        ${message.why.matchedPhrase ? `<em>Matched: "${message.why.matchedPhrase}"</em><br>` : ''}
+                        ${message.why.mood ? `<em>Mood: ${message.why.mood}</em><br>` : ''}
+                        ${message.why.similarity ? `<em>Similarity: ${(message.why.similarity * 100).toFixed(1)}%</em><br>` : ''}
+                        ${message.alternates.length > 0 ? `<br><strong>Alternatives:</strong><br>${message.alternates.map(alt => `• ${alt.artist} - ${alt.title} (${(alt.score * 100).toFixed(1)}%)`).join('<br>')}` : ''}
+                    `);
+                    break;
+                    
+                case 'display':
+                    addMessage('display', `
+                        💬 <strong>${message.user.handle}:</strong> "${message.message}"<br>
+                        🎵 <strong>Playing:</strong> ${message.song.artist} - ${message.song.title}
+                    `);
+                    break;
+                    
+                case 'user_joined':
+                    addMessage('user', `👋 <strong>${message.user.handle}</strong> joined the room`);
+                    break;
+                    
+                case 'user_left':
+                    addMessage('user', `👋 <strong>${message.user.handle}</strong> left the room`);
+                    break;
+                    
+                case 'rate_limit':
+                    addMessage('error', `⚠️ Rate limit exceeded: ${message.message} (${message.retryAfter}s remaining)`);
+                    break;
+                    
+                case 'error':
+                    addMessage('error', `❌ Error: ${message.message}`);
+                    break;
+                    
+                default:
+                    addMessage('user', `Unknown message type: ${message.type}`);
+            }
+        }
+
+        function disconnect() {
+            if (ws) {
+                ws.close();
+            }
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (!message || !ws || ws.readyState !== WebSocket.OPEN) {
+                return;
+            }
+            
+            // Send message
+            ws.send(JSON.stringify({
+                type: 'msg',
+                text: message
+            }));
+            
+            addMessage('user', `📤 <strong>You:</strong> "${message}"`);
+            input.value = '';
+        }
+
+        // Allow Enter key to send messages
+        document.getElementById('messageInput').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Auto-connect on page load
+        window.addEventListener('load', function() {
+            setTimeout(connect, 500);
+        });
+    </script>
+</body>
+</html>

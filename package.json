@@ -1,0 +1,35 @@
+{
+  "name": "musicr",
+  "version": "1.0.0",
+  "description": "A music-themed chat website where messages are converted to song titles",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "scripts": {
+    "dev": "concurrently --prefix name --prefix-colors \"cyan,magenta\" \"pnpm --filter @musicr/api dev\" \"pnpm --filter @musicr/web dev\"",
+    "dev:api": "nodemon --config apps/api/nodemon.json --exec pnpm --filter @musicr/api exec tsx src/index.ts",
+    "build": "pnpm --filter @musicr/shared build && pnpm --filter @musicr/api build && pnpm --filter @musicr/web build",
+    "lint": "pnpm --recursive lint",
+    "test": "pnpm --recursive test",
+    "clean": "pnpm --recursive clean",
+    "postinstall": "pnpm --filter @musicr/shared build",
+    "e2e": "pnpm --filter @musicr/api exec vitest run --reporter=dot test/e2e/",
+    "api:ensure": "bash scripts/ensure-api.sh",
+    "api:stop": "bash scripts/stop-api.sh"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "concurrently": "^8.2.2",
+    "eslint": "^8.57.0",
+    "prettier": "^3.2.5",
+    "typescript": "^5.4.5"
+  },
+  "packageManager": "pnpm@8.15.5",
+  "dependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
