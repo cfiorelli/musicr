@@ -55,21 +55,20 @@ RUN addgroup -g 1001 -S nodejs && \
 # Set working directory
 WORKDIR /app
 
-# Copy package files from builder stage (avoids path issues with Railway root directory)
-COPY --from=builder --chown=musicr:nodejs /app/package.json /app/pnpm-lock.yaml ./
-COPY --from=builder --chown=musicr:nodejs /app/apps/web/package.json ./apps/web/
+# Copy only web package.json for isolated installation
+COPY --from=builder --chown=musicr:nodejs /app/apps/web/package.json ./
 
 # Install pnpm
 RUN corepack enable pnpm
 
-# Install only production dependencies plus vite for preview
+# Install only web production dependencies plus vite for preview
 RUN pnpm install --frozen-lockfile --prod=true && \
-    cd apps/web && pnpm add vite@^5.0.0 --prod=false
+    pnpm add vite@^5.0.0 --prod=false
 
 # Copy built application
-COPY --from=builder --chown=musicr:nodejs /app/apps/web/dist ./apps/web/dist
-COPY --from=builder --chown=musicr:nodejs /app/apps/web/vite.config.ts ./apps/web/
-COPY --from=builder --chown=musicr:nodejs /app/apps/web/index.html ./apps/web/
+COPY --from=builder --chown=musicr:nodejs /app/apps/web/dist ./dist
+COPY --from=builder --chown=musicr:nodejs /app/apps/web/vite.config.ts ./
+COPY --from=builder --chown=musicr:nodejs /app/apps/web/index.html ./
 
 # Health check for web service
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
@@ -90,4 +89,4 @@ ENV PORT=5173
 ENTRYPOINT ["dumb-init", "--"]
 
 # Start with Vite preview mode, respecting Railway-provided PORT
-CMD ["sh", "-c", "cd apps/web && pnpm vite preview --host 0.0.0.0 --port ${PORT:-5173}"]
+CMD ["sh", "-c", "pnpm vite preview --host 0.0.0.0 --port ${PORT:-5173}"]
