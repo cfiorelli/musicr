@@ -62,21 +62,20 @@ COPY --from=builder --chown=musicr:nodejs /app/package.json ./
 # Install pnpm
 RUN corepack enable pnpm
 
-# Install only production dependencies plus vite for preview
+# Install only production dependencies plus a simple static server
 # Note: No pnpm-lock.yaml in runtime stage, so can't use --frozen-lockfile
 RUN pnpm install --prod=true && \
-    pnpm add vite@^5.0.0 --prod=false
+    pnpm add serve@^14.0.0 --prod=false
 
 # Copy built application and config files
 COPY --from=builder --chown=musicr:nodejs /app/dist ./dist
 COPY --from=builder --chown=musicr:nodejs /app/index.html ./
 
-# Create a simple vite config for preview mode (avoid file permission issues)
-RUN echo 'export default { server: { host: "0.0.0.0" }, preview: { host: "0.0.0.0" } }' > vite.config.js && \
-    chown musicr:nodejs vite.config.js
-
 # Switch to non-root user BEFORE setting up files to avoid permission issues
 USER musicr
+
+# Create a writable cache directory for Vite
+RUN mkdir -p /tmp/vite-cache && chmod 755 /tmp/vite-cache
 
 # Health check for web service
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
@@ -93,6 +92,6 @@ ENV PORT=5173
 # Use dumb-init for proper signal handling
 ENTRYPOINT ["dumb-init", "--"]
 
-# Start with Vite preview mode, respecting Railway-provided PORT
-# Use exec form to properly handle environment variable substitution
-CMD ["sh", "-c", "exec pnpm vite preview --host 0.0.0.0 --port \"$PORT\""]
+# Use serve (simple static file server) instead of vite preview to avoid permission issues
+# serve is more reliable for production static file serving
+CMD ["sh", "-c", "exec pnpm serve -s dist -l \"$PORT\" -H 0.0.0.0"]
