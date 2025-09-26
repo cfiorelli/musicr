@@ -28,6 +28,16 @@ export interface SemanticConfig {
   use_reranking?: boolean;       // Re-rank by multiple factors
 }
 
+type RawSimilarityResult = {
+  id: string;
+  title: string;
+  artist: string;
+  tags: string[];
+  year: number | null;
+  popularity: number;
+  similarity: number;
+};
+
 export class SemanticSearcher {
   private prisma: PrismaClient;
   private config: SemanticConfig;
@@ -90,8 +100,8 @@ export class SemanticSearcher {
 
       // Convert results to SemanticMatch format
       const matches: SemanticMatch[] = results
-        .filter((result: any) => result.similarity >= (this.config.similarity_threshold || 0.5))
-        .map((result: any) => ({
+        .filter((result: RawSimilarityResult) => result.similarity >= (this.config.similarity_threshold || 0.5))
+        .map((result: RawSimilarityResult) => ({
           songId: result.id,
           title: result.title,
           artist: result.artist,

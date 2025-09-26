@@ -28,6 +28,16 @@ export interface KeywordConfig {
   min_phrase_length: number;
 }
 
+type SongWithPhrases = {
+  id: string;
+  title: string;
+  artist: string;
+  phrases: string[];
+  tags: string[] | null;
+  year: number | null;
+  popularity: number;
+};
+
 export class KeywordMatcher {
   private prisma: PrismaClient;
   private config: KeywordConfig;
@@ -165,7 +175,7 @@ export class KeywordMatcher {
     });
 
     const matches = songs
-      .map((song: any) => {
+      .map((song: SongWithPhrases) => {
         // Find the actual matching phrases in the array
         const matchingPhrases = song.phrases.filter((p: string) => 
           p.toLowerCase().includes(phrase.toLowerCase())
@@ -183,7 +193,7 @@ export class KeywordMatcher {
         }));
       })
       .flat()
-      .filter(match => match.matchedPhrase.length >= this.config.min_phrase_length);
+      .filter((match: any) => match.matchedPhrase.length >= this.config.min_phrase_length);
 
     // Cache the results
     this.phraseCache.set(cacheKey, matches);
@@ -222,7 +232,7 @@ export class KeywordMatcher {
     });
 
     const matches = songs
-      .map((song: any) => {
+      .map((song: SongWithPhrases) => {
         const matchingPhrases = song.phrases.filter((p: string) => 
           p.toLowerCase().includes(lemmatized.toLowerCase())
         );
@@ -239,7 +249,7 @@ export class KeywordMatcher {
         }));
       })
       .flat()
-      .filter(match => match.matchedPhrase.length >= this.config.min_phrase_length);
+      .filter((match: any) => match.matchedPhrase.length >= this.config.min_phrase_length);
 
     // Cache the results
     this.phraseCache.set(cacheKey, matches);

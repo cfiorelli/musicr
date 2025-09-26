@@ -11,6 +11,24 @@ import { SongMatchingService } from './services/song-matching-service.js';
 import { ConnectionManager } from './services/connection-manager.js';
 import net from 'net';
 
+// Types for analytics queries
+type RecentMapping = {
+  id: string;
+  text: string;
+  createdAt: Date;
+  user: { anonHandle: string };
+  room: { name: string };
+  song: { title: string; artist: string; year: number | null; tags: string[] } | null;
+  scores: any;
+  userId: string;
+  chosenSongId: string | null;
+};
+
+type PopularMapping = {
+  chosenSongId: string | null;
+  _count: { chosenSongId: number };
+};
+
 // Port availability check
 function assertPortFree(p: number): Promise<void> {
   return new Promise<void>((res, rej) => {
@@ -185,33 +203,13 @@ fastify.get('/api/admin/analytics', async (_, reply) => {
 
   try {
     // Get last 100 mappings with song details
+    const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
     const recentMappings = await prisma.message.findMany({
-      take: 100,
+      where: { createdAt: { gte: oneWeekAgo } },
+      include: { user: true, room: true, song: true },
       orderBy: { createdAt: 'desc' },
-      include: {
-        song: {
-          select: {
-            id: true,
-            title: true,
-            artist: true,
-            year: true,
-            tags: true,
-          }
-        },
-        user: {
-          select: {
-            anonHandle: true
-          }
-        },
-        room: {
-          select: {
-            name: true
-          }
-        }
-      }
-    });
-
-    // Calculate decade distribution
+      take: 100
+    }) as RecentMapping[];    // Calculate decade distribution
     const decadeDistribution: Record<string, number> = {};
     const failureReasons: Record<string, number> = {};
     const tagDistribution: Record<string, number> = {};
@@ -222,7 +220,7 @@ fastify.get('/api/admin/analytics', async (_, reply) => {
       total: 0
     };
 
-    recentMappings.forEach((mapping: any) => {
+    recentMappings.forEach((mapping: RecentMapping) => {
       // Decade analysis
       if (mapping.song?.year) {
         const decade = `${Math.floor(mapping.song.year / 10) * 10}s`;
@@ -280,7 +278,7 @@ fastify.get('/api/admin/analytics', async (_, reply) => {
 
     // Get song details for popular mappings
     const popularSongs = await Promise.all(
-      popularMappings.map(async (mapping: any) => {
+      popularMappings.map(async (mapping: PopularMapping) => {
         const song = await prisma.song.findUnique({
           where: { id: mapping.chosenSongId! },
           select: {
@@ -310,7 +308,7 @@ fastify.get('/api/admin/analytics', async (_, reply) => {
           ? Math.round((confidenceStats.high * 0.9 + confidenceStats.medium * 0.65 + confidenceStats.low * 0.3) / confidenceStats.total * 100) / 100
           : 0
       },
-      recentMappings: recentMappings.map((mapping: any) => ({
+      recentMappings: recentMappings.map((mapping: RecentMapping) => ({
         id: mapping.id,
         text: mapping.text,
         timestamp: mapping.createdAt,

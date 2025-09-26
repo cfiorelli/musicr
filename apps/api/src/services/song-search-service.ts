@@ -124,7 +124,7 @@ export class SongSearchService {
       take: limit * 2 // Get more to allow for filtering
     });
 
-    return songs.map(song => this.songToSearchResult(song, this.getMatchType(song, query), this.calculateExactScore(song, query)));
+        return songs.map((song: Song) => this.songToSearchResult(song, this.getMatchType(song, query), this.calculateExactScore(song, query)));
   }
 
   /**
@@ -143,7 +143,7 @@ export class SongSearchService {
       take: limit * 2
     });
 
-    return songs.map(song => {
+    return songs.map((song: Song) => {
       const matchingPhrases = song.phrases.filter((phrase: string) => 
         phrases.some(queryPhrase => 
           phrase.toLowerCase().includes(queryPhrase.toLowerCase()) ||
