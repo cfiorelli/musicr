@@ -15,17 +15,14 @@ RUN apk add --no-cache \
 # Set working directory
 WORKDIR /app
 
-    # Copy package files - Railway context is apps/web, pnpm-lock.yaml is in parent dir
+    # Copy package files - Railway context is apps/web only
     COPY package.json ./
-    COPY ../pnpm-lock.yaml ./
-
+    
     # Install pnpm
-RUN corepack enable pnpm
-
-# Install dependencies
-RUN pnpm install --frozen-lockfile --prod=false
-
-# Stage 2: Build the application
+    RUN corepack enable pnpm
+    
+    # Install dependencies without pnpm-lock.yaml (Railway apps/web context limitation)
+    RUN pnpm install --prod=false# Stage 2: Build the application
 FROM dependencies AS builder
 LABEL stage=builder
 
