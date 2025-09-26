@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import { useChatStore } from './stores/chatStore';
 import ChatInterface from './components/ChatInterface';
