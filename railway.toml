@@ -14,11 +14,12 @@ cmds = [
 
 [build.nixpacksPlan.phases.build]
 cmds = [
-  "cd apps/api && pnpm run build"
+  "cd apps/api && pnpm run build",
+  "ls -la apps/api/dist/"
 ]
 
 [deploy]
-startCommand = "cd apps/api && pnpm start"
+startCommand = "cd apps/api && ls -la dist/ && node dist/index.js"
 healthcheckPath = "/health"
 healthcheckTimeout = 300
 restartPolicyType = "ON_FAILURE"
