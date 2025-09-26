@@ -56,9 +56,7 @@ RUN addgroup -g 1001 -S nodejs && \
 WORKDIR /app
 
 # Copy package files
-COPY --chown=musicr:nodejs package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-RUN mkdir -p apps/web
-COPY --chown=musicr:nodejs apps/web/package.json ./apps/web/package.json
+COPY --chown=musicr:nodejs package.json pnpm-lock.yaml ./
 
 # Install pnpm
 RUN corepack enable pnpm
