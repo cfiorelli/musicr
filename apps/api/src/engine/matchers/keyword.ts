@@ -165,13 +165,13 @@ export class KeywordMatcher {
     });
 
     const matches = songs
-      .map(song => {
+      .map((song: any) => {
         // Find the actual matching phrases in the array
-        const matchingPhrases = song.phrases.filter(p => 
+        const matchingPhrases = song.phrases.filter((p: string) => 
           p.toLowerCase().includes(phrase.toLowerCase())
         );
         
-        return matchingPhrases.map(matchedPhrase => ({
+        return matchingPhrases.map((matchedPhrase: string) => ({
           songId: song.id,
           title: song.title,
           artist: song.artist,
@@ -222,12 +222,12 @@ export class KeywordMatcher {
     });
 
     const matches = songs
-      .map(song => {
-        const matchingPhrases = song.phrases.filter(p => 
+      .map((song: any) => {
+        const matchingPhrases = song.phrases.filter((p: string) => 
           p.toLowerCase().includes(lemmatized.toLowerCase())
         );
         
-        return matchingPhrases.map(matchedPhrase => ({
+        return matchingPhrases.map((matchedPhrase: string) => ({
           songId: song.id,
           title: song.title,
           artist: song.artist,

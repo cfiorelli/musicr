@@ -90,8 +90,8 @@ export class SemanticSearcher {
 
       // Convert results to SemanticMatch format
       const matches: SemanticMatch[] = results
-        .filter(result => result.similarity >= (this.config.similarity_threshold || 0.5))
-        .map(result => ({
+        .filter((result: any) => result.similarity >= (this.config.similarity_threshold || 0.5))
+        .map((result: any) => ({
           songId: result.id,
           title: result.title,
           artist: result.artist,
