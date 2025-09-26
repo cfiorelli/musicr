@@ -25,3 +25,7 @@ restartPolicyType = "ON_FAILURE"
 
 [databases.postgres]
 database = "musicr"
+
+# Ignore web app during API builds to prevent import-time errors
+[build.env]
+NIXPACKS_IGNORE_PATHS = "apps/web"
