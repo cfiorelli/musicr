@@ -222,7 +222,7 @@ fastify.get('/api/admin/analytics', async (_, reply) => {
       total: 0
     };
 
-    recentMappings.forEach(mapping => {
+    recentMappings.forEach((mapping: any) => {
       // Decade analysis
       if (mapping.song?.year) {
         const decade = `${Math.floor(mapping.song.year / 10) * 10}s`;
@@ -233,7 +233,7 @@ fastify.get('/api/admin/analytics', async (_, reply) => {
 
       // Tag distribution
       if (mapping.song?.tags) {
-        mapping.song.tags.forEach(tag => {
+        mapping.song.tags.forEach((tag: string) => {
           tagDistribution[tag] = (tagDistribution[tag] || 0) + 1;
         });
       }
@@ -280,7 +280,7 @@ fastify.get('/api/admin/analytics', async (_, reply) => {
 
     // Get song details for popular mappings
     const popularSongs = await Promise.all(
-      popularMappings.map(async (mapping) => {
+      popularMappings.map(async (mapping: any) => {
         const song = await prisma.song.findUnique({
           where: { id: mapping.chosenSongId! },
           select: {
@@ -310,7 +310,7 @@ fastify.get('/api/admin/analytics', async (_, reply) => {
           ? Math.round((confidenceStats.high * 0.9 + confidenceStats.medium * 0.65 + confidenceStats.low * 0.3) / confidenceStats.total * 100) / 100
           : 0
       },
-      recentMappings: recentMappings.map(mapping => ({
+      recentMappings: recentMappings.map((mapping: any) => ({
         id: mapping.id,
         text: mapping.text,
         timestamp: mapping.createdAt,
