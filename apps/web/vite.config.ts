@@ -14,10 +14,12 @@ export default defineConfig({
   server: {
     port: 5173,
     host: true,
-    allowedHosts: ['musicrweb-production.up.railway.app'],
+    // Remove specific allowedHosts restriction for Railway deployment flexibility
   },
   build: {
     outDir: 'dist',
     sourcemap: true,
+    // Ensure assets use relative paths for Railway deployment
+    assetsDir: 'assets',
   },
 });
