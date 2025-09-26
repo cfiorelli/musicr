@@ -62,10 +62,9 @@ COPY --from=builder --chown=musicr:nodejs /app/package.json ./
 # Install pnpm
 RUN corepack enable pnpm
 
-# Install only production dependencies plus a simple static server
+# Install only production dependencies 
 # Note: No pnpm-lock.yaml in runtime stage, so can't use --frozen-lockfile
-RUN pnpm install --prod=true && \
-    pnpm add serve@^14.0.0 --prod=false
+RUN pnpm install --prod=true
 
 # Copy built application and config files
 COPY --from=builder --chown=musicr:nodejs /app/dist ./dist
@@ -94,4 +93,5 @@ ENTRYPOINT ["dumb-init", "--"]
 
 # Use serve (simple static file server) instead of vite preview to avoid permission issues
 # serve is more reliable for production static file serving
-CMD ["sh", "-c", "exec pnpm serve -s dist -l \"$PORT\" -H 0.0.0.0"]
+# The preview script in package.json now uses serve
+CMD ["pnpm", "run", "preview"]
