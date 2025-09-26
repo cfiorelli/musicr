@@ -1,5 +1,6 @@
 # Multi-stage Dockerfile for musicr Web Frontend
-# Optimized for production deployment with Vite preview mode
+# Designed to work with Railway's apps/web/** watch path
+# Railway should provide only apps/web content as build context
 
 # Stage 1: Dependencies
 FROM node:20-alpine AS dependencies
@@ -14,9 +15,9 @@ RUN apk add --no-cache \
 # Set working directory
 WORKDIR /app
 
-# Copy package files
-COPY package.json pnpm-lock.yaml ./
-COPY apps/web/package.json ./apps/web/
+# Copy package files - Railway context should be apps/web
+COPY package.json ./
+COPY pnpm-lock.yaml* ../pnpm-lock.yaml ./
 
 # Install pnpm
 RUN corepack enable pnpm
@@ -28,16 +29,15 @@ RUN pnpm install --frozen-lockfile --prod=false
 FROM dependencies AS builder
 LABEL stage=builder
 
-# Copy source code
-COPY apps/web ./apps/web
-COPY tsconfig.json ./
+# Copy web source code (should be root of build context)
+COPY . ./
 
 # Set environment for build
 ENV NODE_ENV=production
 ENV VITE_API_URL=http://localhost:4000
 
 # Build the application
-RUN cd apps/web && pnpm run build
+RUN pnpm run build
 
 # Stage 3: Production runtime with Vite preview
 FROM node:20-alpine AS runtime
@@ -55,20 +55,20 @@ RUN addgroup -g 1001 -S nodejs && \
 # Set working directory
 WORKDIR /app
 
-# Copy only web package.json for isolated installation
-COPY --from=builder --chown=musicr:nodejs /app/apps/web/package.json ./
+# Copy web package.json for runtime dependencies
+COPY --from=builder --chown=musicr:nodejs /app/package.json ./
 
 # Install pnpm
 RUN corepack enable pnpm
 
-# Install only web production dependencies plus vite for preview
+# Install only production dependencies plus vite for preview
 RUN pnpm install --frozen-lockfile --prod=true && \
     pnpm add vite@^5.0.0 --prod=false
 
 # Copy built application
-COPY --from=builder --chown=musicr:nodejs /app/apps/web/dist ./dist
-COPY --from=builder --chown=musicr:nodejs /app/apps/web/vite.config.ts ./
-COPY --from=builder --chown=musicr:nodejs /app/apps/web/index.html ./
+COPY --from=builder --chown=musicr:nodejs /app/dist ./dist
+COPY --from=builder --chown=musicr:nodejs /app/vite.config.ts ./
+COPY --from=builder --chown=musicr:nodejs /app/index.html ./
 
 # Health check for web service
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
