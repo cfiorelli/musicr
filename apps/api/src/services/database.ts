@@ -50,9 +50,6 @@ async function runMigrationsIfNeeded() {
 // Create database tables programmatically
 async function createTables() {
   try {
-    // Enable vector extension
-    await prisma.$queryRaw`CREATE EXTENSION IF NOT EXISTS vector;`;
-    
     // Create songs table
     await prisma.$queryRaw`
       CREATE TABLE IF NOT EXISTS songs (
@@ -64,7 +61,7 @@ async function createTables() {
         tags TEXT[] DEFAULT '{}',
         phrases TEXT[] DEFAULT '{}',
         mbid TEXT UNIQUE,
-        embedding vector(384),
+        embedding JSONB,
         "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
         "updatedAt" TIMESTAMP WITH TIME ZONE DEFAULT NOW()
       );

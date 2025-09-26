@@ -9,7 +9,6 @@ generator client {
 datasource db {
   provider   = "postgresql"
   url        = env("DATABASE_URL")
-  extensions = [vector]
 }
 
 model Song {
@@ -21,7 +20,7 @@ model Song {
   tags       String[] @default([])
   phrases    String[] @default([])
   mbid       String?  @unique
-  embedding  Unsupported("vector(384)")?
+  embedding  Json?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 

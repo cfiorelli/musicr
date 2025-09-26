@@ -140,17 +140,16 @@ async function seedDatabase(songs: SeedSong[]) {
         INSERT INTO songs (id, title, artist, year, popularity, tags, phrases, embedding, "createdAt", "updatedAt")
         VALUES (
           gen_random_uuid(),
-          ${song.title},
-          ${song.artist},
-          ${song.year},
-          ${song.popularity},
-          ${song.tags}::text[],
-          ${song.phrases}::text[],
-          ${embedding}::vector(384),
+          ${title}::text,
+          ${artist}::text,
+          ${year}::integer,
+          ${popularity}::integer,
+          ${tags}::text[],
+          ${phrases}::text[],
+          ${embedding ? `$${JSON.stringify(embedding)}::jsonb` : 'NULL'},
           NOW(),
           NOW()
-        )
-      `;
+        )`;
 
       processed++;
 

@@ -164,9 +164,9 @@ export class SongSearchService {
       const embeddingService = await getEmbeddingService();
       const queryEmbedding = await embeddingService.embedSingle(query);
       
-      // Get songs with embeddings using raw SQL to cast vector to text
-      const songsWithEmbeddings = await this.prisma.$queryRaw<Array<Song & { embedding_text: string }>>`
-        SELECT *, embedding::text as embedding_text FROM songs 
+      // Get songs with embeddings using raw SQL
+      const songsWithEmbeddings = await this.prisma.$queryRaw<Array<Song & { embedding: number[] }>>`
+        SELECT * FROM songs 
         WHERE embedding IS NOT NULL 
         ORDER BY popularity DESC 
         LIMIT ${limit * 3}
@@ -176,7 +176,7 @@ export class SongSearchService {
 
       for (const song of songsWithEmbeddings) {
         try {
-          const songEmbedding = this.parseEmbedding(song.embedding_text);
+          const songEmbedding = song.embedding as number[];
           const similarity = cosineSimilarity(queryEmbedding, songEmbedding);
           
           if (similarity > 0.3) { // Lower threshold for search
@@ -315,15 +315,6 @@ export class SongSearchService {
     }
     
     return phrases;
-  }
-
-  /**
-   * Parse embedding from PostgreSQL vector string
-   */
-  private parseEmbedding(embeddingText: string): number[] {
-    // Remove brackets and split by comma
-    const cleaned = embeddingText.replace(/^\[|\]$/g, '');
-    return cleaned.split(',').map(s => parseFloat(s.trim()));
   }
 
   /**

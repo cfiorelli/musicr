@@ -485,8 +485,8 @@ export class SongMatchingService {
 
       for (const song of songsWithEmbeddings) {
         if (song.embedding) {
-          // Convert PostgreSQL vector to number array
-          const songEmbedding = this.parseEmbedding(song.embedding);
+          // embedding is now stored as JSONB array
+          const songEmbedding = Array.isArray(song.embedding) ? song.embedding as number[] : this.parseEmbedding(song.embedding);
           const similarity = cosineSimilarity(textEmbedding, songEmbedding);
           
           if (similarity >= this.MIN_SIMILARITY_THRESHOLD) {
@@ -638,16 +638,21 @@ export class SongMatchingService {
   }
 
   /**
-   * Parse embedding from PostgreSQL vector type
+   * Parse embedding from JSONB format (fallback for legacy data)
    */
   private parseEmbedding(embedding: any): number[] {
-    // Handle different possible formats from PostgreSQL
+    // JSONB should already be parsed as array, but handle string format as fallback
     if (Array.isArray(embedding)) return embedding;
     if (typeof embedding === 'string') {
-      // Parse vector string format "[1,2,3]" or "1,2,3"
-      const cleaned = embedding.replace(/[\[\]]/g, '');
-      return cleaned.split(',').map((s: string) => parseFloat(s.trim()));
+      try {
+        const parsed = JSON.parse(embedding);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        // Parse vector string format "[1,2,3]" or "1,2,3"
+        const cleaned = embedding.replace(/[\[\]]/g, '');
+        return cleaned.split(',').map((s: string) => parseFloat(s.trim()));
+      }
     }
-    throw new Error('Unknown embedding format');
+    return [];
   }
 }
