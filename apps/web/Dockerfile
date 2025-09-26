@@ -55,8 +55,9 @@ RUN addgroup -g 1001 -S nodejs && \
 # Set working directory
 WORKDIR /app
 
-# Copy package files
-COPY --chown=musicr:nodejs package.json pnpm-lock.yaml ./
+# Copy package files from builder stage (avoids path issues with Railway root directory)
+COPY --from=builder --chown=musicr:nodejs /app/package.json /app/pnpm-lock.yaml ./
+COPY --from=builder --chown=musicr:nodejs /app/apps/web/package.json ./apps/web/
 
 # Install pnpm
 RUN corepack enable pnpm
