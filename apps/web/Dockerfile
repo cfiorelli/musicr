@@ -63,7 +63,8 @@ COPY --from=builder --chown=musicr:nodejs /app/package.json ./
 RUN corepack enable pnpm
 
 # Install only production dependencies plus vite for preview
-RUN pnpm install --frozen-lockfile --prod=true && \
+# Note: No pnpm-lock.yaml in runtime stage, so can't use --frozen-lockfile
+RUN pnpm install --prod=true && \
     pnpm add vite@^5.0.0 --prod=false
 
 # Copy built application
