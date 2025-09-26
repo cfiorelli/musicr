@@ -148,6 +148,10 @@ fastify.post('/api/map', async (request, reply) => {
 
 async function start() {
   try {
+    // Load configuration first (lazy loading)
+    const { loadConfig } = await import('./config/index.js');
+    loadConfig();
+
     // Check port availability first
     const port = Number(process.env.PORT) || 4000;
     const host = '0.0.0.0';

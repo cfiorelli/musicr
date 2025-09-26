@@ -36,8 +36,33 @@ function getDatabaseUrl(): string {
   throw new Error('DATABASE_URL is not set and cannot be constructed from Railway PostgreSQL environment variables');
 }
 
-// Parse environment variables
-const rawEnv = { ...process.env };
-rawEnv.DATABASE_URL = getDatabaseUrl();
+// Lazy-loaded environment configuration - doesn't throw at import time
+let cachedEnv: ReturnType<typeof envSchema.parse> | null = null;
 
-export const env = envSchema.parse(rawEnv);
+export function loadServerEnv() {
+  if (cachedEnv) {
+    return cachedEnv;
+  }
+
+  try {
+    // Parse environment variables
+    const rawEnv = { ...process.env };
+    rawEnv.DATABASE_URL = getDatabaseUrl();
+
+    cachedEnv = envSchema.parse(rawEnv);
+    return cachedEnv;
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      throw new Error('Missing/invalid server env: ' + JSON.stringify(error.format()));
+    }
+    throw error;
+  }
+}
+
+// For backward compatibility, export a getter that loads on demand
+export const env = new Proxy({} as ReturnType<typeof envSchema.parse>, {
+  get(_target, prop) {
+    const loadedEnv = loadServerEnv();
+    return loadedEnv[prop as keyof typeof loadedEnv];
+  }
+});
