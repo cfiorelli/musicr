@@ -67,17 +67,20 @@ RUN corepack enable pnpm
 RUN pnpm install --prod=true && \
     pnpm add vite@^5.0.0 --prod=false
 
-# Copy built application
+# Copy built application and config files
 COPY --from=builder --chown=musicr:nodejs /app/dist ./dist
-COPY --from=builder --chown=musicr:nodejs /app/vite.config.ts ./
 COPY --from=builder --chown=musicr:nodejs /app/index.html ./
+
+# Create a simple vite config for preview mode (avoid file permission issues)
+RUN echo 'export default { server: { host: "0.0.0.0" }, preview: { host: "0.0.0.0" } }' > vite.config.js && \
+    chown musicr:nodejs vite.config.js
+
+# Switch to non-root user BEFORE setting up files to avoid permission issues
+USER musicr
 
 # Health check for web service
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
     CMD ["sh", "-c", "curl -f http://localhost:${PORT:-5173}/ || exit 1"]
-
-# Switch to non-root user
-USER musicr
 
 # Expose default preview port
 EXPOSE 5173
@@ -91,4 +94,5 @@ ENV PORT=5173
 ENTRYPOINT ["dumb-init", "--"]
 
 # Start with Vite preview mode, respecting Railway-provided PORT
-CMD ["sh", "-c", "pnpm vite preview --host 0.0.0.0 --port ${PORT:-5173}"]
+# Use exec form to properly handle environment variable substitution
+CMD ["sh", "-c", "exec pnpm vite preview --host 0.0.0.0 --port \"$PORT\""]
