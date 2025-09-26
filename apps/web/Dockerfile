@@ -67,12 +67,16 @@ RUN corepack enable pnpm
 # Note: No pnpm-lock.yaml in runtime stage, so can't use --frozen-lockfile
 RUN pnpm install --prod=true
 
-# Copy built application and config files
+# Copy built application, config files, and start script
 COPY --from=builder --chown=musicr:nodejs /app/dist ./dist
 COPY --from=builder --chown=musicr:nodejs /app/index.html ./
+COPY --from=builder --chown=musicr:nodejs /app/start-server.sh ./start-server.sh
 
 # Switch to non-root user BEFORE setting up files to avoid permission issues
 USER musicr
+
+# Make start script executable
+RUN chmod +x ./start-server.sh
 
 # Create a writable cache directory for Vite
 RUN mkdir -p /tmp/vite-cache && chmod 755 /tmp/vite-cache
@@ -92,6 +96,6 @@ ENV PORT=5173
 # Use dumb-init for proper signal handling
 ENTRYPOINT ["dumb-init", "--"]
 
-# Use serve directly instead of npm script to avoid Railway argument conflicts
-# serve is more reliable for production static file serving
-CMD ["sh", "-c", "exec pnpm exec serve -s dist -l tcp://0.0.0.0:${PORT:-5173}"]
+# Use custom start script that ignores Railway's extra arguments
+# This prevents "Please provide one path argument at maximum" error
+CMD ["./start-server.sh"]
