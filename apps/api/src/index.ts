@@ -338,7 +338,7 @@ fastify.get('/api/admin/analytics', async (_, reply) => {
       failureReasons: Object.entries(failureReasons)
         .sort(([, a], [, b]) => b - a)
         .map(([reason, count]) => ({ reason, count })),
-      popularSongs: popularSongs.filter(song => song)
+      popularSongs: popularSongs.filter((song: any) => song)
     };
 
     return reply.send(analytics);

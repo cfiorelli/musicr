@@ -1,0 +1,27 @@
+[build]
+builder = "NIXPACKS"
+
+[build.nixpacksPlan.phases.setup]
+cmds = [
+  "npm install -g pnpm@8.15.5",
+  "pnpm install --frozen-lockfile"
+]
+
+[build.nixpacksPlan.phases.install]
+cmds = [
+  "cd apps/api && pnpm prisma generate"
+]
+
+[build.nixpacksPlan.phases.build]
+cmds = [
+  "cd apps/api && pnpm run build"
+]
+
+[deploy]
+startCommand = "cd apps/api && pnpm start"
+healthcheckPath = "/health"
+healthcheckTimeout = 300
+restartPolicyType = "ON_FAILURE"
+
+[databases.postgres]
+database = "musicr"
