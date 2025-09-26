@@ -30,7 +30,7 @@ LABEL stage=builder
 
 # Copy source code
 COPY apps/web ./apps/web
-COPY packages ./packages
+COPY shared ./shared
 COPY tsconfig.json ./
 
 # Set environment for build
@@ -74,12 +74,12 @@ COPY --from=builder --chown=musicr:nodejs /app/apps/web/index.html ./apps/web/
 
 # Health check for web service
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
-    CMD curl -f http://localhost:5173/ || exit 1
+    CMD ["sh", "-c", "curl -f http://localhost:${PORT:-5173}/ || exit 1"]
 
 # Switch to non-root user
 USER musicr
 
-# Expose port
+# Expose default preview port
 EXPOSE 5173
 
 # Set environment variables
@@ -90,5 +90,5 @@ ENV PORT=5173
 # Use dumb-init for proper signal handling
 ENTRYPOINT ["dumb-init", "--"]
 
-# Start with Vite preview mode
-CMD ["sh", "-c", "cd apps/web && pnpm vite preview --host 0.0.0.0 --port 5173"]
+# Start with Vite preview mode, respecting Railway-provided PORT
+CMD ["sh", "-c", "cd apps/web && pnpm vite preview --host 0.0.0.0 --port ${PORT:-5173}"]
