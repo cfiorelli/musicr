@@ -4,10 +4,25 @@
  * Provides debugging and search functionality for songs using various strategies
  */
 
-import { PrismaClient, Song } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import { logger } from '../config/index.js';
 import { SearchRequest, SearchResult } from '../schemas/api.js';
 import { getEmbeddingService, cosineSimilarity } from '../embeddings/index.js';
+
+// Define Song type based on schema
+interface Song {
+  id: string;
+  title: string;
+  artist: string;
+  year: number | null;
+  popularity: number;
+  tags: string[];
+  phrases: string[];
+  mbid: string | null;
+  embedding?: unknown;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 export class SongSearchService {
   private prisma: PrismaClient;
@@ -129,7 +144,7 @@ export class SongSearchService {
     });
 
     return songs.map(song => {
-      const matchingPhrases = song.phrases.filter(phrase => 
+      const matchingPhrases = song.phrases.filter((phrase: string) => 
         phrases.some(queryPhrase => 
           phrase.toLowerCase().includes(queryPhrase.toLowerCase()) ||
           queryPhrase.toLowerCase().includes(phrase.toLowerCase())

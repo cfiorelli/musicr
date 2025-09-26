@@ -6,11 +6,19 @@
  * and persists userId in HttpOnly cookies for 1 year.
  */
 
-import { PrismaClient, User } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { createHash } from 'crypto';
 import { generateAnonHandle } from '../utils/anon-handle.js';
 import { logger } from '../config/index.js';
+
+// Define User type based on schema
+interface User {
+  id: string;
+  anonHandle: string;
+  ipHash: string;
+  createdAt: Date;
+}
 
 interface UserSession {
   userId: string;

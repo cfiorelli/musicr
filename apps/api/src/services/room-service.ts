@@ -5,8 +5,16 @@
  * Ensures default 'main' room exists for MVP functionality.
  */
 
-import { PrismaClient, Room } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import { logger } from '../config/index.js';
+
+// Define Room type based on schema
+interface Room {
+  id: string;
+  name: string;
+  allowExplicit: boolean;
+  createdAt: Date;
+}
 
 export class RoomService {
   private prisma: PrismaClient;

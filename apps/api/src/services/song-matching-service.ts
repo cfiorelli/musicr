@@ -6,11 +6,26 @@
  * with alternates and reasoning.
  */
 
-import { PrismaClient, Song } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import { logger } from '../config/index.js';
 import { getEmbeddingService, cosineSimilarity } from '../embeddings/index.js';
 import { phraseLexicon } from './phrase-lexicon-service.js';
 import { moderationService, ModerationConfig } from './moderation-service.js';
+
+// Define Song type based on schema
+interface Song {
+  id: string;
+  title: string;
+  artist: string;
+  year: number | null;
+  popularity: number;
+  tags: string[];
+  phrases: string[];
+  mbid: string | null;
+  embedding?: unknown;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 interface SongMatch {
   song: Song;
@@ -428,7 +443,7 @@ export class SongMatchingService {
       });
 
       for (const song of songs) {
-        const matchingPhrases = song.phrases.filter(phrase => 
+        const matchingPhrases = song.phrases.filter((phrase: string) => 
           text.toLowerCase().includes(phrase.toLowerCase()) ||
           phrase.toLowerCase().includes(text.toLowerCase())
         );
@@ -512,7 +527,7 @@ export class SongMatchingService {
       take: 5
     });
 
-    return songs.map(song => ({
+    return songs.map((song: Song) => ({
       song,
       score: 0.5 + (song.popularity / 100) * 0.3,
       reason: {
@@ -531,7 +546,7 @@ export class SongMatchingService {
       take: 3
     });
 
-    return songs.map(song => ({
+    return songs.map((song: Song) => ({
       song,
       score: 0.3 + (song.popularity / 100) * 0.2,
       reason: {
