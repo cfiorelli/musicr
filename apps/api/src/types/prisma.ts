@@ -1,6 +1,7 @@
 /**
  * Prisma type definitions
  * Manually defined based on schema to ensure type safety
+ * Updated: 2025-09-26 - Force Railway rebuild
  */
 
 // Base model types
