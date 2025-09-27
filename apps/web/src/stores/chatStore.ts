@@ -275,7 +275,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
                 joinedAt: new Date().toISOString()
               });
             }
-            get().fetchRoomUsers();
+            // Removed fetchRoomUsers() call to prevent overwriting WebSocket state
             
             // Set up periodic user list validation (every 120 seconds)
             // Only sync if we suspect we're missing users or have connectivity issues
