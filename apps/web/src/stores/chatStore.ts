@@ -5,6 +5,12 @@ function generateId() {
   return 'msg_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
 }
 
+export interface RoomUser {
+  userId: string;
+  handle: string;
+  joinedAt: string;
+}
+
 export interface Message {
   id: string;
   content: string;
@@ -36,6 +42,7 @@ export interface ChatState {
   familyFriendly: boolean;
   selectedMessage: string | null;
   alternates: Message['alternates'];
+  roomUsers: RoomUser[];
   
   connect: () => void;
   disconnect: () => void;
@@ -45,6 +52,9 @@ export interface ChatState {
   setFamilyFriendly: (value: boolean) => void;
   selectAlternate: (messageId: string, alternate: NonNullable<Message['alternates']>[0]) => void;
   getUserSession: () => Promise<void>;
+  fetchRoomUsers: () => Promise<void>;
+  addRoomUser: (user: RoomUser) => void;
+  removeRoomUser: (userId: string) => void;
 }
 
 // Derive URLs dynamically so the app works from localhost or LAN IPs
@@ -88,6 +98,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
   familyFriendly: true,
   selectedMessage: null,
   alternates: [],
+  roomUsers: [],
 
   getUserSession: async () => {
     try {
@@ -100,6 +111,31 @@ export const useChatStore = create<ChatState>((set, get) => ({
       console.error('Error getting user session:', error);
       set({ userHandle: 'anonymous-user-123' }); // fallback
     }
+  },
+
+  fetchRoomUsers: async () => {
+    try {
+      const { currentRoom } = get();
+      const response = await fetch(`${API_URL}/rooms/${currentRoom}/users`, {
+        credentials: 'include'
+      });
+      const data = await response.json();
+      set({ roomUsers: data.users });
+    } catch (error) {
+      console.error('Error fetching room users:', error);
+    }
+  },
+
+  addRoomUser: (user: RoomUser) => {
+    set((state) => ({
+      roomUsers: [...state.roomUsers.filter(u => u.userId !== user.userId), user]
+    }));
+  },
+
+  removeRoomUser: (userId: string) => {
+    set((state) => ({
+      roomUsers: state.roomUsers.filter(u => u.userId !== userId)
+    }));
   },
 
   connect: () => {
@@ -156,20 +192,61 @@ export const useChatStore = create<ChatState>((set, get) => ({
               console.log('No optimistic message found to update');
             }
           } else if (data.type === 'display') {
-            // Message from another user
+            // Message from another user or historical message
             const message: Message = {
-              id: generateId(),
+              id: data.id || generateId(), // Use server ID if available
               content: data.originalText,
               songTitle: data.primary?.title,
               songArtist: data.primary?.artist,
               songYear: data.primary?.year,
               alternates: data.alternates,
-              reasoning: data.why?.reasoning || data.why?.matchedPhrase,
-              timestamp: new Date().toISOString(),
+              reasoning: data.why?.reasoning || data.why?.matchedPhrase || data.why,
+              timestamp: data.timestamp || new Date().toISOString(),
               userId: data.userId,
               anonHandle: data.anonHandle,
             };
-            get().addMessage(message);
+            
+            // For historical messages, add them in order without duplicating
+            if (data.isHistorical) {
+              // Check if we already have this message to avoid duplicates
+              const { messages } = get();
+              const exists = messages.find(m => m.timestamp === message.timestamp && m.content === message.content);
+              if (!exists) {
+                // Insert historical messages in chronological order
+                set((state) => {
+                  const newMessages = [...state.messages, message];
+                  return {
+                    messages: newMessages.sort((a, b) => 
+                      new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+                    )
+                  };
+                });
+              }
+            } else {
+              // Live message - add normally
+              get().addMessage(message);
+            }
+          } else if (data.type === 'connected') {
+            // Connection confirmation - update user handle and fetch room users
+            set({ userHandle: data.anonHandle });
+            console.log('Connected to room:', data.roomName, 'as', data.anonHandle);
+            
+            // Fetch current room users
+            get().fetchRoomUsers();
+          } else if (data.type === 'user_joined') {
+            // New user joined the room
+            const { addRoomUser } = get();
+            addRoomUser({
+              userId: data.user.id,
+              handle: data.user.handle,
+              joinedAt: data.timestamp
+            });
+            console.log('User joined:', data.user.handle);
+          } else if (data.type === 'user_left') {
+            // User left the room
+            const { removeRoomUser } = get();
+            removeRoomUser(data.user.id);
+            console.log('User left:', data.user.handle);
           } else if (data.type === 'moderation_notice') {
             // Content was moderated - show notice to sender
             const moderationMessage: Message = {

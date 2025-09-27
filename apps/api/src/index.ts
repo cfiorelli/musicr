@@ -744,6 +744,102 @@ fastify.post('/api/admin/seed', async (request, reply) => {
   }
 });
 
+// GET /api/rooms/:roomId/messages - Fetch recent messages for a room
+fastify.get<{
+  Params: { roomId: string };
+  Querystring: { limit?: string; before?: string };
+}>('/api/rooms/:roomId/messages', async (request, reply) => {
+  const { roomId } = request.params;
+  const limit = Math.min(parseInt(request.query.limit || '50'), 100); // Max 100 messages
+  const before = request.query.before; // For pagination
+
+  try {
+    const messages = await prisma.message.findMany({
+      where: {
+        roomId: roomId
+      },
+      include: {
+        user: {
+          select: {
+            anonHandle: true
+          }
+        },
+        song: {
+          select: {
+            title: true,
+            artist: true,
+            year: true
+          }
+        }
+      },
+      orderBy: {
+        createdAt: 'desc'
+      },
+      take: limit,
+      ...(before && {
+        cursor: {
+          id: before
+        },
+        skip: 1
+      })
+    });
+
+    // Reverse to get chronological order (oldest first)
+    const messagesWithDisplay = messages.reverse().map(msg => ({
+      id: msg.id,
+      type: 'display',
+      originalText: msg.text,
+      userId: msg.userId,
+      anonHandle: msg.user.anonHandle,
+      primary: msg.scores ? (msg.scores as any).primary : null,
+      alternates: msg.scores ? (msg.scores as any).alternates : [],
+      why: msg.scores ? `Matched using ${(msg.scores as any).strategy}` : '',
+      timestamp: msg.createdAt.toISOString(),
+      chosenSong: msg.song ? {
+        title: msg.song.title,
+        artist: msg.song.artist,
+        year: msg.song.year
+      } : null
+    }));
+
+    return {
+      messages: messagesWithDisplay,
+      hasMore: messages.length === limit,
+      oldestId: messages.length > 0 ? messages[0].id : null
+    };
+
+  } catch (error) {
+    logger.error({ error, roomId }, 'Failed to fetch room messages');
+    reply.status(500).send({ error: 'Failed to fetch messages' });
+  }
+});
+
+// GET /api/rooms/:roomId/users - Get current users in a room
+fastify.get<{
+  Params: { roomId: string };
+}>('/api/rooms/:roomId/users', async (request, reply) => {
+  const { roomId } = request.params;
+
+  try {
+    const roomStats = connectionManager.getRoomStats(roomId);
+    
+    return {
+      roomId,
+      users: roomStats.connections.map(conn => ({
+        userId: conn.userId,
+        handle: conn.handle,
+        joinedAt: conn.joinedAt
+      })),
+      totalUsers: roomStats.uniqueUsers,
+      totalConnections: roomStats.connectionCount
+    };
+
+  } catch (error) {
+    logger.error({ error, roomId }, 'Failed to fetch room users');
+    reply.status(500).send({ error: 'Failed to fetch room users' });
+  }
+});
+
 // Simple test endpoint to verify API is working
 fastify.get('/api/test-simple', async (_, reply) => {
   return reply.send({ 
@@ -901,6 +997,76 @@ fastify.register(async function (fastify) {
         roomId: defaultRoom.id,
         isNewUser: userSession.isNew
       }, 'WebSocket connection established');
+
+      // Send recent message history to new connection
+      try {
+        const recentMessages = await prisma.message.findMany({
+          where: {
+            roomId: defaultRoom.id
+          },
+          include: {
+            user: {
+              select: {
+                anonHandle: true
+              }
+            },
+            song: {
+              select: {
+                title: true,
+                artist: true,
+                year: true
+              }
+            }
+          },
+          orderBy: {
+            createdAt: 'desc'
+          },
+          take: 20
+        });
+
+        // Send messages in chronological order (oldest first)
+        const messagesToSend = recentMessages.reverse().map(msg => ({
+          type: 'display',
+          originalText: msg.text,
+          userId: msg.userId,
+          anonHandle: msg.user.anonHandle,
+          primary: msg.scores ? (msg.scores as any).primary : null,
+          alternates: msg.scores ? (msg.scores as any).alternates : [],
+          why: msg.scores ? `Matched using ${(msg.scores as any).strategy}` : '',
+          timestamp: msg.createdAt.toISOString(),
+          isHistorical: true // Flag to indicate this is history, not live
+        }));
+
+        // Send each historical message
+        messagesToSend.forEach(msg => {
+          connection.send(JSON.stringify(msg));
+        });
+
+        // Send connection confirmation after history
+        connection.send(JSON.stringify({
+          type: 'connected',
+          userId: userSession.userId,
+          anonHandle: userSession.anonHandle,
+          roomId: defaultRoom.id,
+          roomName: defaultRoom.name,
+          allowExplicit: defaultRoom.allowExplicit,
+          timestamp: new Date().toISOString()
+        }));
+
+      } catch (error) {
+        logger.error({ error, roomId: defaultRoom.id }, 'Failed to send message history');
+        
+        // Still send connection confirmation even if history fails
+        connection.send(JSON.stringify({
+          type: 'connected',
+          userId: userSession.userId,
+          anonHandle: userSession.anonHandle,
+          roomId: defaultRoom.id,
+          roomName: defaultRoom.name,
+          allowExplicit: defaultRoom.allowExplicit,
+          timestamp: new Date().toISOString()
+        }));
+      }
 
       // Handle incoming messages
       connection.on('message', async (rawMessage: Buffer) => {

@@ -95,7 +95,7 @@ const ChatInterface = () => {
   );
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="w-full">
       {/* Header with Room and Handle */}
       <div className="bg-white/10 backdrop-blur-md rounded-lg p-4 mb-4 flex justify-between items-center">
         <div>

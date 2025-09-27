@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import { useChatStore } from './stores/chatStore';
 import ChatInterface from './components/ChatInterface';
+import RoomUserList from './components/RoomUserList';
 import AdminDashboard from './components/AdminDashboard';
 
 function HomePage() {
@@ -47,7 +48,17 @@ function HomePage() {
           </div>
         </header>
         
-        <ChatInterface />
+        <div className="flex gap-6">
+          {/* Main chat area */}
+          <div className="flex-1">
+            <ChatInterface />
+          </div>
+          
+          {/* Sidebar with room users */}
+          <div className="w-80">
+            <RoomUserList />
+          </div>
+        </div>
       </div>
     </div>
   );
