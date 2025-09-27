@@ -64,7 +64,7 @@ export class ModerationService {
     this.nsfwKeywords = new Set([
       'porn', 'sex', 'xxx', 'nude', 'naked', 'dick', 'penis',
       'vagina', 'pussy', 'cock', 'fuck', 'fucking', 'orgasm',
-      'masturbate', 'horny', 'sexy time', 'blow job', 'blowjob'
+      'masturbate', 'horny', 'sexy', 'sexy time', 'blow job', 'blowjob'
     ]);
   }
 

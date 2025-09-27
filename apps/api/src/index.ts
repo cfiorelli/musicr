@@ -1070,7 +1070,7 @@ fastify.register(async function (fastify) {
 
               const filteredDisplayMessage = {
                 type: 'display',
-                originalText: messageData.text, // What user typed (same as original in this context)
+                originalText: songMatchResult.moderated.replacementText, // Show the filtered replacement text
                 userId: userSession.userId,
                 anonHandle: userSession.anonHandle,
                 primary: songMatchResult.primary,
