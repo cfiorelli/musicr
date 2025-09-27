@@ -554,6 +554,15 @@ fastify.get('/api/admin/analytics', async (_, reply) => {
     const usersCount = await prisma.user.count();
     const messagesCount = await prisma.message.count();
     
+    // Get unique IP count for more meaningful user metrics
+    const uniqueIPs = await prisma.user.groupBy({
+      by: ['ipHash'],
+      _count: {
+        ipHash: true
+      }
+    });
+    const uniqueDevicesCount = uniqueIPs.length;
+    
     // Get recent messages with song matching results
     const recentMessages = await prisma.message.findMany({
       take: 10,
@@ -577,6 +586,7 @@ fastify.get('/api/admin/analytics', async (_, reply) => {
       summary: {
         totalSongs: songsCount,
         totalUsers: usersCount,
+        uniqueDevices: uniqueDevicesCount,
         totalMappings: messagesCount,
         successfulMappings: messagesWithScores.length,
         successRate: messagesCount > 0 ? (messagesWithScores.length / messagesCount) * 100 : 0,
