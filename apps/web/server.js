@@ -52,7 +52,11 @@ const server = createServer((req, res) => {
   }
 
   let filePath = req.url === '/' ? '/index.html' : req.url;
-  const fullPath = join(DIST_DIR, filePath);
+  
+  // Remove query parameters and fragments
+  filePath = filePath.split('?')[0].split('#')[0];
+  
+  let fullPath = join(DIST_DIR, filePath);
 
   // Security check - ensure we're serving from dist directory
   if (!fullPath.startsWith(DIST_DIR)) {
@@ -64,7 +68,8 @@ const server = createServer((req, res) => {
   // If file doesn't exist and it's not a file with extension, serve index.html (SPA support)
   if (!existsSync(fullPath)) {
     if (!extname(filePath)) {
-      filePath = '/index.html';
+      // This is likely a client-side route, serve index.html
+      fullPath = join(DIST_DIR, 'index.html');
     } else {
       res.writeHead(404);
       res.end('Not Found');
@@ -72,31 +77,30 @@ const server = createServer((req, res) => {
     }
   }
 
-  const finalPath = join(DIST_DIR, filePath);
-  
   try {
-    if (!existsSync(finalPath)) {
+    if (!existsSync(fullPath)) {
       res.writeHead(404);
       res.end('Not Found');
       return;
     }
 
-    const stat = statSync(finalPath);
+    const stat = statSync(fullPath);
     if (stat.isDirectory()) {
       res.writeHead(404);
       res.end('Not Found');
       return;
     }
 
-    const ext = extname(finalPath);
+    const ext = extname(fullPath);
     const contentType = MIME_TYPES[ext] || 'application/octet-stream';
     
-    const content = readFileSync(finalPath);
+    const content = readFileSync(fullPath);
     
     res.writeHead(200, { 'Content-Type': contentType });
     res.end(content);
   } catch (error) {
     console.error('Error serving file:', error);
+    console.error('Attempted path:', fullPath);
     res.writeHead(500);
     res.end('Internal Server Error');
   }
