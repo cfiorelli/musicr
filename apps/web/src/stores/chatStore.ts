@@ -220,6 +220,25 @@ export const useChatStore = create<ChatState>((set, get) => ({
             } else {
               console.log('No optimistic message found to update');
             }
+          } else if (data.primary && !data.type) {
+            // Direct song mapping response (for user's own message)
+            const { messages, updateMessage } = get();
+            const lastUserMessage = messages.filter(m => m.userId === 'user').pop();
+            console.log('Received song mapping response for user message:', lastUserMessage);
+            
+            if (lastUserMessage && lastUserMessage.isOptimistic) {
+              console.log('Updating optimistic message with song mapping:', data);
+              updateMessage(lastUserMessage.id, {
+                songTitle: data.primary?.title,
+                songArtist: data.primary?.artist,
+                songYear: data.primary?.year,
+                alternates: data.alternates,
+                reasoning: data.why?.reasoning || data.why?.matchedPhrase || data.why,
+                isOptimistic: false
+              });
+            } else {
+              console.log('No optimistic message found to update with song mapping');
+            }
           } else if (data.type === 'display') {
             // Message from another user or historical message
             const message: Message = {
