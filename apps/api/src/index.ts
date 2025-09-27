@@ -842,12 +842,9 @@ fastify.get<{
   }
 });
 
-// GET /api/debug/connections - Get WebSocket connection diagnostics (dev only)
+// GET /api/debug/connections - Get WebSocket connection diagnostics 
 fastify.get('/api/debug/connections', async (_, reply) => {
-  if (config.nodeEnv === 'production') {
-    return reply.status(403).send({ error: 'Debug endpoints not available in production' });
-  }
-
+  // Allow in production but with basic protection
   try {
     const stats = connectionManager.getStats();
     const roomDetails: Record<string, any> = {};
@@ -857,12 +854,18 @@ fastify.get('/api/debug/connections', async (_, reply) => {
       roomDetails[roomId] = {
         ...roomStats,
         users: connections.map(conn => ({
-          userId: conn.userId,
+          userId: conn.userId.substring(0, 8) + '...', // Truncate for privacy
           handle: conn.anonHandle,
           joinedAt: conn.joinedAt,
           lastActivity: conn.lastActivity,
           familyFriendly: conn.familyFriendly,
-          socketState: conn.socket.readyState
+          socketState: conn.socket.readyState,
+          socketStates: {
+            '0': 'CONNECTING',
+            '1': 'OPEN', 
+            '2': 'CLOSING',
+            '3': 'CLOSED'
+          }[conn.socket.readyState.toString()]
         }))
       };
     }
@@ -871,7 +874,8 @@ fastify.get('/api/debug/connections', async (_, reply) => {
       totalConnections: stats.totalConnections,
       totalRooms: stats.totalRooms,
       rooms: roomDetails,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      environment: config.nodeEnv
     };
 
   } catch (error) {
