@@ -533,6 +533,41 @@ fastify.get('/api/songs/search', async (request, reply) => {
   }
 });
 
+// GET /api/admin/analytics - Admin dashboard data (development only)
+fastify.get('/api/admin/analytics', async (_, reply) => {
+  // Only allow in development
+  if (config.nodeEnv === 'production') {
+    return reply.code(403).send({ error: 'Admin dashboard not available in production' });
+  }
+  
+  try {
+    // Get connection statistics
+    const stats = connectionManager.getStats();
+    
+    const analytics = {
+      connections: {
+        total: stats.totalConnections,
+        byRoom: stats.roomStats
+      },
+      database: {
+        status: 'connected',
+        tables: ['users', 'songs', 'rooms', 'phrases']
+      },
+      server: {
+        uptime: process.uptime(),
+        memory: process.memoryUsage(),
+        nodeVersion: process.version
+      },
+      timestamp: new Date().toISOString()
+    };
+    
+    return reply.send(analytics);
+  } catch (error) {
+    logger.error({ error }, 'Error fetching admin analytics');
+    return reply.code(500).send({ error: 'Failed to fetch analytics' });
+  }
+});
+
 // WebSocket route for real-time chat
 fastify.register(async function (fastify) {
   fastify.get('/ws', { websocket: true }, async (connection, req) => {
