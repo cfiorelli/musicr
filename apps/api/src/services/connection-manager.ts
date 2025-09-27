@@ -66,7 +66,10 @@ export class ConnectionManager {
     this.connections.set(connectionId, connection);
     this.userConnections.set(userId, connectionId);
 
-    // Add to room first
+    // Get existing users BEFORE adding to room to avoid including self
+    const existingConnections = this.getRoomConnections(roomId);
+    
+    // Add to room AFTER getting existing connections
     if (!this.roomConnections.has(roomId)) {
       this.roomConnections.set(roomId, new Set());
     }
@@ -80,26 +83,31 @@ export class ConnectionManager {
       userId,
       anonHandle,
       roomId,
+      existingUsersCount: existingConnections.length,
       totalConnections: this.connections.size,
       roomConnectionCount: this.roomConnections.get(roomId)?.size || 0
     }, 'WebSocket connection added');
 
-    // Send current room state to the new connection first
-    const existingUsers = this.getRoomConnections(roomId)
-      .filter(conn => conn.id !== connectionId) // Don't include self
-      .map(conn => ({
-        type: 'user_joined',
-        user: {
-          id: conn.userId,
-          handle: conn.anonHandle
-        },
-        timestamp: new Date().toISOString()
-      }));
-
-    // Send existing users to new connection
-    existingUsers.forEach(userEvent => {
-      this.sendToConnection(connectionId, userEvent);
-    });
+    // Send existing users to the new connection
+    if (existingConnections.length > 0) {
+      logger.info({
+        connectionId,
+        existingUsers: existingConnections.map(c => c.anonHandle)
+      }, 'Sending existing users to new connection');
+      
+      existingConnections.forEach(conn => {
+        this.sendToConnection(connectionId, {
+          type: 'user_joined',
+          user: {
+            id: conn.userId,
+            handle: conn.anonHandle
+          },
+          timestamp: conn.joinedAt.toISOString()
+        });
+      });
+    } else {
+      logger.info({ connectionId }, 'No existing users to send to new connection');
+    }
 
     // Notify ALL users in the room about the new user (including the new user themselves)
     this.broadcastToRoom(roomId, {

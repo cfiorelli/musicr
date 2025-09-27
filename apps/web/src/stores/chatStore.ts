@@ -259,8 +259,10 @@ export const useChatStore = create<ChatState>((set, get) => ({
             // Connection confirmation - update user handle and fetch room users
             set({ userHandle: data.anonHandle });
             console.log('Connected to room:', data.roomName, 'as', data.anonHandle);
+            console.log('Current users before API fetch:', get().roomUsers.length);
             
-            // Fetch current room users
+            // Fetch current room users from API
+            get().fetchRoomUsers();
             get().fetchRoomUsers();
             
             // Set up periodic user list validation (every 60 seconds)
@@ -282,12 +284,13 @@ export const useChatStore = create<ChatState>((set, get) => ({
           } else if (data.type === 'user_joined') {
             // New user joined the room
             const { addRoomUser } = get();
-            addRoomUser({
+            const newUser = {
               userId: data.user.id,
               handle: data.user.handle,
               joinedAt: data.timestamp
-            });
-            console.log('User joined:', data.user.handle);
+            };
+            addRoomUser(newUser);
+            console.log('User joined:', data.user.handle, 'Total users now:', get().roomUsers.length);
           } else if (data.type === 'user_left') {
             // User left the room
             const { removeRoomUser } = get();
