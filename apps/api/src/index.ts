@@ -535,9 +535,14 @@ fastify.get('/api/songs/search', async (request, reply) => {
 
 // GET /api/admin/analytics - Admin dashboard data (development only)
 fastify.get('/api/admin/analytics', async (_, reply) => {
-  // Only allow in development
-  if (config.nodeEnv === 'production') {
-    return reply.code(403).send({ error: 'Admin dashboard not available in production' });
+  // Allow in Railway development/staging deployments, block in true production
+  // (You can add more specific logic here later, like API key authentication)
+  const isBlockedProduction = config.nodeEnv === 'production' && 
+                               !process.env.RAILWAY_ENVIRONMENT &&
+                               process.env.NODE_ENV === 'production';
+  
+  if (isBlockedProduction) {
+    return reply.code(403).send({ error: 'Admin dashboard not available in this environment' });
   }
   
   try {

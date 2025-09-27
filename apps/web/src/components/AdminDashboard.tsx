@@ -54,7 +54,7 @@ function AdminDashboard() {
   const fetchAnalytics = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/admin/analytics');
+      const response = await fetch('https://musicrapi-production.up.railway.app/api/admin/analytics');
       
       if (!response.ok) {
         if (response.status === 403) {
