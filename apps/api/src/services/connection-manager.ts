@@ -80,8 +80,26 @@ export class ConnectionManager {
       userId,
       anonHandle,
       roomId,
-      totalConnections: this.connections.size
+      totalConnections: this.connections.size,
+      roomConnectionCount: this.roomConnections.get(roomId)?.size || 0
     }, 'WebSocket connection added');
+
+    // Send current room state to the new connection first
+    const existingUsers = this.getRoomConnections(roomId)
+      .filter(conn => conn.id !== connectionId) // Don't include self
+      .map(conn => ({
+        type: 'user_joined',
+        user: {
+          id: conn.userId,
+          handle: conn.anonHandle
+        },
+        timestamp: new Date().toISOString()
+      }));
+
+    // Send existing users to new connection
+    existingUsers.forEach(userEvent => {
+      this.sendToConnection(connectionId, userEvent);
+    });
 
     // Notify ALL users in the room about the new user (including the new user themselves)
     this.broadcastToRoom(roomId, {
@@ -101,7 +119,10 @@ export class ConnectionManager {
    */
   removeConnection(connectionId: string): void {
     const connection = this.connections.get(connectionId);
-    if (!connection) return;
+    if (!connection) {
+      logger.debug({ connectionId }, 'Attempted to remove non-existent connection');
+      return;
+    }
 
     // Remove from room
     const roomConnections = this.roomConnections.get(connection.roomId);
@@ -123,18 +144,26 @@ export class ConnectionManager {
       userId: connection.userId,
       anonHandle: connection.anonHandle,
       roomId: connection.roomId,
-      totalConnections: this.connections.size
+      totalConnections: this.connections.size,
+      remainingInRoom: roomConnections?.size || 0
     }, 'WebSocket connection removed');
 
     // Notify room about user leaving
-    this.broadcastToRoom(connection.roomId, {
+    const leaveEvent = {
       type: 'user_left',
       user: {
         id: connection.userId,
         handle: connection.anonHandle
       },
       timestamp: new Date().toISOString()
-    });
+    };
+    
+    const sentCount = this.broadcastToRoom(connection.roomId, leaveEvent);
+    logger.debug({
+      userId: connection.userId,
+      handle: connection.anonHandle,
+      sentToUsers: sentCount
+    }, 'User leave event broadcasted');
   }
 
   /**
@@ -409,22 +438,35 @@ export class ConnectionManager {
    */
   private cleanupStaleConnections(): void {
     const now = new Date();
-    const staleThreshold = 5 * 60 * 1000; // 5 minutes
+    const staleThreshold = 10 * 60 * 1000; // Increased to 10 minutes to be less aggressive
     const staleConnections: string[] = [];
+    const deadConnections: string[] = [];
 
     for (const [connectionId, connection] of this.connections) {
       const timeSinceActivity = now.getTime() - connection.lastActivity.getTime();
       
-      if (timeSinceActivity > staleThreshold || connection.socket.readyState !== 1) {
+      // Check if socket is definitely dead (readyState 2 = CLOSING, 3 = CLOSED)
+      if (connection.socket.readyState === 2 || connection.socket.readyState === 3) {
+        deadConnections.push(connectionId);
+      }
+      // Check for stale connections (no activity for 10 minutes)
+      else if (timeSinceActivity > staleThreshold) {
         staleConnections.push(connectionId);
       }
     }
 
+    if (deadConnections.length > 0) {
+      logger.info({ 
+        deadCount: deadConnections.length 
+      }, 'Cleaning up dead WebSocket connections');
+      deadConnections.forEach(connectionId => this.removeConnection(connectionId));
+    }
+
     if (staleConnections.length > 0) {
       logger.info({ 
-        staleCount: staleConnections.length 
+        staleCount: staleConnections.length,
+        thresholdMinutes: staleThreshold / 60000
       }, 'Cleaning up stale connections');
-
       staleConnections.forEach(connectionId => this.removeConnection(connectionId));
     }
   }
