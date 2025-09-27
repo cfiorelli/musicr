@@ -1,0 +1,4 @@
+[deploy]
+restartPolicyType = "on_failure"
+
+# No healthcheckPath defined = no health check
