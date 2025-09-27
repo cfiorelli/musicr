@@ -68,7 +68,7 @@ fastify.get('/health', async () => {
 });
 
 // Test page for WebSocket functionality
-fastify.get('/test', async (request, reply) => {
+fastify.get('/test', async (_, reply) => {
   reply.type('text/html');
   return `<!DOCTYPE html>
 <html lang="en">
