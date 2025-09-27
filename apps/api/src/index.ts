@@ -568,6 +568,63 @@ fastify.get('/api/admin/analytics', async (_, reply) => {
   }
 });
 
+// POST /api/admin/seed - Seed database (development only)
+fastify.post('/api/admin/seed', async (_, reply) => {
+  // Only allow in development
+  if (config.nodeEnv === 'production') {
+    return reply.code(403).send({ error: 'Database seeding not available in production' });
+  }
+  
+  try {
+    // Check if database is already seeded
+    const songCount = await prisma.song.count();
+    if (songCount > 0) {
+      return reply.send({ 
+        message: 'Database already seeded', 
+        songCount,
+        skipped: true 
+      });
+    }
+
+    // Add a few basic songs for testing
+    logger.info('Starting basic database seed...');
+    
+    const basicSongs = [
+      { title: "Love Song", artist: "The Cure", year: 1989, popularity: 85, tags: ["love", "rock", "80s"], phrases: ["love", "romantic", "tender"] },
+      { title: "Happy", artist: "Pharrell Williams", year: 2013, popularity: 92, tags: ["happy", "pop", "upbeat"], phrases: ["happy", "joy", "celebration"] },
+      { title: "Sad Song", artist: "We The Kings", year: 2013, popularity: 70, tags: ["sad", "rock", "emotional"], phrases: ["sad", "heartbreak", "melancholy"] },
+      { title: "Party Rock Anthem", artist: "LMFAO", year: 2011, popularity: 88, tags: ["party", "dance", "electronic"], phrases: ["party", "dance", "celebration"] },
+      { title: "Peaceful Easy Feeling", artist: "Eagles", year: 1972, popularity: 79, tags: ["peaceful", "rock", "classic"], phrases: ["peaceful", "calm", "relaxed"] }
+    ];
+
+    for (const songData of basicSongs) {
+      await prisma.song.create({
+        data: {
+          title: songData.title,
+          artist: songData.artist,
+          year: songData.year,
+          popularity: songData.popularity,
+          tags: songData.tags,
+          phrases: songData.phrases,
+          embedding: new Array(384).fill(0) // Placeholder embedding
+        }
+      });
+    }
+
+    const newSongCount = await prisma.song.count();
+    logger.info({ songCount: newSongCount }, 'Basic database seeding completed');
+
+    return reply.send({ 
+      message: 'Database seeded with basic songs', 
+      songCount: newSongCount,
+      seeded: true 
+    });
+  } catch (error) {
+    logger.error({ error }, 'Error seeding database');
+    return reply.code(500).send({ error: 'Failed to seed database' });
+  }
+});
+
 // WebSocket route for real-time chat
 fastify.register(async function (fastify) {
   fastify.get('/ws', { websocket: true }, async (connection, req) => {
