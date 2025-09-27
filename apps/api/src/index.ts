@@ -679,19 +679,75 @@ fastify.post('/api/admin/migrate', async (request, reply) => {
       existingTables: tableCheck 
     }, 'Current database tables');
 
-    // Run Prisma migrations
-    logger.info('Starting database migration...');
+    // Manual schema creation since Railway might not support migrate deploy
+    logger.info('Creating database schema manually...');
     
-    // Import and run prisma migrate deploy programmatically
-    const { execSync } = await import('child_process');
-    const migrationOutput = execSync('npx prisma migrate deploy', { 
-      encoding: 'utf8',
-      cwd: process.cwd()
-    });
+    // Create tables directly using raw SQL
+    await prisma.$executeRaw`
+      CREATE TABLE IF NOT EXISTS "songs" (
+        "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        "title" TEXT NOT NULL,
+        "artist" TEXT NOT NULL,
+        "year" INTEGER,
+        "popularity" INTEGER NOT NULL DEFAULT 0,
+        "tags" TEXT[] DEFAULT ARRAY[]::TEXT[],
+        "phrases" TEXT[] DEFAULT ARRAY[]::TEXT[],
+        "mbid" TEXT UNIQUE,
+        "embedding" JSONB,
+        "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+      );
+    `;
 
-    logger.info({ 
-      migrationOutput 
-    }, 'Migration completed');
+    await prisma.$executeRaw`
+      CREATE TABLE IF NOT EXISTS "users" (
+        "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        "anonHandle" TEXT UNIQUE NOT NULL,
+        "ipHash" TEXT NOT NULL,
+        "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+      );
+    `;
+
+    await prisma.$executeRaw`
+      CREATE TABLE IF NOT EXISTS "rooms" (
+        "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        "name" TEXT UNIQUE NOT NULL,
+        "allowExplicit" BOOLEAN NOT NULL DEFAULT false,
+        "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+      );
+    `;
+
+    await prisma.$executeRaw`
+      CREATE TABLE IF NOT EXISTS "messages" (
+        "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        "userId" UUID NOT NULL,
+        "roomId" UUID NOT NULL,
+        "text" TEXT NOT NULL,
+        "chosenSongId" UUID,
+        "scores" JSONB,
+        "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        CONSTRAINT "messages_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE,
+        CONSTRAINT "messages_roomId_fkey" FOREIGN KEY ("roomId") REFERENCES "rooms"("id") ON DELETE CASCADE,
+        CONSTRAINT "messages_chosenSongId_fkey" FOREIGN KEY ("chosenSongId") REFERENCES "songs"("id") ON DELETE SET NULL
+      );
+    `;
+
+    // Create indexes
+    await prisma.$executeRaw`CREATE INDEX IF NOT EXISTS "idx_songs_tags" ON "songs" USING GIN ("tags");`;
+    await prisma.$executeRaw`CREATE INDEX IF NOT EXISTS "idx_songs_phrases" ON "songs" USING GIN ("phrases");`;
+    await prisma.$executeRaw`CREATE INDEX IF NOT EXISTS "idx_songs_title_artist" ON "songs"("title", "artist");`;
+    await prisma.$executeRaw`CREATE INDEX IF NOT EXISTS "idx_songs_popularity" ON "songs"("popularity");`;
+    await prisma.$executeRaw`CREATE INDEX IF NOT EXISTS "idx_messages_user_id" ON "messages"("userId");`;
+    await prisma.$executeRaw`CREATE INDEX IF NOT EXISTS "idx_messages_room_id" ON "messages"("roomId");`;
+
+    // Create default room
+    await prisma.$executeRaw`
+      INSERT INTO "rooms" ("name", "allowExplicit") 
+      VALUES ('general', false) 
+      ON CONFLICT ("name") DO NOTHING;
+    `;
+
+    logger.info('Manual schema creation completed');
 
     // Check tables after migration
     const tablesAfter = await prisma.$queryRaw`
@@ -702,9 +758,8 @@ fastify.post('/api/admin/migrate', async (request, reply) => {
 
     return reply.code(200).send({ 
       success: true,
-      message: 'Database migration completed successfully',
+      message: 'Database schema created successfully',
       tablesAfter,
-      migrationOutput,
       timestamp: new Date().toISOString()
     });
     
