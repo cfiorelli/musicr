@@ -2,10 +2,16 @@ import { useState, useEffect } from 'react';
 
 interface AdminAnalytics {
   summary: {
+    totalSongs: number;
+    totalUsers: number;
     totalMappings: number;
     successfulMappings: number;
     successRate: number;
     averageConfidence: number;
+  };
+  connections: {
+    total: number;
+    byRoom: Record<string, number>;
   };
   recentMappings: Array<{
     id: string;
@@ -21,30 +27,19 @@ interface AdminAnalytics {
     confidence: number | null;
     strategy: string | null;
   }>;
-  decadeDistribution: Array<{
-    decade: string;
-    count: number;
-  }>;
-  tagDistribution: Array<{
-    tag: string;
-    count: number;
-  }>;
-  confidenceBreakdown: {
-    high: number;
-    medium: number;
-    low: number;
-    total: number;
+  database: {
+    status: string;
+    songsCount: number;
+    usersCount: number;
+    messagesCount: number;
+    tables: string[];
   };
-  failureReasons: Array<{
-    reason: string;
-    count: number;
-  }>;
-  popularSongs: Array<{
-    title: string;
-    artist: string;
-    year?: number;
-    mappingCount: number;
-  }>;
+  server: {
+    uptime: number;
+    memory: any;
+    nodeVersion: string;
+  };
+  timestamp: string;
 }
 
 function AdminDashboard() {

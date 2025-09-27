@@ -544,14 +544,63 @@ fastify.get('/api/admin/analytics', async (_, reply) => {
     // Get connection statistics
     const stats = connectionManager.getStats();
     
+    // Get database statistics
+    const songsCount = await prisma.song.count();
+    const usersCount = await prisma.user.count();
+    const messagesCount = await prisma.message.count();
+    
+    // Get recent messages with song matching results
+    const recentMessages = await prisma.message.findMany({
+      take: 10,
+      orderBy: { createdAt: 'desc' },
+      include: {
+        user: true,
+        room: true
+      }
+    });
+
+    // Calculate performance metrics from recent messages
+    const messagesWithScores = recentMessages.filter(m => m.scores);
+    const averageConfidence = messagesWithScores.length > 0 
+      ? messagesWithScores.reduce((sum, m) => {
+          const scores = m.scores as any;
+          return sum + (scores?.confidence || 0);
+        }, 0) / messagesWithScores.length
+      : 0;
+
     const analytics = {
+      summary: {
+        totalSongs: songsCount,
+        totalUsers: usersCount,
+        totalMappings: messagesCount,
+        successfulMappings: messagesWithScores.length,
+        successRate: messagesCount > 0 ? (messagesWithScores.length / messagesCount) * 100 : 0,
+        averageConfidence: Math.round(averageConfidence * 100) / 100
+      },
       connections: {
         total: stats.totalConnections,
         byRoom: stats.roomStats
       },
+      recentMappings: recentMessages.map(msg => ({
+        id: msg.id,
+        text: msg.text,
+        timestamp: msg.createdAt.toISOString(),
+        user: msg.user.anonHandle,
+        room: msg.room.name,
+        song: (msg.scores as any)?.primary ? {
+          title: (msg.scores as any).primary.title,
+          artist: (msg.scores as any).primary.artist,
+          year: (msg.scores as any).primary.year
+        } : null,
+        confidence: (msg.scores as any)?.confidence || null,
+        strategy: (msg.scores as any)?.strategy || null
+      })),
       database: {
         status: 'connected',
-        tables: ['users', 'songs', 'rooms', 'phrases']
+        songsCount,
+        usersCount,
+        messagesCount,
+        tables: ['users', 'songs', 'rooms', 'messages']
       },
       server: {
         uptime: process.uptime(),
