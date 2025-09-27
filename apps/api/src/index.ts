@@ -10,6 +10,7 @@ import { RoomService } from './services/room-service.js';
 import { SongMatchingService } from './services/song-matching-service.js';
 import { SongSearchService } from './services/song-search-service.js';
 import { ConnectionManager } from './services/connection-manager.js';
+import { ModerationService } from './services/moderation-service.js';
 import { RateLimiter } from './utils/rate-limiter.js';
 import { getEmbeddingService } from './embeddings/index.js';
 import { phraseLexicon } from './services/phrase-lexicon-service.js';
@@ -60,6 +61,7 @@ const roomService = new RoomService(prisma);
 const songMatchingService = new SongMatchingService(prisma);
 const songSearchService = new SongSearchService(prisma);
 const connectionManager = new ConnectionManager();
+const moderationService = new ModerationService();
 const rateLimiter = new RateLimiter();
 
 // Health check route
@@ -987,7 +989,8 @@ fastify.register(async function (fastify) {
         connection,
         userSession.userId,
         userSession.anonHandle,
-        defaultRoom.id
+        defaultRoom.id,
+        true // default family-friendly to true
       );
 
       logger.info({
@@ -1025,17 +1028,40 @@ fastify.register(async function (fastify) {
         });
 
         // Send messages in chronological order (oldest first)
-        const messagesToSend = recentMessages.reverse().map(msg => ({
-          type: 'display',
-          originalText: msg.text,
-          userId: msg.userId,
-          anonHandle: msg.user.anonHandle,
-          primary: msg.scores ? (msg.scores as any).primary : null,
-          alternates: msg.scores ? (msg.scores as any).alternates : [],
-          why: msg.scores ? `Matched using ${(msg.scores as any).strategy}` : '',
-          timestamp: msg.createdAt.toISOString(),
-          isHistorical: true // Flag to indicate this is history, not live
-        }));
+        // Apply family-friendly filtering based on user's current preference
+        const messagesToSend = await Promise.all(
+          recentMessages.reverse().map(async (msg) => {
+            let displayText = msg.text;
+            
+            // Get user's current family-friendly setting
+            const userConnection = connectionManager.getConnection(connectionId);
+            const isFamilyFriendly = userConnection?.familyFriendly ?? true;
+            
+            // If user has family-friendly ON, check if message needs filtering
+            if (isFamilyFriendly) {
+              try {
+                const modResult = await moderationService.moderateContent(msg.text);
+                if (!modResult.allowed && modResult.replacementText) {
+                  displayText = modResult.replacementText;
+                }
+              } catch (error) {
+                logger.warn({ error, messageId: msg.id }, 'Failed to moderate historical message');
+              }
+            }
+            
+            return {
+              type: 'display',
+              originalText: displayText,
+              userId: msg.userId,
+              anonHandle: msg.user.anonHandle,
+              primary: msg.scores ? (msg.scores as any).primary : null,
+              alternates: msg.scores ? (msg.scores as any).alternates : [],
+              why: msg.scores ? `Matched using ${(msg.scores as any).strategy}` : '',
+              timestamp: msg.createdAt.toISOString(),
+              isHistorical: true
+            };
+          })
+        );
 
         // Send each historical message
         messagesToSend.forEach(msg => {
