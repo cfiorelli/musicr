@@ -1,8 +1,8 @@
 /**
  * Anonymous User Handle Generator
  * 
- * Generates anonymous handles in the format: ${adjective}-${animal}
- * Examples: clever-fox, brave-wolf, quick-rabbit
+ * Generates anonymous handles in the format: ${adjective}-${noun}
+ * Examples: clever-thunder, brave-mountain, quick-melody
  */
 
 // Curated lists for generating friendly anonymous handles
@@ -29,36 +29,62 @@ const adjectives = [
   'dancing', 'singing', 'jumping', 'flying', 'swimming', 'running', 'walking', 'sleeping'
 ];
 
-const animals = [
-  // Common favorites
-  'fox', 'wolf', 'bear', 'lion', 'tiger', 'eagle', 'hawk', 'owl', 'cat', 'dog',
-  'rabbit', 'deer', 'horse', 'dolphin', 'whale', 'shark', 'octopus', 'penguin', 'seal', 'otter',
-  'mouse', 'rat', 'bat', 'bird', 'fish', 'frog', 'bee', 'ant', 'fly', 'worm',
+const nouns = [
+  // Nature & Weather
+  'thunder', 'lightning', 'storm', 'rain', 'snow', 'wind', 'cloud', 'mist', 'fog', 'sunrise',
+  'sunset', 'rainbow', 'star', 'moon', 'sun', 'galaxy', 'comet', 'meteor', 'aurora', 'eclipse',
+  'mountain', 'valley', 'ocean', 'river', 'lake', 'forest', 'desert', 'island', 'cliff', 'cave',
+  'fire', 'ice', 'crystal', 'diamond', 'stone', 'rock', 'sand', 'wave', 'tide', 'current',
   
-  // Exotic/interesting
-  'dragon', 'phoenix', 'griffin', 'unicorn', 'pegasus', 'lynx', 'panther', 'jaguar', 'cheetah', 'leopard',
-  'falcon', 'raven', 'sparrow', 'robin', 'hummingbird', 'butterfly', 'firefly', 'mantis', 'spider', 'crab',
-  'lobster', 'shrimp', 'snail', 'slug', 'beetle', 'cricket', 'grasshopper', 'dragonfly', 'wasp', 'hornet',
+  // Music & Sound
+  'melody', 'rhythm', 'harmony', 'beat', 'song', 'tune', 'note', 'chord', 'symphony', 'ballad',
+  'jazz', 'blues', 'rock', 'folk', 'classical', 'opera', 'piano', 'guitar', 'violin', 'drums',
+  'echo', 'whisper', 'shout', 'silence', 'voice', 'sound', 'music', 'dance', 'performance', 'concert',
   
-  // Ocean creatures
-  'turtle', 'seahorse', 'starfish', 'jellyfish', 'coral', 'ray', 'barracuda', 'marlin', 'tuna', 'salmon',
-  'trout', 'bass', 'cod', 'flounder', 'eel', 'squid', 'clam', 'oyster', 'mussel', 'scallop',
+  // Abstract Concepts
+  'dream', 'hope', 'joy', 'peace', 'love', 'freedom', 'wisdom', 'courage', 'strength', 'magic',
+  'mystery', 'wonder', 'adventure', 'journey', 'quest', 'destiny', 'fortune', 'luck', 'chance', 'fate',
+  'spirit', 'soul', 'heart', 'mind', 'thought', 'idea', 'vision', 'imagination', 'creativity', 'art',
   
-  // Land animals
-  'squirrel', 'hedgehog', 'raccoon', 'badger', 'mole', 'hamster', 'ferret', 'weasel', 'mongoose',
-  'zebra', 'giraffe', 'elephant', 'rhino', 'hippo', 'crocodile', 'lizard', 'gecko', 'chameleon', 'iguana',
-  'snake', 'tortoise', 'armadillo', 'sloth', 'koala', 'panda', 'kangaroo', 'wallaby', 'opossum', 'skunk'
+  // Time & Movement
+  'moment', 'instant', 'second', 'minute', 'hour', 'day', 'night', 'dawn', 'dusk', 'eternity',
+  'speed', 'motion', 'flow', 'drift', 'rush', 'glide', 'leap', 'jump', 'flight', 'journey',
+  'path', 'road', 'trail', 'bridge', 'gate', 'door', 'window', 'passage', 'crossing', 'turn',
+  
+  // Objects & Technology
+  'key', 'lock', 'mirror', 'lens', 'prism', 'compass', 'map', 'book', 'page', 'story',
+  'pixel', 'code', 'data', 'signal', 'wave', 'frequency', 'network', 'connection', 'link', 'node',
+  'engine', 'gear', 'wheel', 'circuit', 'battery', 'spark', 'flame', 'light', 'shadow', 'glow',
+  
+  // Colors & Textures
+  'crimson', 'azure', 'emerald', 'amber', 'violet', 'coral', 'silver', 'golden', 'platinum', 'copper',
+  'velvet', 'silk', 'marble', 'steel', 'glass', 'pearl', 'ivory', 'ebony', 'jade', 'ruby',
+  'smooth', 'rough', 'soft', 'sharp', 'bright', 'dark', 'clear', 'cloudy', 'shiny', 'matte',
+  
+  // Places & Spaces
+  'garden', 'field', 'meadow', 'grove', 'clearing', 'sanctuary', 'haven', 'refuge', 'shelter', 'home',
+  'castle', 'tower', 'palace', 'cottage', 'cabin', 'studio', 'workshop', 'library', 'gallery', 'theater',
+  'plaza', 'square', 'street', 'avenue', 'lane', 'alley', 'corner', 'center', 'edge', 'border',
+  
+  // Feelings & Energy
+  'energy', 'power', 'force', 'strength', 'vigor', 'passion', 'fire', 'spark', 'flame', 'blaze',
+  'calm', 'serenity', 'tranquil', 'zen', 'balance', 'harmony', 'unity', 'flow', 'grace', 'elegance',
+  'excitement', 'thrill', 'rush', 'buzz', 'vibe', 'mood', 'feeling', 'emotion', 'sensation', 'touch',
+  
+  // Actions & Concepts
+  'creation', 'innovation', 'invention', 'discovery', 'exploration', 'research', 'study', 'learning', 'growth', 'progress',
+  'change', 'transformation', 'evolution', 'revolution', 'breakthrough', 'achievement', 'success', 'victory', 'triumph', 'glory'
 ];
 
 /**
  * Generate a random anonymous handle
- * Format: ${adjective}-${animal}
+ * Format: ${adjective}-${noun}
  */
 export function generateAnonHandle(): string {
   const adjective = adjectives[Math.floor(Math.random() * adjectives.length)];
-  const animal = animals[Math.floor(Math.random() * animals.length)];
+  const noun = nouns[Math.floor(Math.random() * nouns.length)];
   
-  return `${adjective}-${animal}`;
+  return `${adjective}-${noun}`;
 }
 
 /**
@@ -88,7 +114,7 @@ export function generateUniqueAnonHandles(count: number): string[] {
  */
 export function parseAnonHandle(handle: string): {
   adjective: string;
-  animal: string;
+  noun: string;
 } | null {
   if (!isValidAnonHandle(handle)) {
     return null;
@@ -97,6 +123,6 @@ export function parseAnonHandle(handle: string): {
   const parts = handle.split('-');
   return {
     adjective: parts[0],
-    animal: parts[1]
+    noun: parts[1]
   };
 }
