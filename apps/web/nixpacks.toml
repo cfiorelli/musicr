@@ -4,7 +4,7 @@ NPM_CONFIG_PRODUCTION = "false"
 [phases.install]
 cmds = [
   "npm install -g pnpm@8.15.5",
-  "pnpm install --frozen-lockfile || pnpm install"
+  "pnpm install --no-frozen-lockfile"
 ]
 
 [phases.build]
