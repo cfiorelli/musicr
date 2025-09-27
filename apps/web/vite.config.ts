@@ -16,6 +16,12 @@ export default defineConfig({
     host: true,
     // Remove specific allowedHosts restriction for Railway deployment flexibility
   },
+  preview: {
+    host: true,
+    port: 8080,
+    // Allow Railway domain for production preview
+    allowedHosts: ['musicrweb-production.up.railway.app', 'localhost']
+  },
   build: {
     outDir: 'dist',
     sourcemap: true,
