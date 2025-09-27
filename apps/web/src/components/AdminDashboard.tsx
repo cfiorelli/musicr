@@ -153,21 +153,21 @@ function AdminDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <div className="bg-white p-6 rounded-lg shadow">
             <h3 className="text-lg font-semibold text-gray-700 mb-2">Total Songs</h3>
-            <p className="text-3xl font-bold text-blue-600">{analytics.summary.totalSongs}</p>
+            <p className="text-3xl font-bold text-blue-600">{analytics.summary?.totalSongs || 0}</p>
           </div>
           <div className="bg-white p-6 rounded-lg shadow">
             <h3 className="text-lg font-semibold text-gray-700 mb-1">Unique Devices</h3>
             <p className="text-sm text-gray-500 mb-2">Actual users</p>
-            <p className="text-3xl font-bold text-green-600">{analytics.summary.uniqueDevices}</p>
+            <p className="text-3xl font-bold text-green-600">{analytics.summary?.uniqueDevices || 0}</p>
           </div>
           <div className="bg-white p-6 rounded-lg shadow">
             <h3 className="text-lg font-semibold text-gray-700 mb-1">Total User Records</h3>
             <p className="text-sm text-gray-500 mb-2">Including reconnects</p>
-            <p className="text-3xl font-bold text-gray-600">{analytics.summary.totalUsers}</p>
+            <p className="text-3xl font-bold text-gray-600">{analytics.summary?.totalUsers || 0}</p>
           </div>
           <div className="bg-white p-6 rounded-lg shadow">
             <h3 className="text-lg font-semibold text-gray-700 mb-2">Success Rate</h3>
-            <p className="text-3xl font-bold text-indigo-600">{Math.round(analytics.summary.successRate)}%</p>
+            <p className="text-3xl font-bold text-indigo-600">{Math.round((analytics.summary?.successRate || 0) * 100)}%</p>
           </div>
         </div>
         
@@ -175,15 +175,15 @@ function AdminDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-white p-6 rounded-lg shadow">
             <h3 className="text-lg font-semibold text-gray-700 mb-2">Total Messages</h3>
-            <p className="text-3xl font-bold text-purple-600">{analytics.summary.totalMappings}</p>
+            <p className="text-3xl font-bold text-purple-600">{analytics.summary?.totalMappings || 0}</p>
           </div>
           <div className="bg-white p-6 rounded-lg shadow">
             <h3 className="text-lg font-semibold text-gray-700 mb-2">Successful Matches</h3>
-            <p className="text-3xl font-bold text-green-600">{analytics.summary.successfulMappings}</p>
+            <p className="text-3xl font-bold text-green-600">{analytics.summary?.successfulMappings || 0}</p>
           </div>
           <div className="bg-white p-6 rounded-lg shadow">
             <h3 className="text-lg font-semibold text-gray-700 mb-2">Avg Confidence</h3>
-            <p className="text-3xl font-bold text-blue-600">{Math.round(analytics.summary.averageConfidence * 100)}%</p>
+            <p className="text-3xl font-bold text-blue-600">{Math.round((analytics.summary?.averageConfidence || 0) * 100)}%</p>
           </div>
         </div>
 
@@ -194,18 +194,18 @@ function AdminDashboard() {
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-gray-700">Total Connections</span>
-                <span className="text-2xl font-bold text-blue-600">{analytics.connections.total}</span>
+                <span className="text-2xl font-bold text-blue-600">{analytics.connections?.total || 0}</span>
               </div>
               <div className="mt-4">
                 <h4 className="text-lg font-semibold text-gray-700 mb-2">By Room</h4>
                 <div className="space-y-2">
-                  {Object.entries(analytics.connections.byRoom).map(([room, count]) => (
+                  {Object.entries(analytics.connections?.byRoom || {}).map(([room, count]) => (
                     <div key={room} className="flex items-center justify-between">
                       <span className="text-gray-600">{room}</span>
                       <span className="font-semibold text-green-600">{count}</span>
                     </div>
                   ))}
-                  {Object.keys(analytics.connections.byRoom).length === 0 && (
+                  {Object.keys(analytics.connections?.byRoom || {}).length === 0 && (
                     <p className="text-gray-500 text-sm">No active rooms</p>
                   )}
                 </div>
@@ -220,28 +220,28 @@ function AdminDashboard() {
               <div className="flex items-center justify-between">
                 <span className="text-gray-700">Status</span>
                 <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                  analytics.database.status === 'connected' 
+                  (analytics.database?.status || 'unknown') === 'connected' 
                     ? 'bg-green-100 text-green-800' 
                     : 'bg-red-100 text-red-800'
                 }`}>
-                  {analytics.database.status}
+                  {analytics.database?.status || 'unknown'}
                 </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-gray-700">Songs Count</span>
-                <span className="font-semibold text-blue-600">{analytics.database.songsCount}</span>
+                <span className="font-semibold text-blue-600">{analytics.database?.songsCount || 0}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-gray-700">User Records</span>
-                <span className="font-semibold text-gray-600">{analytics.database.usersCount}</span>
+                <span className="font-semibold text-gray-600">{analytics.database?.usersCount || 0}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-gray-700">Unique Devices</span>
-                <span className="font-semibold text-green-600">{analytics.summary.uniqueDevices}</span>
+                <span className="font-semibold text-green-600">{analytics.summary?.uniqueDevices || 0}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-gray-700">Messages Count</span>
-                <span className="font-semibold text-purple-600">{analytics.database.messagesCount}</span>
+                <span className="font-semibold text-purple-600">{analytics.database?.messagesCount || 0}</span>
               </div>
             </div>
           </div>
@@ -253,21 +253,21 @@ function AdminDashboard() {
               <div className="flex items-center justify-between">
                 <span className="text-gray-700">Uptime</span>
                 <span className="font-semibold text-indigo-600">
-                  {Math.floor(analytics.server.uptime / 3600)}h {Math.floor((analytics.server.uptime % 3600) / 60)}m
+                  {Math.floor((analytics.server?.uptime || 0) / 3600)}h {Math.floor(((analytics.server?.uptime || 0) % 3600) / 60)}m
                 </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-gray-700">Node.js Version</span>
-                <span className="font-semibold text-green-600">{analytics.server.nodeVersion}</span>
+                <span className="font-semibold text-green-600">{analytics.server?.nodeVersion || 'Unknown'}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-gray-700">Memory Usage</span>
                 <span className="font-semibold text-purple-600">
-                  {Math.round(analytics.server.memory.heapUsed / 1024 / 1024)}MB
+                  {Math.round((analytics.server.memory?.heapUsed || 0) / 1024 / 1024)}MB
                 </span>
               </div>
               <div className="text-xs text-gray-500 mt-2">
-                Last updated: {formatTimestamp(analytics.timestamp)}
+                Last updated: {analytics.timestamp ? formatTimestamp(analytics.timestamp) : 'Unknown'}
               </div>
             </div>
           </div>
@@ -278,19 +278,19 @@ function AdminDashboard() {
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-gray-700">Total Mappings</span>
-                <span className="font-semibold text-blue-600">{analytics.summary.totalMappings}</span>
+                <span className="font-semibold text-blue-600">{analytics.summary?.totalMappings || 0}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-gray-700">Successful Mappings</span>
-                <span className="font-semibold text-green-600">{analytics.summary.successfulMappings}</span>
+                <span className="font-semibold text-green-600">{analytics.summary?.successfulMappings || 0}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-gray-700">Success Rate</span>
-                <span className="font-semibold text-purple-600">{Math.round(analytics.summary.successRate)}%</span>
+                <span className="font-semibold text-purple-600">{Math.round((analytics.summary?.successRate || 0) * 100)}%</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-gray-700">Average Confidence</span>
-                <span className="font-semibold text-indigo-600">{Math.round(analytics.summary.averageConfidence * 100)}%</span>
+                <span className="font-semibold text-indigo-600">{Math.round((analytics.summary?.averageConfidence || 0) * 100)}%</span>
               </div>
             </div>
           </div>
@@ -299,7 +299,7 @@ function AdminDashboard() {
           <div className="bg-white p-6 rounded-lg shadow lg:col-span-2">
             <h3 className="text-xl font-bold text-gray-800 mb-4">Recent Activity</h3>
             <div className="max-h-96 overflow-y-auto">
-              {analytics.recentMappings.length > 0 ? (
+              {(analytics.recentMappings || []).length > 0 ? (
                 <table className="w-full text-sm">
                   <thead className="sticky top-0 bg-white border-b">
                     <tr className="text-left">
@@ -311,7 +311,7 @@ function AdminDashboard() {
                     </tr>
                   </thead>
                   <tbody>
-                    {analytics.recentMappings.map((mapping) => (
+                    {(analytics.recentMappings || []).map((mapping) => (
                       <tr key={mapping.id} className="border-b hover:bg-gray-50">
                         <td className="py-2 px-1 text-gray-600 text-xs">
                           {new Date(mapping.timestamp).toLocaleTimeString()}
