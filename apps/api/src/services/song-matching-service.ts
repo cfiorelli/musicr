@@ -38,25 +38,28 @@ interface SongMatch {
   };
 }
 
-interface SongMatchResult {
-  type: 'song';
-  primary: {
-    title: string;
-    artist: string;
-    year?: number;
-  };
-  alternates: Array<{
-    title: string;
-    artist: string;
-    year?: number;
-    score: number;
-  }>;
+export interface SongMatchResult {
+  primary: Song;
+  alternates: Song[];
   scores: {
-    confidence: number;
     strategy: string;
-    reasoning: string;
+    confidence: number;
+    debugInfo?: any;
   };
-  why: string;
+  why: {
+    matchedPhrase?: string;
+    similarity?: number;
+    mood?: string;
+    tags?: string[];
+    fallbackReason?: string;
+  };
+  moderated?: {
+    wasFiltered: boolean;
+    category?: string;
+    reason?: string;
+    originalText: string;
+    replacementText: string;
+  };
 }
 
 export class SongMatchingService {
@@ -199,35 +202,6 @@ export class SongMatchingService {
   /**
    * Generate reasoning text for the match
    */
-  private generateReasoning(match: SongMatch): string {
-    let reasoning = '';
-
-    switch (match.reason.strategy) {
-      case 'exact':
-        reasoning = 'Exact match found in song title or artist name';
-        break;
-      case 'phrase':
-        reasoning = match.reason.matchedPhrase 
-          ? `Matched phrase: "${match.reason.matchedPhrase}"` 
-          : 'Found matching phrases or keywords';
-        break;
-      case 'embedding':
-      case 'semantic':
-        reasoning = match.reason.similarity 
-          ? `Semantic similarity: ${Math.round(match.reason.similarity * 100)}%` 
-          : 'Semantic match based on meaning and context';
-        break;
-      default:
-        reasoning = 'Matched based on popularity and relevance';
-    }
-
-    if (match.reason.mood) {
-      reasoning += `, mood: ${match.reason.mood}`;
-    }
-
-    return reasoning;
-  }
-
   /**
    * Process a text message and find matching songs
    */
@@ -262,9 +236,32 @@ export class SongMatchingService {
         reason: moderationResult.reason
       }, 'Content moderated, using neutral mapping');
       
-      text = replacementText;
+      // Return moderation info so caller can provide user feedback
+      const result = await this.processMatchingStrategies(replacementText, allowExplicit, userId);
+      return {
+        ...result,
+        moderated: {
+          wasFiltered: true,
+          category: moderationResult.category || 'unknown',
+          reason: moderationResult.reason || 'Content filtered',
+          originalText: text,
+          replacementText: replacementText
+        }
+      };
     }
 
+    // Process with clean/original text
+    return await this.processMatchingStrategies(text, allowExplicit, userId);
+  }
+
+  /**
+   * Process song matching strategies
+   */
+  private async processMatchingStrategies(
+    text: string,
+    allowExplicit: boolean,
+    userId?: string
+  ): Promise<SongMatchResult> {
     const cleanText = this.cleanText(text);
     
     // Try different matching strategies in order of precision
@@ -333,24 +330,21 @@ export class SongMatchingService {
     }, 'Song matching completed');
 
     return {
-      type: 'song',
-      primary: {
-        title: primary.song.title,
-        artist: primary.song.artist,
-        year: primary.song.year || undefined,
-      },
-      alternates: alternates.map(match => ({
-        title: match.song.title,
-        artist: match.song.artist,
-        year: match.song.year || undefined,
-        score: Math.round(match.score * 100) / 100,
-      })),
+      primary: primary.song,
+      alternates: alternates.map(match => match.song),
       scores: {
         confidence: Math.round(confidence * 100) / 100,
         strategy: primary.reason.strategy,
-        reasoning: this.generateReasoning(primary)
+        debugInfo: {
+          primaryScore: primary.score,
+          totalMatches: matches.length
+        }
       },
-      why: this.generateReasoning(primary)
+      why: {
+        matchedPhrase: primary.reason.matchedPhrase,
+        similarity: primary.reason.similarity,
+        mood: primary.reason.mood
+      }
     };
   }
 

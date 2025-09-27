@@ -23,6 +23,8 @@ export interface Message {
   userId: string;
   anonHandle: string;
   isOptimistic?: boolean;
+  isModeration?: boolean;
+  moderationCategory?: string;
 }
 
 export interface ChatState {
@@ -161,6 +163,18 @@ export const useChatStore = create<ChatState>((set, get) => ({
               anonHandle: data.anonHandle,
             };
             get().addMessage(message);
+          } else if (data.type === 'moderation_notice') {
+            // Content was moderated - show notice to sender
+            const moderationMessage: Message = {
+              id: generateId(),
+              content: data.message,
+              timestamp: new Date().toISOString(),
+              userId: 'system',
+              anonHandle: 'System',
+              isModeration: true,
+              moderationCategory: data.category
+            };
+            get().addMessage(moderationMessage);
           }
         } catch (error) {
           console.error('Error parsing WebSocket message:', error);

@@ -439,9 +439,17 @@ fastify.post('/api/map', async (request, reply) => {
           text: text,
           chosenSongId: null,
           scores: {
-            primary: songResult.primary,
-            alternates: songResult.alternates,
-            reasoning: songResult.why,
+            primary: {
+              title: songResult.primary.title,
+              artist: songResult.primary.artist,
+              year: songResult.primary.year
+            },
+            alternates: songResult.alternates.map(song => ({
+              title: song.title,
+              artist: song.artist,
+              year: song.year
+            })),
+            reasoning: songResult.why.matchedPhrase || 'song match',
             timestamp: new Date().toISOString(),
             source: 'api_map'
           }
@@ -452,10 +460,23 @@ fastify.post('/api/map', async (request, reply) => {
     const processingTime = Date.now() - startTime;
     
     const response: MapResponse = {
-      primary: songResult.primary,
-      alternates: songResult.alternates,
-      scores: songResult.scores,
-      why: songResult.why,
+      primary: {
+        title: songResult.primary.title,
+        artist: songResult.primary.artist,
+        year: songResult.primary.year || undefined
+      },
+      alternates: songResult.alternates.map((song, index) => ({
+        title: song.title,
+        artist: song.artist,
+        year: song.year || undefined,
+        score: 0.8 - (index * 0.1) // Simple scoring for alternates
+      })),
+      scores: {
+        confidence: songResult.scores.confidence,
+        strategy: songResult.scores.strategy,
+        reasoning: songResult.why.matchedPhrase || songResult.why.mood || 'Song match analysis'
+      },
+      why: songResult.why.matchedPhrase || songResult.why.mood || 'Based on content analysis',
       metadata: {
         processingTime,
         timestamp: new Date().toISOString(),
@@ -957,9 +978,18 @@ fastify.register(async function (fastify) {
                 text: messageData.text,
                 chosenSongId: null, // Will be set later when user selects
                 scores: {
-                  primary: songMatchResult.primary,
-                  alternates: songMatchResult.alternates,
-                  reasoning: songMatchResult.why
+                  primary: {
+                    title: songMatchResult.primary.title,
+                    artist: songMatchResult.primary.artist,
+                    year: songMatchResult.primary.year
+                  },
+                  alternates: songMatchResult.alternates.map(song => ({
+                    title: song.title,
+                    artist: song.artist,
+                    year: song.year
+                  })),
+                  confidence: songMatchResult.scores.confidence,
+                  strategy: songMatchResult.scores.strategy
                 }
               }
             });
@@ -982,6 +1012,18 @@ fastify.register(async function (fastify) {
 
           // Only broadcast if we have a valid result
           if (songMatchResult) {
+            // Check if content was moderated and provide feedback to sender
+            if (songMatchResult.moderated?.wasFiltered) {
+              // Send moderation notice to sender only
+              connection.send(JSON.stringify({
+                type: 'moderation_notice',
+                category: songMatchResult.moderated.category,
+                originalText: songMatchResult.moderated.originalText,
+                message: `Your message was filtered (${songMatchResult.moderated.category}): ${songMatchResult.moderated.reason}. Showing results for: "${songMatchResult.moderated.replacementText}"`,
+                timestamp: Date.now()
+              }));
+            }
+
             // Broadcast display message to room
             const displayMessage = {
               type: 'display',

@@ -135,13 +135,17 @@ const ChatInterface = () => {
           <div className="space-y-4">
             {messages.map((message) => {
               const songDisplay = formatSongDisplay(message);
+              const isModeration = message.isModeration;
+              
               return (
                 <div key={message.id} className="group">
                   <div className="flex items-start gap-3">
                     <div className="flex-1">
                       {/* Message content */}
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="text-blue-300 font-medium text-sm">
+                        <span className={`font-medium text-sm ${
+                          isModeration ? 'text-orange-300' : 'text-blue-300'
+                        }`}>
                           {message.anonHandle}
                         </span>
                         <span className="text-gray-400 text-xs">
@@ -150,9 +154,16 @@ const ChatInterface = () => {
                         {message.isOptimistic && (
                           <span className="text-yellow-400 text-xs">sending...</span>
                         )}
+                        {isModeration && (
+                          <span className="text-orange-400 text-xs font-medium bg-orange-500/20 px-2 py-1 rounded">
+                            Content Filtered
+                          </span>
+                        )}
                       </div>
                       
-                      <div className="bg-gray-700/50 rounded-lg p-3 text-white">
+                      <div className={`rounded-lg p-3 text-white ${
+                        isModeration ? 'bg-orange-600/30 border border-orange-500/50' : 'bg-gray-700/50'
+                      }`}>
                         <div className="flex items-center gap-2">
                           <span>{message.content}</span>
                           {songDisplay && (
