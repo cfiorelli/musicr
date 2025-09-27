@@ -650,6 +650,15 @@ fastify.post('/api/admin/seed', async (request, reply) => {
   }
 });
 
+// Simple test endpoint to verify API is working
+fastify.get('/api/test-simple', async (_, reply) => {
+  return reply.send({ 
+    message: 'API is working',
+    timestamp: new Date().toISOString(),
+    env: config.nodeEnv
+  });
+});
+
 // POST /api/admin/migrate - Run database migrations (development only)
 fastify.post('/api/admin/migrate', async (request, reply) => {
   // Better security check - allow if not explicitly production AND if Railway environment
