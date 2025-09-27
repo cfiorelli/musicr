@@ -1,0 +1,45 @@
+[variables][variables]
+
+NPM_CONFIG_PRODUCTION = "false"NPM_CONFIG_PRODUCTION = "false"
+
+
+
+[phases.setup][phases.setup]
+
+nixPkgs = ["nodejs_20", "corepack"]nixPkgs = ["nodejs", "corepack"]
+
+cmds = [cmds = [
+
+  "corepack enable",  "corepack enable",
+
+  "corepack prepare pnpm@latest --activate"  "corepack prepare pnpm@latest --activate",
+
+]  "pnpm --version"
+
+]
+
+[phases.install]
+
+# Install dependencies from workspace root but focus on web app[phases.install]
+
+cmds = [cmds = ["pnpm install --no-frozen-lockfile"]
+
+  "cd /app",
+
+  "pnpm install --frozen-lockfile"[phases.build]
+
+]cmds = ["pnpm run build"]
+
+
+
+[phases.build][start]
+
+# Build only the web app and its dependenciescmd = "node server.js"
+cmds = [
+  "cd /app",
+  "pnpm --filter ./apps/web... build"
+]
+
+[start]
+# Start the web app
+cmd = "cd /app && pnpm --filter ./apps/web start"
