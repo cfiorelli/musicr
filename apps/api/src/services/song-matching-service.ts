@@ -303,6 +303,17 @@ export class SongMatchingService {
     
     const primary = matches[0];
     
+    // Safety check - if we still don't have matches, throw a meaningful error
+    if (!primary) {
+      logger.error({
+        originalText: text,
+        cleanText,
+        matchesLength: matches.length
+      }, 'No songs found in database - cannot process request');
+      
+      throw new Error('No songs available in database. Database may need to be seeded.');
+    }
+    
     // Calculate calibrated confidence
     const confidence = this.calculateConfidence(matches);
     
@@ -545,6 +556,16 @@ export class SongMatchingService {
       orderBy: { popularity: 'desc' },
       take: 3
     });
+
+    logger.info({
+      songsCount: songs.length,
+      songs: songs.slice(0, 2)
+    }, 'getDefaultMatches query result');
+
+    if (songs.length === 0) {
+      logger.warn('No songs found in database! Database may need to be seeded.');
+      return [];
+    }
 
     return songs.map((song: Song) => ({
       song,
