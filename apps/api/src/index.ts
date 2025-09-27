@@ -921,12 +921,12 @@ fastify.register(async function (fastify) {
             // Broadcast display message to room
             const displayMessage = {
               type: 'display',
-              user: {
-                id: userSession.userId,
-                handle: userSession.anonHandle,
-              },
-              message: messageData.text,
-              song: songMatchResult.primary,
+              originalText: messageData.text,
+              userId: userSession.userId,
+              anonHandle: userSession.anonHandle,
+              primary: songMatchResult.primary,
+              alternates: songMatchResult.alternates,
+              why: songMatchResult.why,
               timestamp: new Date().toISOString(),
             };
 
