@@ -1,0 +1,19 @@
+[variables]
+NPM_CONFIG_PRODUCTION = "false"
+
+[phases.setup]
+nixPkgs = ["nodejs", "corepack"]
+cmds = [
+  "corepack enable",
+  "corepack prepare pnpm@latest --activate",
+  "pnpm --version"
+]
+
+[phases.install]
+cmds = ["pnpm install --frozen-lockfile"]
+
+[phases.build]
+cmds = ["pnpm run build"]
+
+[start]
+cmd = "pnpm start"
