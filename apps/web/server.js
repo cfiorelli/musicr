@@ -7,8 +7,15 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const PORT = process.env.PORT || 5173;
+// Railway sets PORT env var, but we need to use the port Railway networking expects
+const RAILWAY_PORT = process.env.PORT;
+const PORT = RAILWAY_PORT || 5173; // Use Railway's PORT or default to 5173
 const DIST_DIR = join(__dirname, 'dist');
+
+console.log('🔍 Environment check:');
+console.log('  RAILWAY PORT env var:', RAILWAY_PORT);
+console.log('  Final port used:', PORT);
+console.log('  Node version:', process.version);
 
 const MIME_TYPES = {
   '.html': 'text/html',
