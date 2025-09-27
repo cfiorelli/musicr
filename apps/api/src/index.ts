@@ -569,15 +569,34 @@ fastify.get('/api/admin/analytics', async (_, reply) => {
 });
 
 // POST /api/admin/seed - Seed database (development only)
-fastify.post('/api/admin/seed', async (_, reply) => {
-  // Only allow in development
-  if (config.nodeEnv === 'production') {
+fastify.post('/api/admin/seed', async (request, reply) => {
+  // Better security check - allow if not explicitly production AND if Railway environment
+  const isProduction = config.nodeEnv === 'production' && !process.env.RAILWAY_ENVIRONMENT;
+  
+  if (isProduction) {
     return reply.code(403).send({ error: 'Database seeding not available in production' });
   }
+
+  // Log the request for debugging
+  logger.info({
+    nodeEnv: config.nodeEnv,
+    railwayEnv: process.env.RAILWAY_ENVIRONMENT,
+    method: request.method,
+    url: request.url
+  }, 'Seed endpoint called');
   
   try {
     // Check if database is already seeded
     const songCount = await prisma.song.count();
+    logger.info({ currentSongCount: songCount }, 'Current song count in database');
+    
+    if (songCount > 0) {
+      return reply.code(200).send({ 
+        message: 'Database already seeded', 
+        songCount,
+        skipped: true 
+      });
+    }
     if (songCount > 0) {
       return reply.send({ 
         message: 'Database already seeded', 
@@ -614,14 +633,20 @@ fastify.post('/api/admin/seed', async (_, reply) => {
     const newSongCount = await prisma.song.count();
     logger.info({ songCount: newSongCount }, 'Basic database seeding completed');
 
-    return reply.send({ 
+    return reply.code(200).send({ 
+      success: true,
       message: 'Database seeded with basic songs', 
       songCount: newSongCount,
-      seeded: true 
+      seeded: true,
+      timestamp: new Date().toISOString()
     });
   } catch (error) {
     logger.error({ error }, 'Error seeding database');
-    return reply.code(500).send({ error: 'Failed to seed database' });
+    return reply.code(500).send({ 
+      success: false,
+      error: 'Failed to seed database',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
   }
 });
 
