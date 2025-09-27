@@ -7,14 +7,15 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Railway sets PORT env var, but we need to use the port Railway networking expects
+// Railway provides dynamic PORT - must use exactly what Railway gives us
 const RAILWAY_PORT = process.env.PORT;
-const PORT = RAILWAY_PORT || 5173; // Use Railway's PORT or default to 5173
+const PORT = RAILWAY_PORT || 5173; // Fallback for local development only
 const DIST_DIR = join(__dirname, 'dist');
 
-console.log('🔍 Environment check:');
-console.log('  RAILWAY PORT env var:', RAILWAY_PORT);
+console.log('🔍 Railway Environment check:');
+console.log('  Railway PORT env var:', RAILWAY_PORT);
 console.log('  Final port used:', PORT);
+console.log('  Is Railway deployment:', !!RAILWAY_PORT);
 console.log('  Node version:', process.version);
 
 const MIME_TYPES = {
@@ -40,6 +41,13 @@ const server = createServer((req, res) => {
   if (req.method === 'OPTIONS') {
     res.writeHead(200);
     res.end();
+    return;
+  }
+
+  // Simple health check endpoint
+  if (req.url === '/health' || req.url === '/healthz') {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ status: 'ok', port: PORT, timestamp: new Date().toISOString() }));
     return;
   }
 
@@ -95,8 +103,18 @@ const server = createServer((req, res) => {
 });
 
 server.listen(PORT, '0.0.0.0', () => {
-  console.log(`✨ Server running at http://0.0.0.0:${PORT}`);
+  console.log(`✨ Server successfully bound to 0.0.0.0:${PORT}`);
   console.log(`📁 Serving files from: ${DIST_DIR}`);
+  console.log(`🏥 Health check available at: /health`);
+  console.log(`🌐 Railway will route traffic to this port automatically`);
+});
+
+server.on('error', (error) => {
+  console.error('❌ Server error:', error);
+  if (error.code === 'EADDRINUSE') {
+    console.error(`💥 Port ${PORT} is already in use`);
+  }
+  process.exit(1);
 });
 
 process.on('SIGTERM', () => {
