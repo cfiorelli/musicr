@@ -1,37 +1,19 @@
-[phases.setup][variables][variables]
+[variables]
+NPM_CONFIG_PRODUCTION = "false"
 
-nixPkgs = ["nodejs", "pnpm"]
+[phases.setup]
+nixPkgs = ["nodejs", "corepack"]
+cmds = [
+  "corepack enable",
+  "corepack prepare pnpm@latest --activate",
+  "pnpm --version"
+]
 
-NPM_CONFIG_PRODUCTION = "false"NPM_CONFIG_PRODUCTION = "false"
-
-[phases.install] 
-
+[phases.install]
 cmds = ["pnpm install --no-frozen-lockfile"]
 
-
-
-[phases.build][phases.setup][phases.install]
-
+[phases.build]
 cmds = ["pnpm run build"]
 
-cmds = ["corepack enable", "corepack prepare pnpm@8.15.5 --activate"]cmds = [
-
 [start]
-
-cmd = "pnpm run start"  "npm install -g pnpm@8.15.5",
-
-[phases.install]   "pnpm install --no-frozen-lockfile"
-
-cmds = ["pnpm install --no-frozen-lockfile"]]
-
-
-
-[phases.build][phases.build]
-
-cmds = ["pnpm run build"]cmds = ["pnpm run build"]
-
-
-
-[start][start]
-
-cmd = "pnpm run start"cmd = "pnpm run preview"
+cmd = "pnpm run start"
