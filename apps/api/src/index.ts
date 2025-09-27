@@ -650,6 +650,74 @@ fastify.post('/api/admin/seed', async (request, reply) => {
   }
 });
 
+// POST /api/admin/migrate - Run database migrations (development only)
+fastify.post('/api/admin/migrate', async (request, reply) => {
+  // Better security check - allow if not explicitly production AND if Railway environment
+  const isProduction = config.nodeEnv === 'production' && !process.env.RAILWAY_ENVIRONMENT;
+  
+  if (isProduction) {
+    return reply.code(403).send({ error: 'Database migration not available in production' });
+  }
+
+  // Log the request for debugging
+  logger.info({
+    nodeEnv: config.nodeEnv,
+    railwayEnv: process.env.RAILWAY_ENVIRONMENT,
+    method: request.method,
+    url: request.url
+  }, 'Migrate endpoint called');
+  
+  try {
+    // First, let's check if tables exist
+    const tableCheck = await prisma.$queryRaw`
+      SELECT table_name 
+      FROM information_schema.tables 
+      WHERE table_schema = 'public';
+    `;
+    
+    logger.info({ 
+      existingTables: tableCheck 
+    }, 'Current database tables');
+
+    // Run Prisma migrations
+    logger.info('Starting database migration...');
+    
+    // Import and run prisma migrate deploy programmatically
+    const { execSync } = await import('child_process');
+    const migrationOutput = execSync('npx prisma migrate deploy', { 
+      encoding: 'utf8',
+      cwd: process.cwd()
+    });
+
+    logger.info({ 
+      migrationOutput 
+    }, 'Migration completed');
+
+    // Check tables after migration
+    const tablesAfter = await prisma.$queryRaw`
+      SELECT table_name 
+      FROM information_schema.tables 
+      WHERE table_schema = 'public';
+    `;
+
+    return reply.code(200).send({ 
+      success: true,
+      message: 'Database migration completed successfully',
+      tablesAfter,
+      migrationOutput,
+      timestamp: new Date().toISOString()
+    });
+    
+  } catch (error) {
+    logger.error({ error }, 'Error running database migration');
+    return reply.code(500).send({ 
+      success: false,
+      error: 'Failed to run database migration',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
 // WebSocket route for real-time chat
 fastify.register(async function (fastify) {
   fastify.get('/ws', { websocket: true }, async (connection, req) => {
