@@ -912,7 +912,28 @@ fastify.register(async function (fastify) {
           connectionManager.updateActivity(connectionId);
 
           // Validate message format
-          if (!messageData.type || messageData.type !== 'msg' || !messageData.text) {
+          if (!messageData.type) {
+            connection.send(JSON.stringify({
+              type: 'error',
+              message: 'Invalid message format. Expected: {type:"msg"|"pref", ...}'
+            }));
+            return;
+          }
+
+          // Handle preference updates
+          if (messageData.type === 'pref') {
+            if (typeof messageData.familyFriendly === 'boolean') {
+              connectionManager.updateFamilyFriendly(connectionId, messageData.familyFriendly);
+              connection.send(JSON.stringify({
+                type: 'pref_updated',
+                familyFriendly: messageData.familyFriendly
+              }));
+            }
+            return;
+          }
+
+          // Handle chat messages
+          if (messageData.type !== 'msg' || !messageData.text) {
             connection.send(JSON.stringify({
               type: 'error',
               message: 'Invalid message format. Expected: {type:"msg", text:string}'
@@ -1024,19 +1045,70 @@ fastify.register(async function (fastify) {
               }));
             }
 
-            // Broadcast display message to room
-            const displayMessage = {
-              type: 'display',
-              originalText: messageData.text,
-              userId: userSession.userId,
-              anonHandle: userSession.anonHandle,
-              primary: songMatchResult.primary,
-              alternates: songMatchResult.alternates,
-              why: songMatchResult.why,
-              timestamp: new Date().toISOString(),
-            };
+            // Handle per-user content filtering
+            if (songMatchResult.moderated?.wasFiltered) {
+              // Content was filtered - we need to get both original and filtered results
+              // Get unfiltered result for users who allow NSFW
+              const unfilteredResult = await songMatchingService.matchSongs(
+                songMatchResult.moderated.originalText,
+                true, // allowExplicit = true for unfiltered version
+                userSession.userId,
+                true  // roomAllowsExplicit = true to bypass room filtering
+              );
 
-            connectionManager.broadcastToRoom(defaultRoom.id, displayMessage, connectionId);
+              // Create display messages for both versions
+              const originalDisplayMessage = {
+                type: 'display',
+                originalText: songMatchResult.moderated.originalText, // Original NSFW text
+                userId: userSession.userId,
+                anonHandle: userSession.anonHandle,
+                primary: unfilteredResult.primary,
+                alternates: unfilteredResult.alternates,
+                why: unfilteredResult.why,
+                timestamp: new Date().toISOString(),
+              };
+
+              const filteredDisplayMessage = {
+                type: 'display',
+                originalText: messageData.text, // What user typed (same as original in this context)
+                userId: userSession.userId,
+                anonHandle: userSession.anonHandle,
+                primary: songMatchResult.primary,
+                alternates: songMatchResult.alternates,
+                why: songMatchResult.why,
+                timestamp: new Date().toISOString(),
+              };
+
+              // Broadcast different versions based on user preferences
+              const broadcastResult = connectionManager.broadcastWithFiltering(
+                defaultRoom.id, 
+                originalDisplayMessage,  // Users with NSFW allowed get original
+                filteredDisplayMessage,  // Users with family-friendly get filtered
+                connectionId
+              );
+
+              logger.info({
+                originalSent: broadcastResult.originalSent,
+                filteredSent: broadcastResult.filteredSent,
+                originalText: songMatchResult.moderated.originalText,
+                filteredText: songMatchResult.moderated.replacementText
+              }, 'Broadcast completed with per-user filtering');
+
+            } else {
+              // Content was not filtered - broadcast normally to everyone
+              const displayMessage = {
+                type: 'display',
+                originalText: messageData.text,
+                userId: userSession.userId,
+                anonHandle: userSession.anonHandle,
+                primary: songMatchResult.primary,
+                alternates: songMatchResult.alternates,
+                why: songMatchResult.why,
+                timestamp: new Date().toISOString(),
+              };
+
+              connectionManager.broadcastToRoom(defaultRoom.id, displayMessage, connectionId);
+            }
             
             logger.info({
               userId: userSession.userId,

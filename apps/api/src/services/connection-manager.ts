@@ -16,6 +16,7 @@ interface Connection {
   roomId: string;
   joinedAt: Date;
   lastActivity: Date;
+  familyFriendly: boolean;
 }
 
 interface BroadcastMessage {
@@ -45,7 +46,8 @@ export class ConnectionManager {
     socket: WebSocket,
     userId: string,
     anonHandle: string,
-    roomId: string
+    roomId: string,
+    familyFriendly: boolean = true
   ): string {
     const connectionId = this.generateConnectionId();
     
@@ -56,7 +58,8 @@ export class ConnectionManager {
       anonHandle,
       roomId,
       joinedAt: new Date(),
-      lastActivity: new Date()
+      lastActivity: new Date(),
+      familyFriendly
     };
 
     // Store connection mappings
@@ -171,6 +174,78 @@ export class ConnectionManager {
     if (!connectionId) return false;
 
     return this.sendToConnection(connectionId, message);
+  }
+
+  /**
+   * Update family-friendly setting for a connection
+   */
+  updateFamilyFriendly(connectionId: string, familyFriendly: boolean): boolean {
+    const connection = this.connections.get(connectionId);
+    if (connection) {
+      connection.familyFriendly = familyFriendly;
+      logger.debug({
+        connectionId,
+        userId: connection.userId,
+        familyFriendly
+      }, 'Updated family-friendly setting');
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Broadcast different messages to users based on their family-friendly preferences
+   */
+  broadcastWithFiltering(
+    roomId: string, 
+    originalMessage: BroadcastMessage,
+    filteredMessage: BroadcastMessage,
+    excludeConnectionId?: string
+  ): { originalSent: number; filteredSent: number } {
+    const roomConnections = this.roomConnections.get(roomId);
+    if (!roomConnections || roomConnections.size === 0) {
+      return { originalSent: 0, filteredSent: 0 };
+    }
+
+    let originalSent = 0;
+    let filteredSent = 0;
+    const failedConnections: string[] = [];
+
+    for (const connectionId of roomConnections) {
+      if (connectionId === excludeConnectionId) continue;
+
+      const connection = this.connections.get(connectionId);
+      if (!connection) {
+        failedConnections.push(connectionId);
+        continue;
+      }
+
+      // Send original content to users who allow NSFW, filtered to those who don't
+      const messageToSend = connection.familyFriendly ? filteredMessage : originalMessage;
+      
+      if (this.sendToConnection(connectionId, messageToSend)) {
+        if (connection.familyFriendly) {
+          filteredSent++;
+        } else {
+          originalSent++;
+        }
+      } else {
+        failedConnections.push(connectionId);
+      }
+    }
+
+    // Clean up failed connections
+    failedConnections.forEach(connectionId => this.removeConnection(connectionId));
+
+    logger.debug({
+      roomId,
+      originalSent,
+      filteredSent,
+      totalInRoom: roomConnections.size,
+      messageType: originalMessage.type
+    }, 'Broadcast completed with filtering');
+
+    return { originalSent, filteredSent };
   }
 
   /**
