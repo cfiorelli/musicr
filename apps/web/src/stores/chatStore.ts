@@ -121,6 +121,13 @@ export const useChatStore = create<ChatState>((set, get) => ({
         console.log('WebSocket connected');
         set({ connectionStatus: 'connected', ws: websocket });
         
+        // Send initial preference to server
+        const { familyFriendly } = get();
+        websocket.send(JSON.stringify({
+          type: 'pref',
+          familyFriendly
+        }));
+        
         // Room joining happens automatically on the server side
       };
       
@@ -259,6 +266,15 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
   setFamilyFriendly: (value: boolean) => {
     set({ familyFriendly: value });
+    
+    // Send preference update to server
+    const { ws } = get();
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({
+        type: 'pref',
+        familyFriendly: value
+      }));
+    }
   },
 
   selectAlternate: (messageId: string, alternate: NonNullable<Message['alternates']>[0]) => {
