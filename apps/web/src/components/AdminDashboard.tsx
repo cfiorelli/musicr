@@ -4,6 +4,7 @@ interface AdminAnalytics {
   summary: {
     totalSongs: number;
     totalUsers: number;
+    uniqueDevices: number;
     totalMappings: number;
     successfulMappings: number;
     successRate: number;
@@ -149,22 +150,40 @@ function AdminDashboard() {
         </div>
 
         {/* Summary Statistics */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <div className="bg-white p-6 rounded-lg shadow">
             <h3 className="text-lg font-semibold text-gray-700 mb-2">Total Songs</h3>
             <p className="text-3xl font-bold text-blue-600">{analytics.summary.totalSongs}</p>
           </div>
           <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-lg font-semibold text-gray-700 mb-2">Total Users</h3>
-            <p className="text-3xl font-bold text-green-600">{analytics.summary.totalUsers}</p>
+            <h3 className="text-lg font-semibold text-gray-700 mb-1">Unique Devices</h3>
+            <p className="text-sm text-gray-500 mb-2">Actual users</p>
+            <p className="text-3xl font-bold text-green-600">{analytics.summary.uniqueDevices}</p>
           </div>
+          <div className="bg-white p-6 rounded-lg shadow">
+            <h3 className="text-lg font-semibold text-gray-700 mb-1">Total User Records</h3>
+            <p className="text-sm text-gray-500 mb-2">Including reconnects</p>
+            <p className="text-3xl font-bold text-gray-600">{analytics.summary.totalUsers}</p>
+          </div>
+          <div className="bg-white p-6 rounded-lg shadow">
+            <h3 className="text-lg font-semibold text-gray-700 mb-2">Success Rate</h3>
+            <p className="text-3xl font-bold text-indigo-600">{Math.round(analytics.summary.successRate)}%</p>
+          </div>
+        </div>
+        
+        {/* Secondary Metrics */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-white p-6 rounded-lg shadow">
             <h3 className="text-lg font-semibold text-gray-700 mb-2">Total Messages</h3>
             <p className="text-3xl font-bold text-purple-600">{analytics.summary.totalMappings}</p>
           </div>
           <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-lg font-semibold text-gray-700 mb-2">Success Rate</h3>
-            <p className="text-3xl font-bold text-indigo-600">{Math.round(analytics.summary.successRate)}%</p>
+            <h3 className="text-lg font-semibold text-gray-700 mb-2">Successful Matches</h3>
+            <p className="text-3xl font-bold text-green-600">{analytics.summary.successfulMappings}</p>
+          </div>
+          <div className="bg-white p-6 rounded-lg shadow">
+            <h3 className="text-lg font-semibold text-gray-700 mb-2">Avg Confidence</h3>
+            <p className="text-3xl font-bold text-blue-600">{Math.round(analytics.summary.averageConfidence * 100)}%</p>
           </div>
         </div>
 
@@ -213,8 +232,12 @@ function AdminDashboard() {
                 <span className="font-semibold text-blue-600">{analytics.database.songsCount}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-gray-700">Users Count</span>
-                <span className="font-semibold text-green-600">{analytics.database.usersCount}</span>
+                <span className="text-gray-700">User Records</span>
+                <span className="font-semibold text-gray-600">{analytics.database.usersCount}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-gray-700">Unique Devices</span>
+                <span className="font-semibold text-green-600">{analytics.summary.uniqueDevices}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-gray-700">Messages Count</span>

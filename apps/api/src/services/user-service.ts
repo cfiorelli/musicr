@@ -37,7 +37,7 @@ export class UserService {
   private prisma: PrismaClient;
   private readonly COOKIE_NAME = 'musicr_user_id';
   private readonly COOKIE_MAX_AGE = 365 * 24 * 60 * 60; // 1 year in seconds
-  private readonly MAX_RETRY_ATTEMPTS = 5;
+  private readonly MAX_RETRY_ATTEMPTS = 10;
 
   constructor(prisma: PrismaClient) {
     this.prisma = prisma;
