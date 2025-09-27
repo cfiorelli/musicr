@@ -3,7 +3,6 @@ import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import { useChatStore } from './stores/chatStore';
 import ChatInterface from './components/ChatInterface';
 import AdminDashboard from './components/AdminDashboard';
-import StatsPanel from './components/StatsPanel';
 
 function HomePage() {
   const { connect, disconnect, connectionStatus } = useChatStore();
@@ -48,17 +47,7 @@ function HomePage() {
           </div>
         </header>
         
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Main Chat Area */}
-          <div className="lg:col-span-3">
-            <ChatInterface />
-          </div>
-          
-          {/* Stats Sidebar */}
-          <div className="lg:col-span-1">
-            <StatsPanel />
-          </div>
-        </div>
+        <ChatInterface />
       </div>
     </div>
   );
