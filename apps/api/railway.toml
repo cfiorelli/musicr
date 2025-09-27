@@ -1,4 +1,5 @@
 [deploy]
 restartPolicyType = "on_failure"
-
-# No healthcheckPath defined = no health check
+# Explicitly disable health check
+healthcheckPath = ""
+healthcheckTimeout = 0
