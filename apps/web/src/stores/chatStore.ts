@@ -119,11 +119,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
         console.log('WebSocket connected');
         set({ connectionStatus: 'connected', ws: websocket });
         
-        // Join default room
-        websocket.send(JSON.stringify({
-          type: 'join',
-          roomName: get().currentRoom
-        }));
+        // Room joining happens automatically on the server side
       };
       
       websocket.onmessage = (event) => {
