@@ -116,10 +116,12 @@ export const useChatStore = create<ChatState>((set, get) => ({
   fetchRoomUsers: async () => {
     try {
       const { currentRoom, userHandle } = get();
+      console.log('Fetching room users for room:', currentRoom);
       const response = await fetch(`${API_URL}/rooms/${currentRoom}/users`, {
         credentials: 'include'
       });
       const data = await response.json();
+      console.log('API returned room users:', data);
       
       // Ensure current user is included in the list
       let users = data.users || [];
@@ -127,6 +129,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
       
       if (!currentUserExists && userHandle && userHandle !== 'anonymous-user-123') {
         // Add current user to the list if they're missing
+        console.log('Adding missing current user:', userHandle);
         users.push({
           userId: 'current-user',
           handle: userHandle,
@@ -135,7 +138,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
       }
       
       set({ roomUsers: users });
-      console.log('Fetched room users:', users.length, 'users');
+      console.log('Fetched room users:', users.length, 'users -', users.map((u: RoomUser) => u.handle));
     } catch (error) {
       console.error('Error fetching room users:', error);
     }
@@ -260,16 +263,22 @@ export const useChatStore = create<ChatState>((set, get) => ({
             // Fetch current room users
             get().fetchRoomUsers();
             
-            // Set up periodic user list sync (every 30 seconds)
+            // Set up periodic user list validation (every 60 seconds)
+            // Only sync if we suspect missing users (don't overwrite working real-time updates)
             const syncInterval = setInterval(() => {
               const currentState = get();
               if (currentState.connectionStatus === 'connected') {
-                console.log('Syncing user list...');
-                currentState.fetchRoomUsers();
+                // Only sync if we have very few users (likely missing some)
+                if (currentState.roomUsers.length <= 1) {
+                  console.log('Few users detected, syncing user list...', currentState.roomUsers.length);
+                  currentState.fetchRoomUsers();
+                } else {
+                  console.log('Room has', currentState.roomUsers.length, 'users, skipping sync');
+                }
               } else {
                 clearInterval(syncInterval);
               }
-            }, 30000);
+            }, 60000); // Increased to 60 seconds
           } else if (data.type === 'user_joined') {
             // New user joined the room
             const { addRoomUser } = get();
