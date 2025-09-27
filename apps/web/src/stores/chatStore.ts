@@ -129,13 +129,16 @@ export const useChatStore = create<ChatState>((set, get) => ({
       websocket.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
+          console.log('WebSocket received data:', data);
           
           if (data.type === 'song') {
             // Update optimistic message with song result
             const { messages, updateMessage } = get();
             const lastUserMessage = messages.filter(m => m.userId === 'user').pop();
+            console.log('Looking for optimistic message to update:', lastUserMessage);
             
             if (lastUserMessage && lastUserMessage.isOptimistic) {
+              console.log('Updating optimistic message with song result:', data);
               updateMessage(lastUserMessage.id, {
                 songTitle: data.primary?.title,
                 songArtist: data.primary?.artist,
@@ -144,6 +147,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
                 reasoning: data.why?.reasoning || data.why?.matchedPhrase,
                 isOptimistic: false
               });
+            } else {
+              console.log('No optimistic message found to update');
             }
           } else if (data.type === 'display') {
             // Message from another user
