@@ -1,9 +1,8 @@
 {
   "$schema": "https://railway.app/railway.schema.json",
   "deploy": {
-    "startCommand": "node server.js",
+    "startCommand": "pnpm -w --filter ./apps/web... start",
     "healthcheckPath": "/health",
-    "healthcheckTimeout": 600,
     "restartPolicyType": "ON_FAILURE"
   }
 }
