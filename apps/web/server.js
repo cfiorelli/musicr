@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { createServer } from 'http';
-import { readFileSync, existsSync, statSync } from 'fs';
+import { readFileSync, existsSync, statSync, readdirSync } from 'fs';
 import { join, extname, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -17,6 +17,21 @@ console.log('  Railway PORT env var:', RAILWAY_PORT);
 console.log('  Final port used:', PORT);
 console.log('  Is Railway deployment:', !!RAILWAY_PORT);
 console.log('  Node version:', process.version);
+console.log('  Current working directory:', process.cwd());
+console.log('  __dirname:', __dirname);
+console.log('  DIST_DIR:', DIST_DIR);
+
+// Check if dist directory exists
+try {
+  const distExists = existsSync(DIST_DIR);
+  console.log('  Dist directory exists:', distExists);
+  if (distExists) {
+    const files = readdirSync(DIST_DIR);
+    console.log('  Dist directory contents:', files);
+  }
+} catch (error) {
+  console.error('  Error checking dist directory:', error);
+}
 
 const MIME_TYPES = {
   '.html': 'text/html',
@@ -46,8 +61,18 @@ const server = createServer((req, res) => {
 
   // Simple health check endpoint
   if (req.url === '/health' || req.url === '/healthz') {
+    console.log('🏥 Health check request received');
+    const healthData = { 
+      status: 'ok', 
+      port: PORT, 
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+      memory: process.memoryUsage(),
+      env: !!process.env.PORT ? 'railway' : 'local'
+    };
     res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ status: 'ok', port: PORT, timestamp: new Date().toISOString() }));
+    res.end(JSON.stringify(healthData));
+    console.log('✅ Health check response sent');
     return;
   }
 
@@ -111,16 +136,24 @@ server.listen(PORT, '0.0.0.0', () => {
   console.log(`📁 Serving files from: ${DIST_DIR}`);
   console.log(`🏥 Health check available at: /health`);
   console.log(`🌐 Railway will route traffic to this port automatically`);
+  console.log(`🚀 Server is ready to accept connections`);
 });
 
 server.on('error', (error) => {
   console.error('❌ Server error:', error);
   if (error.code === 'EADDRINUSE') {
     console.error(`💥 Port ${PORT} is already in use`);
+  } else if (error.code === 'EACCES') {
+    console.error(`💥 Permission denied to bind to port ${PORT}`);
   }
   process.exit(1);
 });
 
+server.on('listening', () => {
+  console.log('🎧 Server is now listening and ready for healthchecks');
+});
+
+// Handle graceful shutdown
 process.on('SIGTERM', () => {
   console.log('SIGTERM received, shutting down gracefully');
   server.close(() => {
