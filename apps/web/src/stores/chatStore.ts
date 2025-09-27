@@ -115,27 +115,53 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
   fetchRoomUsers: async () => {
     try {
-      const { currentRoom } = get();
+      const { currentRoom, userHandle } = get();
       const response = await fetch(`${API_URL}/rooms/${currentRoom}/users`, {
         credentials: 'include'
       });
       const data = await response.json();
-      set({ roomUsers: data.users });
+      
+      // Ensure current user is included in the list
+      let users = data.users || [];
+      const currentUserExists = users.some((u: RoomUser) => u.handle === userHandle);
+      
+      if (!currentUserExists && userHandle && userHandle !== 'anonymous-user-123') {
+        // Add current user to the list if they're missing
+        users.push({
+          userId: 'current-user',
+          handle: userHandle,
+          joinedAt: new Date().toISOString()
+        });
+      }
+      
+      set({ roomUsers: users });
+      console.log('Fetched room users:', users.length, 'users');
     } catch (error) {
       console.error('Error fetching room users:', error);
     }
   },
 
   addRoomUser: (user: RoomUser) => {
-    set((state) => ({
-      roomUsers: [...state.roomUsers.filter(u => u.userId !== user.userId), user]
-    }));
+    set((state) => {
+      // Remove any existing user with same handle or userId to avoid duplicates
+      const filtered = state.roomUsers.filter(u => 
+        u.userId !== user.userId && u.handle !== user.handle
+      );
+      return {
+        roomUsers: [...filtered, user]
+      };
+    });
+    console.log('Added room user:', user.handle);
   },
 
   removeRoomUser: (userId: string) => {
-    set((state) => ({
-      roomUsers: state.roomUsers.filter(u => u.userId !== userId)
-    }));
+    set((state) => {
+      const filtered = state.roomUsers.filter(u => u.userId !== userId);
+      console.log('Removed room user, remaining:', filtered.length, 'users');
+      return {
+        roomUsers: filtered
+      };
+    });
   },
 
   connect: () => {
