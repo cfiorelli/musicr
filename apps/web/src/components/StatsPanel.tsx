@@ -57,7 +57,8 @@ export default function StatsPanel() {
   const fetchAnalytics = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/admin/analytics');
+      // Use full API URL instead of relative path
+      const response = await fetch('https://musicrapi-production.up.railway.app/api/admin/analytics');
       
       if (!response.ok) {
         if (response.status === 403) {
