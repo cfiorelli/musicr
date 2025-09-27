@@ -842,6 +842,44 @@ fastify.get<{
   }
 });
 
+// GET /api/debug/connections - Get WebSocket connection diagnostics (dev only)
+fastify.get('/api/debug/connections', async (_, reply) => {
+  if (config.nodeEnv === 'production') {
+    return reply.status(403).send({ error: 'Debug endpoints not available in production' });
+  }
+
+  try {
+    const stats = connectionManager.getStats();
+    const roomDetails: Record<string, any> = {};
+
+    for (const [roomId, roomStats] of Object.entries(stats.roomStats)) {
+      const connections = connectionManager.getRoomConnections(roomId);
+      roomDetails[roomId] = {
+        ...roomStats,
+        users: connections.map(conn => ({
+          userId: conn.userId,
+          handle: conn.anonHandle,
+          joinedAt: conn.joinedAt,
+          lastActivity: conn.lastActivity,
+          familyFriendly: conn.familyFriendly,
+          socketState: conn.socket.readyState
+        }))
+      };
+    }
+
+    return {
+      totalConnections: stats.totalConnections,
+      totalRooms: stats.totalRooms,
+      rooms: roomDetails,
+      timestamp: new Date().toISOString()
+    };
+
+  } catch (error) {
+    logger.error({ error }, 'Failed to get connection diagnostics');
+    reply.status(500).send({ error: 'Failed to get diagnostics' });
+  }
+});
+
 // Simple test endpoint to verify API is working
 fastify.get('/api/test-simple', async (_, reply) => {
   return reply.send({ 

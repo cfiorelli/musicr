@@ -259,6 +259,17 @@ export const useChatStore = create<ChatState>((set, get) => ({
             
             // Fetch current room users
             get().fetchRoomUsers();
+            
+            // Set up periodic user list sync (every 30 seconds)
+            const syncInterval = setInterval(() => {
+              const currentState = get();
+              if (currentState.connectionStatus === 'connected') {
+                console.log('Syncing user list...');
+                currentState.fetchRoomUsers();
+              } else {
+                clearInterval(syncInterval);
+              }
+            }, 30000);
           } else if (data.type === 'user_joined') {
             // New user joined the room
             const { addRoomUser } = get();
