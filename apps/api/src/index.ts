@@ -596,8 +596,9 @@ fastify.register(async function (fastify) {
 
       // Handle incoming messages
       connection.on('message', async (rawMessage: Buffer) => {
+        let messageData: any;
         try {
-          const messageData = JSON.parse(rawMessage.toString());
+          messageData = JSON.parse(rawMessage.toString());
           
           // Update connection activity
           connectionManager.updateActivity(connectionId);
@@ -643,12 +644,23 @@ fastify.register(async function (fastify) {
           // Process message for song matching
           let songMatchResult;
           try {
+            logger.info({
+              text: messageData.text,
+              userId: userSession.userId,
+              allowExplicit: defaultRoom.allowExplicit
+            }, 'About to call songMatchingService.matchSongs');
+
             songMatchResult = await songMatchingService.matchSongs(
               messageData.text, 
               defaultRoom.allowExplicit,
               userSession.userId,
               defaultRoom.allowExplicit
             );
+
+            logger.info({
+              userId: userSession.userId,
+              songResult: songMatchResult
+            }, 'Song matching completed successfully');
 
             // Save message to database
             await prisma.message.create({
@@ -708,9 +720,14 @@ fastify.register(async function (fastify) {
 
         } catch (error) {
           logger.error({
-            error,
+            error: error instanceof Error ? {
+              message: error.message,
+              stack: error.stack,
+              name: error.name
+            } : error,
             connectionId,
-            userId: userSession.userId
+            userId: userSession.userId,
+            messageText: messageData?.text
           }, 'Error processing WebSocket message');
           
           connection.send(JSON.stringify({
