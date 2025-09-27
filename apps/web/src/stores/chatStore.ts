@@ -256,31 +256,43 @@ export const useChatStore = create<ChatState>((set, get) => ({
               get().addMessage(message);
             }
           } else if (data.type === 'connected') {
-            // Connection confirmation - update user handle and fetch room users
+            // Connection confirmation - update user handle
             set({ userHandle: data.anonHandle });
             console.log('Connected to room:', data.roomName, 'as', data.anonHandle);
-            console.log('Current users before API fetch:', get().roomUsers.length);
+            console.log('Current users after WebSocket events:', get().roomUsers.length, get().roomUsers.map((u: RoomUser) => u.handle));
             
-            // Fetch current room users from API
-            get().fetchRoomUsers();
+            // DON'T fetch from API - we already got the correct state via WebSocket events
+            // The API might return stale data and overwrite the correct real-time state
+            console.log('Skipping API fetch - using WebSocket state instead');
+            
+            // Ensure current user is in the list (fallback safety check)
+            const currentUserInList = get().roomUsers.some((u: RoomUser) => u.handle === data.anonHandle);
+            if (!currentUserInList) {
+              console.log('Adding current user to list as safety fallback');
+              get().addRoomUser({
+                userId: 'current-user',
+                handle: data.anonHandle,
+                joinedAt: new Date().toISOString()
+              });
+            }
             get().fetchRoomUsers();
             
-            // Set up periodic user list validation (every 60 seconds)
-            // Only sync if we suspect missing users (don't overwrite working real-time updates)
+            // Set up periodic user list validation (every 120 seconds)
+            // Only sync if we suspect we're missing users or have connectivity issues
             const syncInterval = setInterval(() => {
               const currentState = get();
               if (currentState.connectionStatus === 'connected') {
-                // Only sync if we have very few users (likely missing some)
-                if (currentState.roomUsers.length <= 1) {
-                  console.log('Few users detected, syncing user list...', currentState.roomUsers.length);
+                // Only sync if we have no users at all (likely a problem)
+                if (currentState.roomUsers.length === 0) {
+                  console.log('No users detected, emergency sync...', currentState.roomUsers.length);
                   currentState.fetchRoomUsers();
                 } else {
-                  console.log('Room has', currentState.roomUsers.length, 'users, skipping sync');
+                  console.log('Room has', currentState.roomUsers.length, 'users, WebSocket working fine');
                 }
               } else {
                 clearInterval(syncInterval);
               }
-            }, 60000); // Increased to 60 seconds
+            }, 120000); // Increased to 2 minutes and only for emergencies
           } else if (data.type === 'user_joined') {
             // New user joined the room
             const { addRoomUser } = get();
