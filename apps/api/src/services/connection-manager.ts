@@ -66,7 +66,7 @@ export class ConnectionManager {
     this.connections.set(connectionId, connection);
     this.userConnections.set(userId, connectionId);
 
-    // Add to room
+    // Add to room first
     if (!this.roomConnections.has(roomId)) {
       this.roomConnections.set(roomId, new Set());
     }
@@ -83,7 +83,7 @@ export class ConnectionManager {
       totalConnections: this.connections.size
     }, 'WebSocket connection added');
 
-    // Notify room about new user
+    // Notify ALL users in the room about the new user (including the new user themselves)
     this.broadcastToRoom(roomId, {
       type: 'user_joined',
       user: {
@@ -91,7 +91,7 @@ export class ConnectionManager {
         handle: anonHandle
       },
       timestamp: new Date().toISOString()
-    }, connectionId);
+    }); // Removed excludeConnectionId so new user sees themselves join
 
     return connectionId;
   }
