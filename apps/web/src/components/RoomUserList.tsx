@@ -1,13 +1,43 @@
 import { useChatStore } from '../stores/chatStore';
 
 const RoomUserList = () => {
-  const { roomUsers, userHandle } = useChatStore();
+  const { roomUsers, userHandle, currentRoom } = useChatStore();
+  
+  // Get API URL for debug links  
+  const getApiUrl = () => {
+    const { VITE_API_URL } = (import.meta as any).env || {};
+    if (VITE_API_URL) return VITE_API_URL;
+    const loc = window.location;
+    const host = loc.hostname;
+    return `${loc.protocol}//${host}:4000/api`;
+  };
 
   return (
     <div className="bg-white/10 backdrop-blur-md rounded-lg p-4">
       <h3 className="text-white font-medium mb-3 flex items-center gap-2">
         <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
         Online ({roomUsers.length})
+        {/* Debug links for production testing */}
+        <div className="ml-auto text-xs">
+          <a 
+            href={`${getApiUrl()}/rooms/${currentRoom}/users`}
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-blue-400 hover:text-blue-300 mr-2"
+            title="Room Users API"
+          >
+            API
+          </a>
+          <a 
+            href={`${getApiUrl()}/debug/connections`}
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-purple-400 hover:text-purple-300"
+            title="Debug Connections"
+          >
+            Debug
+          </a>
+        </div>
       </h3>
       
       <div className="space-y-2 max-h-48 overflow-y-auto">
