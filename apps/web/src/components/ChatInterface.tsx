@@ -7,7 +7,9 @@ const ChatInterface = () => {
   const [lastMessage, setLastMessage] = useState('');
   const [currentSelectedMessage, setCurrentSelectedMessage] = useState<string | null>(null);
   const [currentAlternates, setCurrentAlternates] = useState<Message['alternates']>([]);
+  const [autoScroll, setAutoScroll] = useState(true);
   const inputRef = useRef<HTMLInputElement>(null);
+  const messagesRef = useRef<HTMLDivElement>(null);
   const { 
     messages, 
     sendMessage, 
@@ -49,6 +51,30 @@ const ChatInterface = () => {
       inputRef.current.focus();
     }
   }, []);
+
+  // Auto-scroll to bottom when new messages arrive (if auto-scroll is enabled)
+  useEffect(() => {
+    if (autoScroll && messagesRef.current) {
+      messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
+    }
+  }, [messages, autoScroll]);
+
+  // Handle scroll detection to determine if user scrolled up
+  const handleScroll = () => {
+    if (messagesRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } = messagesRef.current;
+      const isNearBottom = scrollHeight - scrollTop - clientHeight < 50; // 50px threshold
+      
+      // Enable auto-scroll if user scrolled back to bottom
+      if (isNearBottom && !autoScroll) {
+        setAutoScroll(true);
+      }
+      // Disable auto-scroll if user scrolled up from bottom
+      else if (!isNearBottom && autoScroll) {
+        setAutoScroll(false);
+      }
+    }
+  };
 
   const formatSongDisplay = (message: Message) => {
     if (message.songTitle && message.songArtist) {
@@ -125,7 +151,11 @@ const ChatInterface = () => {
       </div>
 
       {/* Chat Messages */}
-      <div className="bg-white/10 backdrop-blur-md rounded-lg p-6 mb-6 h-96 overflow-y-auto">
+      <div 
+        ref={messagesRef}
+        onScroll={handleScroll}
+        className="bg-white/10 backdrop-blur-md rounded-lg p-6 mb-6 h-96 overflow-y-auto"
+      >
         {messages.length === 0 ? (
           <div className="text-center text-gray-300 mt-20">
             <p>🎵 Start chatting! Your messages will be converted to song titles.</p>
