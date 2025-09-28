@@ -4,7 +4,6 @@ import path from 'path';
 import csv from 'csv-parser';
 import { prisma } from '../src/services/database.js';
 import { logger } from '../src/config/index.js';
-import { pipeline, env } from '@huggingface/transformers';
 
 interface SeedSong {
   title: string;
@@ -13,51 +12,6 @@ interface SeedSong {
   popularity: number;
   tags: string[];
   phrases: string[];
-}
-
-// Initialize the embedding pipeline
-let embedder: any = null;
-
-async function initializeEmbedder() {
-  try {
-    logger.info('Initializing sentence transformer model...');
-    // Use a lightweight, fast sentence transformer
-    embedder = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
-    logger.info('✅ Embedding model loaded successfully');
-  } catch (error) {
-    logger.error({ error }, 'Failed to initialize embedding model');
-    throw error;
-  }
-}
-
-async function generateEmbedding(text: string): Promise<number[]> {
-  if (!embedder) {
-    throw new Error('Embedder not initialized');
-  }
-
-  try {
-    const result = await embedder(text, { pooling: 'mean', normalize: true });
-    // Convert tensor to array and flatten if needed
-    const embedding = Array.from(result.data);
-    return embedding as number[];
-  } catch (error) {
-    logger.error({ error, text }, 'Failed to generate embedding');
-    throw error;
-  }
-}
-
-function createSearchableText(song: SeedSong): string {
-  // Create a comprehensive text representation for embedding
-  const searchText = [
-    `${song.title} by ${song.artist}`,
-    `Song: ${song.title}`,
-    `Artist: ${song.artist}`,
-    `Year: ${song.year}`,
-    song.tags.join(' '),
-    song.phrases.join(' ')
-  ].join(' ').toLowerCase();
-
-  return searchText;
 }
 
 function parseTags(tagsStr: string): string[] {
@@ -129,11 +83,7 @@ async function seedDatabase(songs: SeedSong[]) {
         continue;
       }
 
-      // Generate embedding
-      const searchText = createSearchableText(song);
-      const embedding = await generateEmbedding(searchText);
-
-      // Insert song using Prisma client
+      // Insert song without embedding for now
       await prisma.song.create({
         data: {
           title: song.title,
@@ -142,13 +92,13 @@ async function seedDatabase(songs: SeedSong[]) {
           popularity: song.popularity,
           tags: song.tags,
           phrases: song.phrases,
-          embedding: embedding || null
+          embedding: undefined // Skip embeddings for now
         }
       });
 
       processed++;
 
-      if (processed % 10 === 0) {
+      if (processed % 50 === 0) {
         logger.info(`Processed ${processed}/${songs.length} songs...`);
       }
 
@@ -168,9 +118,6 @@ async function main() {
     // Connect to database
     await prisma.$connect();
     logger.info('✅ Database connected');
-
-    // Initialize embedding model
-    await initializeEmbedder();
 
     // Read CSV file
     const csvPath = path.join(process.cwd(), 'data', 'songs_seed.csv');

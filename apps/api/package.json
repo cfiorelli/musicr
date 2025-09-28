@@ -15,7 +15,8 @@
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
     "db:studio": "prisma studio",
-    "seed": "tsx scripts/seed.ts"
+    "seed": "tsx scripts/seed.ts",
+    "seed:simple": "tsx scripts/seed-simple.ts"
   },
   "dependencies": {
     "@fastify/cookie": "^9.4.0",
