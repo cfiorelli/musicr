@@ -1,0 +1,367 @@
+[]
+{
+    "primary": {
+        "title": "Hey Jude",
+        "artist": "The Beatles",
+        "year": 1968
+    },
+    "alternates": [
+        {
+            "title": "I Will Always Love You",
+            "artist": "Whitney Houston",
+            "year": 1992,
+            "score": 0.8
+        },
+        {
+            "title": "Imagine",
+            "artist": "John Lennon",
+            "year": 1971,
+            "score": 0.7000000000000001
+        }
+    ],
+    "scores": {
+        "confidence": 0.51,
+        "strategy": "semantic",
+        "reasoning": "sad"
+    },
+    "why": "sad",
+    "metadata": {
+        "processingTime": 479,
+        "timestamp": "2026-02-03T21:56:57.590Z",
+        "debug": {
+            "instanceId": "6772c5a2ac8f-1-e1aa1262",
+            "hostname": "6772c5a2ac8f",
+            "pid": 1,
+            "bootTime": "2026-02-03T17:19:20.449Z",
+            "buildId": "ebfdffbd-3719-4d8a-bcec-3c25d7fd0cce",
+            "hasOpenAIKey": true,
+            "nodeVersion": "v22.11.0",
+            "uptime": 16657,
+            "embeddingStatus": "ok",
+            "embeddingDimensions": 1536
+        }
+    }
+}
+{
+    "primary": {
+        "title": "Billie Jean",
+        "artist": "Michael Jackson",
+        "year": 1982
+    },
+    "alternates": [
+        {
+            "title": "Call Me Maybe",
+            "artist": "Carly Rae Jepsen",
+            "year": 2012,
+            "score": 0.8
+        },
+        {
+            "title": "I Will Always Love You",
+            "artist": "Whitney Houston",
+            "year": 1992,
+            "score": 0.7000000000000001
+        }
+    ],
+    "scores": {
+        "confidence": 0.5,
+        "strategy": "semantic",
+        "reasoning": "happy"
+    },
+    "why": "happy",
+    "metadata": {
+        "processingTime": 534,
+        "timestamp": "2026-02-03T21:56:58.974Z",
+        "debug": {
+            "instanceId": "6772c5a2ac8f-1-e1aa1262",
+            "hostname": "6772c5a2ac8f",
+            "pid": 1,
+            "bootTime": "2026-02-03T17:19:20.449Z",
+            "buildId": "ebfdffbd-3719-4d8a-bcec-3c25d7fd0cce",
+            "hasOpenAIKey": true,
+            "nodeVersion": "v22.11.0",
+            "uptime": 16659,
+            "embeddingStatus": "ok",
+            "embeddingDimensions": 1536
+        }
+    }
+}
+{
+    "primary": {
+        "title": "Bohemian Rhapsody",
+        "artist": "Queen",
+        "year": 1975
+    },
+    "alternates": [
+        {
+            "title": "Hey Jude",
+            "artist": "The Beatles",
+            "year": 1968,
+            "score": 0.8
+        }
+    ],
+    "scores": {
+        "confidence": 0.5,
+        "strategy": "semantic",
+        "reasoning": "neutral"
+    },
+    "why": "neutral",
+    "metadata": {
+        "processingTime": 528,
+        "timestamp": "2026-02-03T21:57:00.339Z",
+        "debug": {
+            "instanceId": "6772c5a2ac8f-1-e1aa1262",
+            "hostname": "6772c5a2ac8f",
+            "pid": 1,
+            "bootTime": "2026-02-03T17:19:20.449Z",
+            "buildId": "ebfdffbd-3719-4d8a-bcec-3c25d7fd0cce",
+            "hasOpenAIKey": true,
+            "nodeVersion": "v22.11.0",
+            "uptime": 16660,
+            "embeddingStatus": "ok",
+            "embeddingDimensions": 1536
+        }
+    }
+}
+{
+    "primary": {
+        "title": "Music",
+        "artist": "Madonna",
+        "year": 2000
+    },
+    "alternates": [],
+    "scores": {
+        "confidence": 0.95,
+        "strategy": "phrase",
+        "reasoning": "music"
+    },
+    "why": "music",
+    "metadata": {
+        "processingTime": 40,
+        "timestamp": "2026-02-03T21:57:01.213Z",
+        "debug": {
+            "instanceId": "6772c5a2ac8f-1-e1aa1262",
+            "hostname": "6772c5a2ac8f",
+            "pid": 1,
+            "bootTime": "2026-02-03T17:19:20.449Z",
+            "buildId": "ebfdffbd-3719-4d8a-bcec-3c25d7fd0cce",
+            "hasOpenAIKey": true,
+            "nodeVersion": "v22.11.0",
+            "uptime": 16661,
+            "embeddingStatus": "ok",
+            "embeddingDimensions": 1536
+        }
+    }
+}
+{
+    "primary": {
+        "title": "Happy",
+        "artist": "Pharrell Williams",
+        "year": 2013
+    },
+    "alternates": [],
+    "scores": {
+        "confidence": 0.95,
+        "strategy": "phrase",
+        "reasoning": "happy"
+    },
+    "why": "happy",
+    "metadata": {
+        "processingTime": 52,
+        "timestamp": "2026-02-03T21:57:02.087Z",
+        "debug": {
+            "instanceId": "6772c5a2ac8f-1-e1aa1262",
+            "hostname": "6772c5a2ac8f",
+            "pid": 1,
+            "bootTime": "2026-02-03T17:19:20.449Z",
+            "buildId": "ebfdffbd-3719-4d8a-bcec-3c25d7fd0cce",
+            "hasOpenAIKey": true,
+            "nodeVersion": "v22.11.0",
+            "uptime": 16662,
+            "embeddingStatus": "ok",
+            "embeddingDimensions": 1536
+        }
+    }
+}
+{
+    "primary": {
+        "title": "Hey Jude",
+        "artist": "The Beatles",
+        "year": 1968
+    },
+    "alternates": [
+        {
+            "title": "I Will Always Love You",
+            "artist": "Whitney Houston",
+            "year": 1992,
+            "score": 0.8
+        },
+        {
+            "title": "Imagine",
+            "artist": "John Lennon",
+            "year": 1971,
+            "score": 0.7000000000000001
+        }
+    ],
+    "scores": {
+        "confidence": 0.51,
+        "strategy": "semantic",
+        "reasoning": "sad"
+    },
+    "why": "sad",
+    "metadata": {
+        "processingTime": 420,
+        "timestamp": "2026-02-03T21:57:03.337Z",
+        "debug": {
+            "instanceId": "6772c5a2ac8f-1-e1aa1262",
+            "hostname": "6772c5a2ac8f",
+            "pid": 1,
+            "bootTime": "2026-02-03T17:19:20.449Z",
+            "buildId": "ebfdffbd-3719-4d8a-bcec-3c25d7fd0cce",
+            "hasOpenAIKey": true,
+            "nodeVersion": "v22.11.0",
+            "uptime": 16663,
+            "embeddingStatus": "ok",
+            "embeddingDimensions": 1536
+        }
+    }
+}
+{
+    "primary": {
+        "title": "Billie Jean",
+        "artist": "Michael Jackson",
+        "year": 1982
+    },
+    "alternates": [
+        {
+            "title": "Call Me Maybe",
+            "artist": "Carly Rae Jepsen",
+            "year": 2012,
+            "score": 0.8
+        },
+        {
+            "title": "I Will Always Love You",
+            "artist": "Whitney Houston",
+            "year": 1992,
+            "score": 0.7000000000000001
+        }
+    ],
+    "scores": {
+        "confidence": 0.5,
+        "strategy": "semantic",
+        "reasoning": "happy"
+    },
+    "why": "happy",
+    "metadata": {
+        "processingTime": 434,
+        "timestamp": "2026-02-03T21:57:04.547Z",
+        "debug": {
+            "instanceId": "6772c5a2ac8f-1-e1aa1262",
+            "hostname": "6772c5a2ac8f",
+            "pid": 1,
+            "bootTime": "2026-02-03T17:19:20.449Z",
+            "buildId": "ebfdffbd-3719-4d8a-bcec-3c25d7fd0cce",
+            "hasOpenAIKey": true,
+            "nodeVersion": "v22.11.0",
+            "uptime": 16664,
+            "embeddingStatus": "ok",
+            "embeddingDimensions": 1536
+        }
+    }
+}
+{
+    "primary": {
+        "title": "Bohemian Rhapsody",
+        "artist": "Queen",
+        "year": 1975
+    },
+    "alternates": [
+        {
+            "title": "Hey Jude",
+            "artist": "The Beatles",
+            "year": 1968,
+            "score": 0.8
+        }
+    ],
+    "scores": {
+        "confidence": 0.5,
+        "strategy": "semantic",
+        "reasoning": "neutral"
+    },
+    "why": "neutral",
+    "metadata": {
+        "processingTime": 521,
+        "timestamp": "2026-02-03T21:57:05.879Z",
+        "debug": {
+            "instanceId": "6772c5a2ac8f-1-e1aa1262",
+            "hostname": "6772c5a2ac8f",
+            "pid": 1,
+            "bootTime": "2026-02-03T17:19:20.449Z",
+            "buildId": "ebfdffbd-3719-4d8a-bcec-3c25d7fd0cce",
+            "hasOpenAIKey": true,
+            "nodeVersion": "v22.11.0",
+            "uptime": 16666,
+            "embeddingStatus": "ok",
+            "embeddingDimensions": 1536
+        }
+    }
+}
+{
+    "primary": {
+        "title": "Music",
+        "artist": "Madonna",
+        "year": 2000
+    },
+    "alternates": [],
+    "scores": {
+        "confidence": 0.95,
+        "strategy": "phrase",
+        "reasoning": "music"
+    },
+    "why": "music",
+    "metadata": {
+        "processingTime": 34,
+        "timestamp": "2026-02-03T21:57:06.679Z",
+        "debug": {
+            "instanceId": "6772c5a2ac8f-1-e1aa1262",
+            "hostname": "6772c5a2ac8f",
+            "pid": 1,
+            "bootTime": "2026-02-03T17:19:20.449Z",
+            "buildId": "ebfdffbd-3719-4d8a-bcec-3c25d7fd0cce",
+            "hasOpenAIKey": true,
+            "nodeVersion": "v22.11.0",
+            "uptime": 16667,
+            "embeddingStatus": "ok",
+            "embeddingDimensions": 1536
+        }
+    }
+}
+{
+    "primary": {
+        "title": "Happy",
+        "artist": "Pharrell Williams",
+        "year": 2013
+    },
+    "alternates": [],
+    "scores": {
+        "confidence": 0.95,
+        "strategy": "phrase",
+        "reasoning": "happy"
+    },
+    "why": "happy",
+    "metadata": {
+        "processingTime": 24,
+        "timestamp": "2026-02-03T21:57:07.536Z",
+        "debug": {
+            "instanceId": "6772c5a2ac8f-1-e1aa1262",
+            "hostname": "6772c5a2ac8f",
+            "pid": 1,
+            "bootTime": "2026-02-03T17:19:20.449Z",
+            "buildId": "ebfdffbd-3719-4d8a-bcec-3c25d7fd0cce",
+            "hasOpenAIKey": true,
+            "nodeVersion": "v22.11.0",
+            "uptime": 16667,
+            "embeddingStatus": "ok",
+            "embeddingDimensions": 1536
+        }
+    }
+}
