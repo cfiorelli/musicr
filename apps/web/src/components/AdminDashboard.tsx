@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { API_URL } from '../utils/apiUrl';
 
 interface AdminAnalytics {
   summary: {
@@ -55,7 +56,7 @@ function AdminDashboard() {
   const fetchAnalytics = async () => {
     try {
       setLoading(true);
-      const response = await fetch('https://musicrapi-production.up.railway.app/api/admin/analytics');
+      const response = await fetch(`${API_URL}/admin/analytics`);
       
       if (!response.ok) {
         if (response.status === 403) {

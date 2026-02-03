@@ -1,0 +1,160 @@
+{
+  "artists": [
+    {
+      "name": "The Beatles",
+      "mbid": "b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d",
+      "maxTracks": 100
+    },
+    {
+      "name": "Taylor Swift",
+      "mbid": "20244d07-534f-4eff-b4d4-930878889970",
+      "maxTracks": 100
+    },
+    {
+      "name": "Ed Sheeran",
+      "mbid": "b8a7c51f-362c-4dcb-a259-bc6e0095f0a6",
+      "maxTracks": 80
+    },
+    {
+      "name": "Adele",
+      "mbid": "cc2c9c3c-b7bc-4b8b-84d8-4fbd8779e493",
+      "maxTracks": 60
+    },
+    {
+      "name": "Bruno Mars",
+      "mbid": "e95e3c6c-ab5d-4f1f-bb6f-1ea5eb1dcdae",
+      "maxTracks": 60
+    },
+    {
+      "name": "Beyoncé",
+      "mbid": "859d0860-d480-4efd-970c-c05d5f1776b8",
+      "maxTracks": 80
+    },
+    {
+      "name": "Drake",
+      "mbid": "b49b81cc-d5b7-4bdd-b662-4a4b2e8bcdad",
+      "maxTracks": 100
+    },
+    {
+      "name": "Ariana Grande",
+      "mbid": "f4fdbb4c-e4b7-47a0-b83b-d91bbfcfa387",
+      "maxTracks": 80
+    },
+    {
+      "name": "The Weeknd",
+      "mbid": "c8b03190-306c-4120-bb0b-6f2ebfc06ea9",
+      "maxTracks": 80
+    },
+    {
+      "name": "Billie Eilish",
+      "mbid": "f4abc0b5-3f7a-4eff-8f78-ac078dbce533",
+      "maxTracks": 60
+    },
+    {
+      "name": "Post Malone",
+      "mbid": "b1e26560-60e5-4236-bbdb-9aa5a8d5ee19",
+      "maxTracks": 60
+    },
+    {
+      "name": "Dua Lipa",
+      "mbid": "fe8c2430-5de1-4d37-9bae-8fb23e7c8c72",
+      "maxTracks": 60
+    },
+    {
+      "name": "Queen",
+      "mbid": "0383dadf-2a4e-4d10-a46a-e9e041da8eb3",
+      "maxTracks": 80
+    },
+    {
+      "name": "Coldplay",
+      "mbid": "cc197bad-dc9c-440d-a5b5-d52ba2e14234",
+      "maxTracks": 80
+    },
+    {
+      "name": "Imagine Dragons",
+      "mbid": "012151a8-0f9a-44c9-997f-ebd68b5389f9",
+      "maxTracks": 60
+    },
+    {
+      "name": "Maroon 5",
+      "mbid": "0ab49580-c84f-44d4-875f-d83760ea2cfe",
+      "maxTracks": 80
+    },
+    {
+      "name": "Eminem",
+      "mbid": "b95ce3ff-3d05-4e87-9e01-c97b66af13d4",
+      "maxTracks": 100
+    },
+    {
+      "name": "Rihanna",
+      "mbid": "73e5e69d-3554-40d8-8516-00cb38737a1c",
+      "maxTracks": 80
+    },
+    {
+      "name": "Justin Bieber",
+      "mbid": "e0140a67-e4d1-4f13-8a01-364355bee46e",
+      "maxTracks": 100
+    },
+    {
+      "name": "Katy Perry",
+      "mbid": "122d63fc-8671-43e4-9752-34e846d62a9c",
+      "maxTracks": 80
+    },
+    {
+      "name": "Lady Gaga",
+      "mbid": "650e7db6-b795-4eb5-a702-5ea2fc46c848",
+      "maxTracks": 80
+    },
+    {
+      "name": "Sam Smith",
+      "mbid": "77c9f476-ad41-4dd8-a26f-a46a78e65b05",
+      "maxTracks": 60
+    },
+    {
+      "name": "Shawn Mendes",
+      "mbid": "f562ce06-4d3d-4ee6-bded-bb58e7c8fbbe",
+      "maxTracks": 60
+    },
+    {
+      "name": "Harry Styles",
+      "mbid": "3c9b5187-d98e-4ff0-8cf3-5cdb714cfa33",
+      "maxTracks": 60
+    },
+    {
+      "name": "Olivia Rodrigo",
+      "mbid": "b5f3a4d7-4ebe-4b66-93d4-2e8e51e28be5",
+      "maxTracks": 40
+    },
+    {
+      "name": "Doja Cat",
+      "mbid": "ae515ee7-f0e0-4113-9cce-072e69b8f78d",
+      "maxTracks": 60
+    },
+    {
+      "name": "Lizzo",
+      "mbid": "bc078c55-5187-47f5-b127-c1a6b9c8e9e6",
+      "maxTracks": 40
+    },
+    {
+      "name": "Calvin Harris",
+      "mbid": "7d07c1a7-c0d9-4f79-b2c3-42d06c4c2cf5",
+      "maxTracks": 80
+    },
+    {
+      "name": "David Guetta",
+      "mbid": "6934b621-f0ac-4fde-96d0-e5acdef5d617",
+      "maxTracks": 80
+    },
+    {
+      "name": "Avicii",
+      "mbid": "62adc0be-8a7f-4676-b48b-22a141697557",
+      "maxTracks": 60
+    }
+  ],
+  "config": {
+    "rateLimit": 1000,
+    "userAgent": "Musicr/1.0 (https://github.com/yourorg/musicr; contact@musicr.app)",
+    "targetTotal": 2000,
+    "maxPerArtist": 100
+  }
+}

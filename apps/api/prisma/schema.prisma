@@ -12,17 +12,22 @@ datasource db {
 }
 
 model Song {
-  id         String   @id @default(uuid()) @db.Uuid
-  title      String
-  artist     String
-  year       Int?
-  popularity Int      @default(0)
-  tags       String[] @default([])
-  phrases    String[] @default([])
-  mbid       String?  @unique
-  embedding  Json?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id              String                      @id @default(uuid()) @db.Uuid
+  title           String
+  artist          String
+  album           String?
+  year            Int?
+  popularity      Int                         @default(0)
+  tags            String[]                    @default([])
+  phrases         String[]                    @default([])
+  mbid            String?                     @unique
+  isrc            String?                     @unique @db.VarChar(12)
+  source          String?                     @default("manual")
+  sourceUrl       String?                     @map("source_url")
+  embedding       Json?
+  embeddingVector Unsupported("vector(1536)")? @map("embedding_vector")
+  createdAt       DateTime                    @default(now())
+  updatedAt       DateTime                    @updatedAt
 
   messages Message[]
 
@@ -31,6 +36,8 @@ model Song {
   @@index([title, artist], map: "idx_songs_title_artist")
   @@index([popularity], map: "idx_songs_popularity")
   @@index([year], map: "idx_songs_year")
+  // Note: HNSW index on embedding_vector created via raw SQL (idx_songs_embedding_hnsw)
+  // Note: Unique index on ISRC created via raw SQL (idx_songs_isrc)
   @@map("songs")
 }
 

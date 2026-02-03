@@ -14,13 +14,14 @@ import { ModerationService } from './services/moderation-service.js';
 import { RateLimiter } from './utils/rate-limiter.js';
 import { getEmbeddingService } from './embeddings/index.js';
 import { phraseLexicon } from './services/phrase-lexicon-service.js';
-import { 
-  validateMapRequest, 
-  validateSearchRequest, 
+import {
+  validateMapRequest,
+  validateSearchRequest,
   createErrorResponse,
   MapResponse,
-  SearchResponse 
+  SearchResponse
 } from './schemas/api.js';
+import { getInstanceFingerprint, createRequestFingerprint } from './utils/fingerprint.js';
 
 const fastify = Fastify({
   logger: {
@@ -44,7 +45,12 @@ await fastify.register(cors, {
 
 // Register cookie plugin
 await fastify.register(cookie, {
-  secret: process.env.COOKIE_SECRET || 'default-cookie-secret-change-in-production',
+  secret: (() => {
+    if (config.nodeEnv === 'production' && !process.env.COOKIE_SECRET) {
+      throw new Error('COOKIE_SECRET environment variable is required in production');
+    }
+    return process.env.COOKIE_SECRET || 'dev-secret-not-for-production';
+  })(),
   parseOptions: {
     httpOnly: true,
     secure: config.nodeEnv === 'production',
@@ -460,7 +466,8 @@ fastify.post('/api/map', async (request, reply) => {
     }
 
     const processingTime = Date.now() - startTime;
-    
+
+    // Build base response
     const response: MapResponse = {
       primary: {
         title: songResult.primary.title,
@@ -484,6 +491,15 @@ fastify.post('/api/map', async (request, reply) => {
         timestamp: new Date().toISOString(),
       }
     };
+
+    // Add debug fingerprint if DEBUG_MATCHING=1
+    if (process.env.DEBUG_MATCHING === '1') {
+      const fingerprint = createRequestFingerprint(
+        songResult.scores.confidence > 0 ? 'ok' : 'error',
+        { dimensions: 1536 }
+      );
+      (response.metadata as any).debug = fingerprint;
+    }
 
     logger.info({
       text,
@@ -666,11 +682,10 @@ fastify.post('/api/admin/seed', async (request, reply) => {
     headers: request.headers
   }, 'Seed endpoint called');
 
-  // Temporarily bypass security check for debugging
-  // const isProduction = config.nodeEnv === 'production' && !process.env.RAILWAY_ENVIRONMENT;
-  // if (isProduction) {
-  //   return reply.code(403).send({ error: 'Database seeding not available in production' });
-  // }
+  // Security check: disable in production
+  if (config.nodeEnv === 'production') {
+    return reply.code(403).send({ error: 'Database seeding not available in production' });
+  }
   
   try {
     // Check if database is already seeded
@@ -884,9 +899,54 @@ fastify.get('/api/debug/connections', async (_, reply) => {
   }
 });
 
+// GET /api/debug/fingerprint - Instance fingerprint for debugging split-brain behavior
+fastify.get('/api/debug/fingerprint', async (_, reply) => {
+  // Only enabled when DEBUG_MATCHING=1
+  if (process.env.DEBUG_MATCHING !== '1') {
+    return reply.status(404).send({ error: 'Not found' });
+  }
+
+  try {
+    const fingerprint = getInstanceFingerprint();
+
+    // Test embedding service status
+    let embeddingStatus: 'ok' | 'error' | 'missing_key' = 'ok';
+    let embeddingError: string | undefined;
+
+    if (!fingerprint.hasOpenAIKey) {
+      embeddingStatus = 'missing_key';
+      embeddingError = 'OPENAI_API_KEY not set';
+    } else {
+      try {
+        const embeddingService = await getEmbeddingService();
+        const status = await embeddingService.getStatus();
+        if (!status.primary.available) {
+          embeddingStatus = 'error';
+          embeddingError = `Primary embedder (${status.primary.provider}) not available`;
+        }
+      } catch (error) {
+        embeddingStatus = 'error';
+        embeddingError = error instanceof Error ? error.message : 'Unknown error';
+      }
+    }
+
+    return {
+      ...fingerprint,
+      embeddingStatus,
+      embeddingError,
+      environment: config.nodeEnv,
+      timestamp: new Date().toISOString()
+    };
+
+  } catch (error) {
+    logger.error({ error }, 'Failed to get instance fingerprint');
+    reply.status(500).send({ error: 'Failed to get fingerprint' });
+  }
+});
+
 // Simple test endpoint to verify API is working
 fastify.get('/api/test-simple', async (_, reply) => {
-  return reply.send({ 
+  return reply.send({
     message: 'API is working',
     timestamp: new Date().toISOString(),
     env: config.nodeEnv
