@@ -949,7 +949,12 @@ fastify.get('/api/test-simple', async (_, reply) => {
   return reply.send({
     message: 'API is working',
     timestamp: new Date().toISOString(),
-    env: config.nodeEnv
+    env: config.nodeEnv,
+    debug: {
+      DEBUG_MATCHING: process.env.DEBUG_MATCHING,
+      DEBUG_MATCHING_type: typeof process.env.DEBUG_MATCHING,
+      DEBUG_MATCHING_strict_check: process.env.DEBUG_MATCHING === '1',
+    }
   });
 });
 
