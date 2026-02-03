@@ -45,6 +45,7 @@ export const MapResponseSchema = z.object({
     processingTime: z.number(),
     timestamp: z.string(),
     totalCandidates: z.number().optional(),
+    debug: z.any().optional(), // Instance fingerprint when DEBUG_MATCHING=1
   }),
 });
 
