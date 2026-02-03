@@ -1466,17 +1466,17 @@ const start = async () => {
     // Initialize embedding service
     try {
       await getEmbeddingService({
-        primaryProvider: 'local',
-        fallbackProvider: 'openai',
+        primaryProvider: 'openai',
+        fallbackProvider: 'local',
+        openai: process.env.OPENAI_API_KEY ? {
+          apiKey: process.env.OPENAI_API_KEY,
+          model: 'text-embedding-3-small',
+          dimensions: 1536
+        } : undefined,
         local: {
           model: 'Xenova/all-MiniLM-L6-v2',
           dimensions: 384
-        },
-        openai: process.env.OPENAI_API_KEY ? {
-          apiKey: process.env.OPENAI_API_KEY,
-          model: 'text-embedding-ada-002',
-          dimensions: 1536
-        } : undefined
+        }
       });
       logger.info('Embedding service initialized');
     } catch (error) {
