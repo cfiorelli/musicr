@@ -947,14 +947,12 @@ fastify.get('/api/debug/fingerprint', async (_, reply) => {
 // Simple test endpoint to verify API is working
 fastify.get('/api/test-simple', async (_, reply) => {
   return reply.send({
-    message: 'API is working',
+    message: 'API is working - deployment test v2',
     timestamp: new Date().toISOString(),
     env: config.nodeEnv,
-    debug: {
-      DEBUG_MATCHING: process.env.DEBUG_MATCHING,
-      DEBUG_MATCHING_type: typeof process.env.DEBUG_MATCHING,
-      DEBUG_MATCHING_strict_check: process.env.DEBUG_MATCHING === '1',
-    }
+    debugMatchingValue: process.env.DEBUG_MATCHING,
+    debugMatchingType: typeof process.env.DEBUG_MATCHING,
+    debugMatchingStrictCheck: process.env.DEBUG_MATCHING === '1',
   });
 });
 
