@@ -56,18 +56,46 @@ export class SemanticSearcher {
    */
   async findSimilar(message: string, k: number = 50): Promise<SemanticMatch[]> {
     const startTime = Date.now();
-    
+
     try {
       // Generate embedding for the input message
       logger.debug({ message: message.substring(0, 100) }, 'Generating message embedding');
       const embeddingService = await getEmbeddingService();
       const messageEmbedding = await embeddingService.embedSingle(message);
-      
+
+      // Debug logging if DEBUG_MATCHING is enabled
+      if (process.env.DEBUG_MATCHING === '1') {
+        const norm = Math.sqrt(messageEmbedding.reduce((sum, val) => sum + val * val, 0));
+        const sumAbs = messageEmbedding.reduce((sum, val) => sum + Math.abs(val), 0);
+        const isZero = messageEmbedding.every(val => val === 0);
+
+        logger.info({
+          receivedMessage: {
+            length: message.length,
+            preview: message.substring(0, 80)
+          },
+          embeddingInput: {
+            length: message.length,
+            preview: message.substring(0, 80)
+          },
+          embedding: {
+            dimensions: messageEmbedding.length,
+            first5: messageEmbedding.slice(0, 5),
+            l2Norm: norm.toFixed(6),
+            sumAbs: sumAbs.toFixed(6),
+            isAllZeros: isZero
+          },
+          queryPath: 'native_vector'
+        }, '[DEBUG_MATCHING] Embedding generated');
+      }
+
       // Use raw SQL to query songs with embeddings and calculate cosine similarity
       logger.debug('Performing vector similarity search');
-      
+
       const embeddingString = `[${messageEmbedding.join(',')}]`;
       
+      // Use native vector column for fast HNSW index search
+      // Falls back to JSONB if embedding_vector is NULL
       const results = await this.prisma.$queryRaw<Array<{
         id: string;
         title: string;
@@ -77,17 +105,28 @@ export class SemanticSearcher {
         popularity: number;
         similarity: number;
       }>>`
-        SELECT 
+        SELECT
           id,
           title,
           artist,
           tags,
           year,
           popularity,
-          (embedding <=> ${embeddingString}::vector) * -1 + 1 as similarity
-        FROM songs 
-        WHERE embedding IS NOT NULL
-        ORDER BY embedding <=> ${embeddingString}::vector
+          CASE
+            WHEN embedding_vector IS NOT NULL THEN
+              (embedding_vector <=> ${embeddingString}::vector) * -1 + 1
+            ELSE
+              (embedding::jsonb::text::vector <=> ${embeddingString}::vector) * -1 + 1
+          END as similarity
+        FROM songs
+        WHERE embedding_vector IS NOT NULL OR embedding IS NOT NULL
+        ORDER BY
+          CASE
+            WHEN embedding_vector IS NOT NULL THEN
+              embedding_vector <=> ${embeddingString}::vector
+            ELSE
+              embedding::jsonb::text::vector <=> ${embeddingString}::vector
+          END
         LIMIT ${k * 2}
       `;
 
@@ -97,6 +136,23 @@ export class SemanticSearcher {
       }
 
       logger.debug({ songCount: results.length }, 'Computing similarities complete');
+
+      // Debug logging if DEBUG_MATCHING is enabled
+      if (process.env.DEBUG_MATCHING === '1') {
+        logger.info({
+          resultCount: results.length,
+          top3Results: results.slice(0, 3).map(r => ({
+            title: r.title,
+            artist: r.artist,
+            similarity: r.similarity.toFixed(4)
+          })),
+          sqlQuery: {
+            usedNativeVector: true,
+            embeddingDims: messageEmbedding.length,
+            limit: k * 2
+          }
+        }, '[DEBUG_MATCHING] Query results');
+      }
 
       // Convert results to SemanticMatch format
       const matches: SemanticMatch[] = results
