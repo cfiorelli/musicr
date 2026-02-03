@@ -393,7 +393,7 @@ export class SongMatchingService {
       if (titleOverlap > 0.5 || artistOverlap > 0.5) {
         matches.push({
           song,
-          score: Math.max(titleOverlap, artistOverlap) * 1.0 + (song.popularity / 100) * 0.1,
+          score: Math.max(titleOverlap, artistOverlap),
           reason: {
             strategy: 'exact',
             matchedPhrase: titleOverlap > artistOverlap ? song.title : song.artist
@@ -425,7 +425,7 @@ export class SongMatchingService {
         for (const song of songs) {
           matches.push({
             song,
-            score: 0.8 + (phraseMatch.confidence * 0.15) + (song.popularity / 100) * 0.05,
+            score: 0.8 + (phraseMatch.confidence * 0.2),
             reason: {
               strategy: 'phrase',
               matchedPhrase: phraseMatch.phrase,
@@ -461,7 +461,7 @@ export class SongMatchingService {
         if (matchingPhrases.length > 0) {
           matches.push({
             song,
-            score: 0.7 + (matchingPhrases.length * 0.1) + (song.popularity / 100) * 0.05,
+            score: 0.7 + (matchingPhrases.length * 0.15),
             reason: {
               strategy: 'phrase',
               matchedPhrase: matchingPhrases[0],
@@ -501,7 +501,7 @@ export class SongMatchingService {
 
         const songMatch: SongMatch = {
           song: song as Song,
-          score: match.similarity * 0.9 + (match.popularity / 100) * 0.1,
+          score: match.similarity,
           reason: {
             strategy: 'embedding',
             similarity: match.similarity,
@@ -540,7 +540,7 @@ export class SongMatchingService {
 
     return songs.map((song: Song) => ({
       song,
-      score: 0.5 + (song.popularity / 100) * 0.3,
+      score: 0.5,
       reason: {
         strategy: 'semantic',
         mood: mood
@@ -569,7 +569,7 @@ export class SongMatchingService {
 
     return songs.map((song: Song) => ({
       song,
-      score: 0.3 + (song.popularity / 100) * 0.2,
+      score: 0.3,
       reason: {
         strategy: 'semantic',
         mood: 'neutral'
