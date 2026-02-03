@@ -8,9 +8,9 @@
 
 import { PrismaClient } from '@prisma/client';
 import { logger } from '../config/index.js';
-import { getEmbeddingService, cosineSimilarity } from '../embeddings/index.js';
 import { phraseLexicon } from './phrase-lexicon-service.js';
 import { moderationService, ModerationConfig } from './moderation-service.js';
+import { SemanticSearcher } from '../engine/matchers/semantic.js';
 
 // Define Song type based on schema
 interface Song {
@@ -64,11 +64,16 @@ export interface SongMatchResult {
 
 export class SongMatchingService {
   private prisma: PrismaClient;
-  private readonly MIN_SIMILARITY_THRESHOLD = 0.6;
+  private semanticSearcher: SemanticSearcher;
   private readonly CONFIDENCE_THRESHOLD = 0.7;
 
   constructor(prisma: PrismaClient) {
     this.prisma = prisma;
+    this.semanticSearcher = new SemanticSearcher(prisma, {
+      knn_size: 50,
+      similarity_threshold: 0.5,
+      use_reranking: true
+    });
     // Initialize phrase lexicon in the background
     this.initializePhraseService();
   }
@@ -471,44 +476,45 @@ export class SongMatchingService {
   }
 
   /**
-   * Find matches using embedding similarity
+   * Find matches using embedding similarity (uses SemanticSearcher with native pgvector)
    */
   private async findEmbeddingMatches(text: string): Promise<SongMatch[]> {
     try {
-      const embeddingService = await getEmbeddingService();
-      const textEmbedding = await embeddingService.embedSingle(text);
-      
-      // Get songs with embeddings using raw query since embedding field is Unsupported
-      const songsWithEmbeddings = await this.prisma.$queryRaw<Array<Song & { embedding: any }>>`
-        SELECT * FROM songs 
-        WHERE embedding IS NOT NULL 
-        ORDER BY popularity DESC 
-        LIMIT 100
-      `;
+      // Use SemanticSearcher which properly uses native embedding_vector column with HNSW index
+      const semanticMatches = await this.semanticSearcher.findSimilar(text, 50);
 
-      const matches: SongMatch[] = [];
-
-      for (const song of songsWithEmbeddings) {
-        if (song.embedding) {
-          // embedding is now stored as JSONB array
-          const songEmbedding = Array.isArray(song.embedding) ? song.embedding as number[] : this.parseEmbedding(song.embedding);
-          const similarity = cosineSimilarity(textEmbedding, songEmbedding);
-          
-          if (similarity >= this.MIN_SIMILARITY_THRESHOLD) {
-            matches.push({
-              song,
-              score: similarity * 0.9 + (song.popularity / 100) * 0.1,
-              reason: {
-                strategy: 'embedding',
-                similarity: similarity,
-                mood: this.detectMood(text)
-              }
-            });
-          }
-        }
+      if (semanticMatches.length === 0) {
+        logger.debug('No semantic matches found');
+        return [];
       }
 
-      return matches.sort((a, b) => b.score - a.score).slice(0, 10);
+      // Convert SemanticMatch to SongMatch format
+      const matchPromises = semanticMatches.map(async (match) => {
+        // Fetch full song data
+        const song = await this.prisma.song.findUnique({
+          where: { id: match.songId }
+        });
+
+        if (!song) {
+          return null;
+        }
+
+        const songMatch: SongMatch = {
+          song: song as Song,
+          score: match.similarity * 0.9 + (match.popularity / 100) * 0.1,
+          reason: {
+            strategy: 'embedding',
+            similarity: match.similarity,
+            mood: this.detectMood(text)
+          }
+        };
+
+        return songMatch;
+      });
+
+      const matchesWithNulls = await Promise.all(matchPromises);
+      const matches = matchesWithNulls.filter((m) => m !== null) as SongMatch[];
+      return matches.slice(0, 10);
     } catch (error) {
       logger.warn({ error }, 'Embedding matching failed, falling back');
       return [];
@@ -655,19 +661,4 @@ export class SongMatchingService {
   /**
    * Parse embedding from JSONB format (fallback for legacy data)
    */
-  private parseEmbedding(embedding: any): number[] {
-    // JSONB should already be parsed as array, but handle string format as fallback
-    if (Array.isArray(embedding)) return embedding;
-    if (typeof embedding === 'string') {
-      try {
-        const parsed = JSON.parse(embedding);
-        return Array.isArray(parsed) ? parsed : [];
-      } catch {
-        // Parse vector string format "[1,2,3]" or "1,2,3"
-        const cleaned = embedding.replace(/[\[\]]/g, '');
-        return cleaned.split(',').map((s: string) => parseFloat(s.trim()));
-      }
-    }
-    return [];
-  }
 }
