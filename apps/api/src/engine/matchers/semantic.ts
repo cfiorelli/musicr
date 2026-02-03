@@ -95,6 +95,9 @@ export class SemanticSearcher {
       const embeddingString = `[${messageEmbedding.join(',')}]`;
       const limit = k * 2;
 
+      // Set HNSW ef_search parameter for sufficient candidate examination
+      await this.prisma.$executeRawUnsafe(`SET LOCAL hnsw.ef_search = ${Math.max(limit, 100)}`);
+
       // Use native vector column for fast HNSW index search
       // Falls back to JSONB if embedding_vector is NULL
       const results = await this.prisma.$queryRawUnsafe<Array<{
