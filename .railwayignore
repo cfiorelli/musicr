@@ -1,0 +1,57 @@
+# Railway ignore file - exclude large files from upload
+
+# Dependencies (will be installed during build)
+node_modules/
+.pnpm-store/
+**/node_modules/
+
+# Build artifacts (will be rebuilt)
+dist/
+build/
+.next/
+out/
+**/dist/
+**/build/
+
+# Development files
+.git/
+.github/
+**/.git/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+pnpm-debug.log*
+.logs/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Test files
+coverage/
+.nyc_output/
+**/__tests__/
+**/*.test.ts
+**/*.spec.ts
+
+# Documentation
+*.md
+!README.md
+docs/
+
+# Misc
+.cache/
+tmp/
+temp/
+*.tmp
