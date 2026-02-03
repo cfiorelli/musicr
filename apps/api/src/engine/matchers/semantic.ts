@@ -93,10 +93,11 @@ export class SemanticSearcher {
       logger.debug('Performing vector similarity search');
 
       const embeddingString = `[${messageEmbedding.join(',')}]`;
-      
+      const limit = k * 2;
+
       // Use native vector column for fast HNSW index search
       // Falls back to JSONB if embedding_vector is NULL
-      const results = await this.prisma.$queryRaw<Array<{
+      const results = await this.prisma.$queryRawUnsafe<Array<{
         id: string;
         title: string;
         artist: string;
@@ -104,7 +105,7 @@ export class SemanticSearcher {
         year: number | null;
         popularity: number;
         similarity: number;
-      }>>`
+      }>>(`
         SELECT
           id,
           title,
@@ -114,21 +115,21 @@ export class SemanticSearcher {
           popularity,
           CASE
             WHEN embedding_vector IS NOT NULL THEN
-              (embedding_vector <=> ${embeddingString}::vector) * -1 + 1
+              (embedding_vector <=> '${embeddingString}'::vector) * -1 + 1
             ELSE
-              (embedding::jsonb::text::vector <=> ${embeddingString}::vector) * -1 + 1
+              (embedding::jsonb::text::vector <=> '${embeddingString}'::vector) * -1 + 1
           END as similarity
         FROM songs
         WHERE embedding_vector IS NOT NULL OR embedding IS NOT NULL
         ORDER BY
           CASE
             WHEN embedding_vector IS NOT NULL THEN
-              embedding_vector <=> ${embeddingString}::vector
+              embedding_vector <=> '${embeddingString}'::vector
             ELSE
-              embedding::jsonb::text::vector <=> ${embeddingString}::vector
+              embedding::jsonb::text::vector <=> '${embeddingString}'::vector
           END
-        LIMIT ${k * 2}
-      `;
+        LIMIT ${limit}
+      `);
 
       if (results.length === 0) {
         logger.warn('No songs with embeddings found in database');
