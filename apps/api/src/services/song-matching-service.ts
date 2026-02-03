@@ -268,26 +268,17 @@ export class SongMatchingService {
     userId?: string
   ): Promise<SongMatchResult> {
     const cleanText = this.cleanText(text);
-    
-    // Try different matching strategies in order of precision
+
+    // ONLY use semantic/embedding-based matching
     let matches: SongMatch[] = [];
-    
-    // Strategy 1: Exact title/artist matches
-    matches = await this.findExactMatches(cleanText);
-    
-    // Strategy 2: Phrase matches (song contains words from message)
+
+    // Embedding-based semantic search
+    matches = await this.findEmbeddingMatches(cleanText);
+
+    // If semantic search fails, return error instead of fallback
     if (matches.length === 0) {
-      matches = await this.findPhraseMatches(cleanText);
-    }
-    
-    // Strategy 3: Embedding-based semantic search
-    if (matches.length === 0) {
-      matches = await this.findEmbeddingMatches(cleanText);
-    }
-    
-    // Strategy 4: Fallback to popular songs with text analysis
-    if (matches.length === 0) {
-      matches = await this.findFallbackMatches(cleanText);
+      logger.error({ text: cleanText }, 'Semantic search returned no results');
+      throw new Error('Semantic search failed - no matching songs found');
     }
 
     // Filter explicit content if needed
