@@ -10,6 +10,7 @@ import { RoomService } from './services/room-service.js';
 import { SongMatchingService } from './services/song-matching-service.js';
 import { SongSearchService } from './services/song-search-service.js';
 import { ConnectionManager } from './services/connection-manager.js';
+import { redisService } from './services/redis-service.js';
 import { RateLimiter } from './utils/rate-limiter.js';
 import { getEmbeddingService } from './embeddings/index.js';
 import { phraseLexicon } from './services/phrase-lexicon-service.js';
@@ -73,6 +74,50 @@ const songMatchingService = new SongMatchingService(prisma);
 const songSearchService = new SongSearchService(prisma);
 const connectionManager = new ConnectionManager();
 const rateLimiter = new RateLimiter();
+
+// Setup Redis subscriptions for cross-instance reaction sync
+if (redisService.isEnabled()) {
+  await redisService.subscribe('reactions:events', (event) => {
+    // Type guard to ensure this is a reaction event
+    if (event.type !== 'reaction_added' && event.type !== 'reaction_removed') {
+      return;
+    }
+
+    // Ignore events from this instance (already handled locally)
+    if (event.instanceId === INSTANCE_ID) {
+      return;
+    }
+
+    logger.debug({
+      eventType: event.type,
+      fromInstance: event.instanceId,
+      messageId: event.messageId,
+      emoji: event.emoji
+    }, 'Received reaction event from another instance');
+
+    // Broadcast to local connections in the room
+    if (event.type === 'reaction_added') {
+      connectionManager.broadcastToRoom(event.roomId, {
+        type: 'reaction_added',
+        messageId: event.messageId,
+        emoji: event.emoji,
+        userId: event.userId,
+        anonHandle: event.anonHandle,
+        instanceId: event.instanceId
+      });
+    } else if (event.type === 'reaction_removed') {
+      connectionManager.broadcastToRoom(event.roomId, {
+        type: 'reaction_removed',
+        messageId: event.messageId,
+        emoji: event.emoji,
+        userId: event.userId,
+        instanceId: event.instanceId
+      });
+    }
+  });
+
+  logger.info('Redis reaction subscriptions active');
+}
 
 // Health check route
 fastify.get('/health', async () => {
@@ -1257,6 +1302,7 @@ fastify.register(async function (fastify) {
               });
 
               // Broadcast to room
+              const timestamp = new Date().toISOString();
               connectionManager.broadcastToRoom(defaultRoom.id, {
                 type: 'reaction_added',
                 messageId,
@@ -1267,8 +1313,27 @@ fastify.register(async function (fastify) {
                 instanceId: INSTANCE_ID
               });
 
+              // Publish to Redis for other instances
+              if (redisService.isEnabled()) {
+                redisService.publish('reactions:events', {
+                  type: 'reaction_added',
+                  messageId,
+                  emoji,
+                  userId: userSession.userId,
+                  anonHandle: userSession.anonHandle,
+                  roomId: defaultRoom.id,
+                  timestamp,
+                  instanceId: INSTANCE_ID
+                });
+              }
+
               if (DEBUG_PRESENCE) {
-                logger.info({ instanceId: INSTANCE_ID, messageId, emoji }, '[DEBUG_PRESENCE] Broadcast reaction_added');
+                logger.info({
+                  instanceId: INSTANCE_ID,
+                  messageId,
+                  emoji,
+                  redisEnabled: redisService.isEnabled()
+                }, '[DEBUG_PRESENCE] Broadcast reaction_added');
               }
 
             } catch (error) {
@@ -1304,6 +1369,7 @@ fastify.register(async function (fastify) {
               });
 
               // Broadcast to room
+              const timestamp = new Date().toISOString();
               connectionManager.broadcastToRoom(defaultRoom.id, {
                 type: 'reaction_removed',
                 messageId,
@@ -1312,8 +1378,27 @@ fastify.register(async function (fastify) {
                 instanceId: INSTANCE_ID
               });
 
+              // Publish to Redis for other instances
+              if (redisService.isEnabled()) {
+                redisService.publish('reactions:events', {
+                  type: 'reaction_removed',
+                  messageId,
+                  emoji,
+                  userId: userSession.userId,
+                  anonHandle: userSession.anonHandle,
+                  roomId: defaultRoom.id,
+                  timestamp,
+                  instanceId: INSTANCE_ID
+                });
+              }
+
               if (DEBUG_PRESENCE) {
-                logger.info({ instanceId: INSTANCE_ID, messageId, emoji }, '[DEBUG_PRESENCE] Broadcast reaction_removed');
+                logger.info({
+                  instanceId: INSTANCE_ID,
+                  messageId,
+                  emoji,
+                  redisEnabled: redisService.isEnabled()
+                }, '[DEBUG_PRESENCE] Broadcast reaction_removed');
               }
 
             } catch (error) {
