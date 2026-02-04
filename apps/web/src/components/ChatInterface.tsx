@@ -8,7 +8,11 @@ const ChatInterface = () => {
   const [currentSelectedMessage, setCurrentSelectedMessage] = useState<string | null>(null);
   const [currentAlternates, setCurrentAlternates] = useState<Message['alternates']>([]);
   const [autoScroll, setAutoScroll] = useState(true);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [songCount, setSongCount] = useState<number | null>(null);
   const [expandedWhyPanel, setExpandedWhyPanel] = useState<string | null>(null);
+  const [emojiPickerOpen, setEmojiPickerOpen] = useState<string | null>(null);
+  const [quickReactions] = useState(['❤️', '😂', '🎵', '🔥', '👍', '🎉']);
   const [showOnboarding, setShowOnboarding] = useState(() => {
     return localStorage.getItem('musicr-onboarding-dismissed') !== 'true';
   });
@@ -20,15 +24,17 @@ const ChatInterface = () => {
     "We just got good news",
     "I feel anxious but hopeful"
   ];
-  const { 
-    messages, 
-    sendMessage, 
-    connectionStatus, 
-    userHandle, 
+  const {
+    messages,
+    sendMessage,
+    connectionStatus,
+    userHandle,
     currentRoom,
     familyFriendly,
     setFamilyFriendly,
-    selectAlternate
+    selectAlternate,
+    addReaction,
+    removeReaction
   } = useChatStore();
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -84,9 +90,10 @@ const ChatInterface = () => {
     return emojis[Math.abs(hash) % emojis.length];
   };
 
-  const getConfidenceLabel = (similarity?: number): { label: string; color: string; emoji: string } => {
-    if (!similarity) return { label: 'Unknown', color: 'text-gray-400', emoji: '❓' };
-
+  const getConfidenceLabel = (similarity?: number): { label: string; color: string; emoji: string } | null => {
+    if (similarity === undefined || similarity === null) {
+      return { label: 'Unknown', color: 'text-gray-400', emoji: '❓' };
+    }
     if (similarity >= 0.7) return { label: 'Very Strong', color: 'text-green-400', emoji: '🎯' };
     if (similarity >= 0.5) return { label: 'Strong', color: 'text-green-300', emoji: '✨' };
     if (similarity >= 0.35) return { label: 'Moderate', color: 'text-yellow-300', emoji: '🎵' };
@@ -130,8 +137,26 @@ const ChatInterface = () => {
   useEffect(() => {
     if (autoScroll && messagesRef.current) {
       messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
+      setUnreadCount(0); // Reset when auto-scrolling
+    } else if (!autoScroll && messages.length > 0) {
+      // Increment unread count when new message arrives while not at bottom
+      setUnreadCount(prev => prev + 1);
     }
   }, [messages, autoScroll]);
+
+  // Fetch song count on mount
+  useEffect(() => {
+    async function fetchSongCount() {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/admin/analytics`);
+        const data = await response.json();
+        setSongCount(data.songs || null);
+      } catch (error) {
+        console.error('Failed to fetch song count:', error);
+      }
+    }
+    fetchSongCount();
+  }, []);
 
   // Handle scroll detection to determine if user scrolled up
   const handleScroll = () => {
@@ -224,6 +249,20 @@ const ChatInterface = () => {
           }`}>
             {connectionStatus}
           </div>
+          {songCount !== null && (
+            <div className="
+              flex items-center gap-2
+              bg-gradient-to-r from-purple-500/20 to-blue-500/20
+              border border-purple-400/30
+              rounded-full px-3 py-1
+              backdrop-blur-sm
+            ">
+              <span className="text-lg">🎵</span>
+              <span className="text-white text-sm font-medium">
+                {songCount.toLocaleString()} song{songCount !== 1 ? 's' : ''}
+              </span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -389,43 +428,206 @@ const ChatInterface = () => {
 
                       {/* Why Panel - Expandable Explanation */}
                       {expandedWhyPanel === message.id && message.reasoning && songDisplay && (
-                        <div className="mt-3 p-4 bg-gradient-to-br from-blue-500/20 to-blue-600/10 border-2 border-blue-400/30 rounded-xl text-sm backdrop-blur-sm shadow-lg">
-                          <h4 className="text-blue-200 font-bold mb-3 flex items-center gap-2">
-                            <span>💡</span>
-                            <span>Why this song?</span>
-                          </h4>
-                          <div className="space-y-2.5 text-gray-200">
-                            <div className="bg-white/10 rounded-lg p-2">
-                              <span className="text-blue-300 font-medium">Matched Song:</span>{' '}
-                              <span className="text-white font-semibold">{songDisplay}</span>
+                        <div className="
+                          mt-3 p-3 md:p-4
+                          bg-gradient-to-br from-blue-500/20 to-blue-600/10
+                          border-2 border-blue-400/30 rounded-xl
+                          text-sm backdrop-blur-sm shadow-lg
+                          relative z-10
+                          max-w-full md:max-w-2xl
+                          overflow-hidden
+                        ">
+                          {/* Header */}
+                          <div className="flex items-start justify-between gap-2 mb-3">
+                            <div className="flex items-center gap-2 flex-shrink-0">
+                              <span className="text-xl">💭</span>
+                              <span className="text-blue-300 font-semibold text-sm md:text-base">
+                                Why this match?
+                              </span>
                             </div>
-                            <div className="bg-white/10 rounded-lg p-2">
-                              <span className="text-blue-300 font-medium">Reasoning:</span>{' '}
-                              <span className="text-white">{message.reasoning}</span>
+                            <button
+                              onClick={() => setExpandedWhyPanel(null)}
+                              className="text-gray-400 hover:text-white transition-colors
+                                         flex-shrink-0 p-1 md:hidden"
+                              aria-label="Close"
+                            >
+                              ✕
+                            </button>
+                          </div>
+
+                          {/* Song Display */}
+                          <div className="mb-3 p-2 md:p-3 bg-white/5 rounded-lg">
+                            <div className="text-white font-semibold text-sm md:text-base break-words">
+                              {message.songTitle}
                             </div>
-                            {(() => {
-                              const confidence = getConfidenceLabel(message.similarity);
-                              return (
-                                <div className="bg-white/10 rounded-lg p-2">
-                                  <span className="text-blue-300 font-medium">Match Confidence:</span>{' '}
-                                  <span className={`font-semibold ${confidence.color}`}>
+                            <div className="text-blue-300 text-xs md:text-sm break-words">
+                              {message.songArtist}
+                              {message.songYear && (
+                                <span className="text-gray-400 ml-2">({message.songYear})</span>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Confidence Score */}
+                          {(() => {
+                            const confidence = getConfidenceLabel(message.similarity);
+                            if (!confidence) return null; // Guard against undefined
+
+                            return (
+                              <div className="bg-white/10 rounded-lg p-2 md:p-3 mb-3">
+                                <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                                  <span className="text-blue-300 font-medium text-xs md:text-sm">
+                                    Match Confidence:
+                                  </span>
+                                  <span className={`font-semibold text-sm md:text-base ${confidence.color}`}>
                                     {confidence.emoji} {confidence.label}
                                   </span>
-                                  {message.similarity && (
-                                    <span className="text-gray-300 text-xs ml-2">
+                                  {message.similarity !== undefined && (
+                                    <span className="text-gray-300 text-xs">
                                       (score: {(message.similarity * 100).toFixed(1)}%)
                                     </span>
                                   )}
-                                  {message.alternates && message.alternates.length > 0 && (
-                                    <span className="text-gray-300 text-xs block mt-1">
-                                      {message.alternates.length} alternative songs available
-                                    </span>
-                                  )}
                                 </div>
-                              );
-                            })()}
-                            <div className="text-xs text-blue-200/60 mt-3 italic border-t border-blue-400/20 pt-2">
-                              ✨ Matched using semantic AI search (no lyrics analyzed)
+                              </div>
+                            );
+                          })()}
+
+                          {/* Reasoning Text */}
+                          <div className="text-gray-200 leading-relaxed text-xs md:text-sm whitespace-pre-wrap break-words mb-3">
+                            {message.reasoning}
+                          </div>
+
+                          {/* Alternates */}
+                          {message.alternates && message.alternates.length > 0 && (
+                            <div className="mt-3 pt-3 border-t border-blue-400/20">
+                              <div className="text-blue-300 font-medium mb-2 text-xs md:text-sm">
+                                Other matches considered:
+                              </div>
+                              <div className="space-y-1.5">
+                                {message.alternates.slice(0, 3).map((alt, idx) => (
+                                  <div
+                                    key={idx}
+                                    className="text-gray-300 text-xs p-2 bg-white/5 rounded break-words"
+                                  >
+                                    {alt.title} - {alt.artist}
+                                    {alt.score !== undefined && (
+                                      <span className="text-gray-400 ml-2">
+                                        ({(alt.score * 100).toFixed(1)}%)
+                                      </span>
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          <div className="text-xs text-blue-200/60 mt-3 italic border-t border-blue-400/20 pt-2">
+                            ✨ Matched using semantic AI search (no lyrics analyzed)
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Emoji Reactions */}
+                      {message.reactions && message.reactions.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mt-2">
+                          {message.reactions.map((reaction) => (
+                            <button
+                              key={reaction.emoji}
+                              onClick={() => {
+                                if (reaction.hasReacted) {
+                                  removeReaction(message.id, reaction.emoji);
+                                } else {
+                                  addReaction(message.id, reaction.emoji);
+                                }
+                              }}
+                              className={`
+                                flex items-center gap-1 px-2 py-1 rounded-full text-sm
+                                transition-all duration-200 hover:scale-110
+                                ${reaction.hasReacted
+                                  ? 'bg-blue-500/30 border-2 border-blue-400'
+                                  : 'bg-white/10 border border-white/20 hover:bg-white/20'
+                                }
+                              `}
+                              title={reaction.users.map(u => u.anonHandle).join(', ')}
+                            >
+                              <span>{reaction.emoji}</span>
+                              <span className="text-xs font-semibold text-white">{reaction.count}</span>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Quick Reactions Bar */}
+                      <div className="flex items-center gap-1 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        {quickReactions.map((emoji) => (
+                          <button
+                            key={emoji}
+                            onClick={() => addReaction(message.id, emoji)}
+                            className="w-8 h-8 flex items-center justify-center rounded-full
+                                       bg-white/5 hover:bg-white/20 transition-all hover:scale-110"
+                            title={`React with ${emoji}`}
+                          >
+                            {emoji}
+                          </button>
+                        ))}
+                        <button
+                          onClick={() => setEmojiPickerOpen(message.id)}
+                          className="w-8 h-8 flex items-center justify-center rounded-full
+                                     bg-white/5 hover:bg-white/20 transition-all text-sm"
+                          title="More reactions"
+                        >
+                          ➕
+                        </button>
+                      </div>
+
+                      {/* Full Emoji Picker Modal */}
+                      {emojiPickerOpen === message.id && (
+                        <div
+                          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+                          onClick={() => setEmojiPickerOpen(null)}
+                        >
+                          <div
+                            className="bg-gray-800 rounded-xl p-4 max-w-md w-full mx-4"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <div className="flex justify-between items-center mb-3">
+                              <h3 className="text-white font-semibold">Choose a reaction</h3>
+                              <button
+                                onClick={() => setEmojiPickerOpen(null)}
+                                className="text-gray-400 hover:text-white"
+                              >
+                                ✕
+                              </button>
+                            </div>
+                            <div className="grid grid-cols-8 gap-2 max-h-64 overflow-y-auto">
+                              {['😀','😃','😄','😁','😆','😅','🤣','😂','🙂','🙃','😉','😊','😇',
+                                '🥰','😍','🤩','😘','😗','😚','😙','🥲','😋','😛','😜','🤪','😝',
+                                '🤑','🤗','🤭','🤫','🤔','🤐','🤨','😐','😑','😶','😏','😒','🙄',
+                                '😬','🤥','😌','😔','😪','🤤','😴','😷','🤒','🤕','🤢','🤮','🤧',
+                                '🥵','🥶','🥴','😵','🤯','🤠','🥳','🥸','😎','🤓','🧐','😕','😟',
+                                '🙁','☹️','😮','😯','😲','😳','🥺','😦','😧','😨','😰','😥','😢',
+                                '😭','😱','😖','😣','😞','😓','😩','😫','🥱','😤','😡','😠','🤬',
+                                '😈','👿','💀','☠️','💩','🤡','👹','👺','👻','👽','👾','🤖','😺',
+                                '😸','😹','😻','😼','😽','🙀','😿','😾','❤️','🧡','💛','💚','💙',
+                                '💜','🖤','🤍','🤎','💔','❣️','💕','💞','💓','💗','💖','💘','💝',
+                                '🎵','🎶','🎤','🎧','🎼','🎹','🥁','🎸','🎺','🎷','🎻','🎬','🎭',
+                                '🎨','🎯','🎰','🎲','🎳','🎮','🎱','🏆','🥇','🥈','🥉','🏅','🎖️',
+                                '🔥','⭐','✨','💫','💥','💢','💦','💨','🕳️','💬','💭','🗯️','💤',
+                                '👍','👎','👊','✊','🤛','🤜','🤞','✌️','🤟','🤘','👌','🤌','🤏',
+                                '👈','👉','👆','👇','☝️','✋','🤚','🖐️','🖖','👋','🤙','💪','🦾',
+                                '🙏','✍️','💅','🤳','💃','🕺','🎉','🎊','🎈','🎁','🎀','🎂','🍰'
+                              ].map((emoji) => (
+                                <button
+                                  key={emoji}
+                                  onClick={() => {
+                                    addReaction(message.id, emoji);
+                                    setEmojiPickerOpen(null);
+                                  }}
+                                  className="text-2xl hover:scale-125 transition-transform p-2"
+                                >
+                                  {emoji}
+                                </button>
+                              ))}
                             </div>
                           </div>
                         </div>
@@ -438,6 +640,58 @@ const ChatInterface = () => {
           </div>
         )}
       </div>
+
+      {/* Jump to Bottom Button */}
+      {!autoScroll && (
+        <button
+          onClick={() => {
+            if (messagesRef.current) {
+              messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
+              setAutoScroll(true);
+              setUnreadCount(0);
+            }
+          }}
+          className="
+            fixed bottom-24 right-4 md:right-8
+            bg-blue-500 hover:bg-blue-600
+            text-white rounded-full
+            w-12 h-12 md:w-14 md:h-14
+            flex items-center justify-center
+            shadow-lg hover:shadow-xl
+            transition-all duration-200
+            z-20
+            group
+          "
+          aria-label="Jump to bottom"
+        >
+          <div className="relative">
+            <span className="text-xl md:text-2xl">↓</span>
+            {unreadCount > 0 && (
+              <span className="
+                absolute -top-2 -right-2
+                bg-red-500 text-white
+                text-xs font-bold
+                rounded-full
+                w-5 h-5
+                flex items-center justify-center
+                animate-pulse
+              ">
+                {unreadCount > 9 ? '9+' : unreadCount}
+              </span>
+            )}
+          </div>
+          <span className="
+            absolute bottom-full mb-2
+            bg-gray-800 text-white
+            px-2 py-1 rounded text-xs
+            whitespace-nowrap
+            opacity-0 group-hover:opacity-100
+            transition-opacity
+          ">
+            {unreadCount > 0 ? `${unreadCount} new message${unreadCount > 1 ? 's' : ''}` : 'Jump to bottom'}
+          </span>
+        </button>
+      )}
 
       {/* Message Input - Pinned at bottom */}
       <form onSubmit={handleSubmit} className="flex-none flex gap-3">

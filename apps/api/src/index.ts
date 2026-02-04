@@ -1229,6 +1229,112 @@ fastify.register(async function (fastify) {
             return;
           }
 
+          // Handle reaction_add
+          if (messageData.type === 'reaction_add') {
+            try {
+              const { messageId, emoji } = messageData;
+
+              if (!messageId || !emoji) {
+                connection.send(JSON.stringify({
+                  type: 'error',
+                  message: 'Invalid reaction format. Expected: {type:"reaction_add", messageId:string, emoji:string}'
+                }));
+                return;
+              }
+
+              // Validate message exists and is in current room
+              const targetMessage = await prisma.message.findFirst({
+                where: { id: messageId, roomId: defaultRoom.id }
+              });
+
+              if (!targetMessage) {
+                connection.send(JSON.stringify({
+                  type: 'error',
+                  message: 'Message not found'
+                }));
+                return;
+              }
+
+              // Create or get existing reaction
+              const reaction = await prisma.messageReaction.upsert({
+                where: {
+                  messageId_userId_emoji: {
+                    messageId,
+                    userId: userSession.userId,
+                    emoji
+                  }
+                },
+                create: {
+                  messageId,
+                  userId: userSession.userId,
+                  emoji
+                },
+                update: {},
+                include: {
+                  user: true
+                }
+              });
+
+              // Broadcast to room
+              connectionManager.broadcastToRoom(defaultRoom.id, {
+                type: 'reaction_added',
+                messageId,
+                emoji,
+                userId: userSession.userId,
+                anonHandle: userSession.anonHandle,
+                reactionId: reaction.id
+              });
+
+            } catch (error) {
+              logger.error({ error }, 'Failed to add reaction');
+              connection.send(JSON.stringify({
+                type: 'error',
+                message: 'Failed to add reaction'
+              }));
+            }
+            return;
+          }
+
+          // Handle reaction_remove
+          if (messageData.type === 'reaction_remove') {
+            try {
+              const { messageId, emoji } = messageData;
+
+              if (!messageId || !emoji) {
+                connection.send(JSON.stringify({
+                  type: 'error',
+                  message: 'Invalid reaction format. Expected: {type:"reaction_remove", messageId:string, emoji:string}'
+                }));
+                return;
+              }
+
+              // Delete reaction
+              await prisma.messageReaction.deleteMany({
+                where: {
+                  messageId,
+                  userId: userSession.userId,
+                  emoji
+                }
+              });
+
+              // Broadcast to room
+              connectionManager.broadcastToRoom(defaultRoom.id, {
+                type: 'reaction_removed',
+                messageId,
+                emoji,
+                userId: userSession.userId
+              });
+
+            } catch (error) {
+              logger.error({ error }, 'Failed to remove reaction');
+              connection.send(JSON.stringify({
+                type: 'error',
+                message: 'Failed to remove reaction'
+              }));
+            }
+            return;
+          }
+
           // Handle chat messages
           if (messageData.type !== 'msg' || !messageData.text) {
             connection.send(JSON.stringify({
