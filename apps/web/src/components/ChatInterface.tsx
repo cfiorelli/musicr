@@ -55,6 +55,16 @@ const ChatInterface = () => {
     localStorage.setItem('musicr-onboarding-dismissed', 'true');
   };
 
+  const resetOnboarding = () => {
+    setShowOnboarding(true);
+    localStorage.setItem('musicr-onboarding-dismissed', 'false');
+  };
+
+  const getYouTubeSearchUrl = (title: string, artist: string) => {
+    const query = encodeURIComponent(`${artist} ${title}`);
+    return `https://www.youtube.com/results?search_query=${query}`;
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'ArrowUp' && inputValue === '' && lastMessage) {
       e.preventDefault();
@@ -157,6 +167,13 @@ const ChatInterface = () => {
           )}
         </div>
         <div className="flex items-center gap-3">
+          <button
+            onClick={resetOnboarding}
+            className="text-white/70 hover:text-white transition-colors text-xl"
+            title="Show help/welcome guide"
+          >
+            ❓
+          </button>
           <label className="flex items-center gap-2 text-white text-sm cursor-pointer">
             <input
               type="checkbox"
@@ -167,8 +184,8 @@ const ChatInterface = () => {
             Family-friendly
           </label>
           <div className={`px-3 py-1 rounded-full text-sm ${
-            connectionStatus === 'connected' 
-              ? 'bg-green-500 text-white' 
+            connectionStatus === 'connected'
+              ? 'bg-green-500 text-white'
               : connectionStatus === 'connecting'
               ? 'bg-yellow-500 text-white'
               : 'bg-red-500 text-white'
@@ -297,12 +314,21 @@ const ChatInterface = () => {
                           ? 'bg-orange-600/20 border-2 border-orange-500/40'
                           : 'bg-white/10 backdrop-blur-sm border border-white/10 hover:bg-white/15'
                       }`}>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-wrap">
                           <span>{message.content}</span>
                           {songDisplay && (
                             <>
                               <span className="text-gray-300">→</span>
-                              <span className="font-medium text-green-300">{songDisplay}</span>
+                              <a
+                                href={getYouTubeSearchUrl(message.songTitle!, message.songArtist!)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="font-medium text-green-300 hover:text-green-200 underline decoration-green-400/50 hover:decoration-green-300 transition-colors inline-flex items-center gap-1"
+                                title="Listen on YouTube"
+                              >
+                                <span>{songDisplay}</span>
+                                <span className="text-xs">🎬</span>
+                              </a>
                               {message.reasoning && (
                                 <button
                                   onClick={() => setExpandedWhyPanel(
@@ -403,6 +429,63 @@ const ChatInterface = () => {
             setCurrentAlternates([]);
           }}
         />
+      )}
+
+      {/* Onboarding Modal - Shows over messages when toggled */}
+      {showOnboarding && messages.length > 0 && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="max-w-2xl w-full bg-gradient-to-br from-blue-500/30 to-purple-500/30 backdrop-blur-md border-2 border-blue-400/40 rounded-2xl p-8 shadow-2xl relative">
+            <button
+              onClick={dismissOnboarding}
+              className="absolute top-4 right-4 text-gray-300 hover:text-white transition-colors text-2xl"
+              aria-label="Dismiss"
+            >
+              ✕
+            </button>
+            <h2 className="text-3xl font-bold text-white mb-6 flex items-center gap-3">
+              <span>👋</span>
+              <span>Welcome to Musicr!</span>
+            </h2>
+            <div className="space-y-4 mb-6">
+              <div className="flex gap-4 items-start bg-white/10 rounded-xl p-4">
+                <span className="text-3xl">🎵</span>
+                <div>
+                  <p className="text-white font-bold text-lg">What it is</p>
+                  <p className="text-gray-200">A musical chat where every message gets matched to a song using AI semantic search</p>
+                </div>
+              </div>
+              <div className="flex gap-4 items-start bg-white/10 rounded-xl p-4">
+                <span className="text-3xl">💬</span>
+                <div>
+                  <p className="text-white font-bold text-lg">How to use</p>
+                  <p className="text-gray-200">Type like you're chatting normally - emotions, situations, moods - and watch songs appear!</p>
+                </div>
+              </div>
+              <div className="flex gap-4 items-start bg-white/10 rounded-xl p-4">
+                <span className="text-3xl">✨</span>
+                <div>
+                  <p className="text-white font-bold text-lg">Why it's cool</p>
+                  <p className="text-gray-200">Semantic AI matching finds songs by meaning, not keywords. No lyrics stored or analyzed.</p>
+                </div>
+              </div>
+              <div className="flex gap-4 items-start bg-white/10 rounded-xl p-4">
+                <span className="text-3xl">🎬</span>
+                <div>
+                  <p className="text-white font-bold text-lg">Listen to songs</p>
+                  <p className="text-gray-200">Click any song name to search and play it on YouTube!</p>
+                </div>
+              </div>
+            </div>
+            <div className="bg-white/10 rounded-xl p-4 text-sm">
+              <p className="text-white font-semibold mb-3">💡 Keyboard Shortcuts</p>
+              <div className="space-y-2 text-gray-200">
+                <p>• Press <kbd className="bg-white/20 px-3 py-1 rounded font-mono">↑</kbd> to edit your last message</p>
+                <p>• Press <kbd className="bg-white/20 px-3 py-1 rounded font-mono">Cmd+K</kbd> to see alternative song matches</p>
+                <p>• Click <span className="bg-blue-500/60 px-3 py-1 rounded-full font-semibold">💡 why?</span> to understand matches</p>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
