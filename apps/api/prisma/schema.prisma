@@ -25,7 +25,7 @@ model Song {
   source          String?                     @default("manual")
   sourceUrl       String?                     @map("source_url")
   embedding       Json?
-  embeddingVector Unsupported("vector(1536)")? @map("embedding_vector")
+  embeddingVector Unsupported("vector(384)")? @map("embedding_vector")
   createdAt       DateTime                    @default(now())
   updatedAt       DateTime                    @updatedAt
 
