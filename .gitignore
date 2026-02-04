@@ -54,8 +54,9 @@ Thumbs.db
 *.db
 *.sqlite
 *.sqlite3
-prisma/migrations/*
-!prisma/migrations/.gitkeep
+
+# Note: Prisma migrations ARE committed to version control
+# Do not add prisma/migrations/* to gitignore
 
 # Temporary folders
 tmp/
