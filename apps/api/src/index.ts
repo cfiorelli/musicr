@@ -1546,6 +1546,7 @@ fastify.register(async function (fastify) {
                 primary: unfilteredResult.primary,
                 alternates: unfilteredResult.alternates,
                 why: unfilteredResult.why,
+                similarity: unfilteredResult.scores.confidence,
                 timestamp: new Date().toISOString(),
               };
 
@@ -1558,6 +1559,7 @@ fastify.register(async function (fastify) {
                 primary: songMatchResult.primary,
                 alternates: songMatchResult.alternates,
                 why: songMatchResult.why,
+                similarity: songMatchResult.scores.confidence,
                 timestamp: new Date().toISOString(),
               };
 
@@ -1587,6 +1589,7 @@ fastify.register(async function (fastify) {
                 primary: songMatchResult.primary,
                 alternates: songMatchResult.alternates,
                 why: songMatchResult.why,
+                similarity: songMatchResult.scores.confidence,
                 timestamp: new Date().toISOString(),
               };
 
