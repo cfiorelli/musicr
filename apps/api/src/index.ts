@@ -1130,14 +1130,20 @@ fastify.register(async function (fastify) {
 
         // Send messages in chronological order (oldest first)
         const messagesToSend = recentMessages.reverse().map((msg) => {
+            const scores = msg.scores as any;
             return {
               type: 'display',
+              id: msg.id,
               originalText: msg.text,
               userId: msg.userId,
               anonHandle: msg.user.anonHandle,
-              primary: msg.scores ? (msg.scores as any).primary : null,
-              alternates: msg.scores ? (msg.scores as any).alternates : [],
-              why: msg.scores ? `Matched using ${(msg.scores as any).strategy}` : '',
+              primary: scores ? scores.primary : null,
+              alternates: scores ? scores.alternates : [],
+              why: scores ? {
+                reasoning: `Matched using ${scores.strategy}`,
+                similarity: scores.confidence,
+                matchedPhrase: scores.matchedPhrase
+              } : '',
               timestamp: msg.createdAt.toISOString(),
               isHistorical: true
             };
@@ -1338,6 +1344,7 @@ fastify.register(async function (fastify) {
 
           // Process message for song matching
           let songMatchResult;
+          let savedMessage;
           try {
             logger.info({
               text: messageData.text,
@@ -1358,7 +1365,7 @@ fastify.register(async function (fastify) {
             }, 'Song matching completed successfully');
 
             // Save message to database
-            await prisma.message.create({
+            savedMessage = await prisma.message.create({
               data: {
                 userId: userSession.userId,
                 roomId: defaultRoom.id,
@@ -1425,6 +1432,7 @@ fastify.register(async function (fastify) {
               // Create display messages for both versions
               const originalDisplayMessage = {
                 type: 'display',
+                id: savedMessage.id,
                 originalText: songMatchResult.moderated.originalText, // Original NSFW text
                 userId: userSession.userId,
                 anonHandle: userSession.anonHandle,
@@ -1436,6 +1444,7 @@ fastify.register(async function (fastify) {
 
               const filteredDisplayMessage = {
                 type: 'display',
+                id: savedMessage.id,
                 originalText: songMatchResult.moderated.replacementText, // Show the filtered replacement text
                 userId: userSession.userId,
                 anonHandle: userSession.anonHandle,
@@ -1464,6 +1473,7 @@ fastify.register(async function (fastify) {
               // Content was not filtered - broadcast normally to everyone
               const displayMessage = {
                 type: 'display',
+                id: savedMessage.id,
                 originalText: messageData.text,
                 userId: userSession.userId,
                 anonHandle: userSession.anonHandle,
