@@ -99,7 +99,6 @@ export class SemanticSearcher {
       await this.prisma.$executeRawUnsafe(`SET LOCAL hnsw.ef_search = ${Math.max(limit, 100)}`);
 
       // Use native vector column for fast HNSW index search
-      // Falls back to JSONB if embedding_vector is NULL
       const results = await this.prisma.$queryRawUnsafe<Array<{
         id: string;
         title: string;
@@ -116,21 +115,10 @@ export class SemanticSearcher {
           tags,
           year,
           popularity,
-          CASE
-            WHEN embedding_vector IS NOT NULL THEN
-              (embedding_vector <=> '${embeddingString}'::vector) * -1 + 1
-            ELSE
-              (embedding::jsonb::text::vector <=> '${embeddingString}'::vector) * -1 + 1
-          END as similarity
+          (embedding_vector <=> '${embeddingString}'::vector) * -1 + 1 as similarity
         FROM songs
-        WHERE embedding_vector IS NOT NULL OR embedding IS NOT NULL
-        ORDER BY
-          CASE
-            WHEN embedding_vector IS NOT NULL THEN
-              embedding_vector <=> '${embeddingString}'::vector
-            ELSE
-              embedding::jsonb::text::vector <=> '${embeddingString}'::vector
-          END
+        WHERE embedding_vector IS NOT NULL
+        ORDER BY embedding_vector <=> '${embeddingString}'::vector
         LIMIT ${limit}
       `);
 
