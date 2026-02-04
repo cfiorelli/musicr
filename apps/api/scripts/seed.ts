@@ -4,7 +4,7 @@ import path from 'path';
 import csv from 'csv-parser';
 import { prisma } from '../src/services/database.js';
 import { logger } from '../src/config/index.js';
-import { pipeline, env } from '@huggingface/transformers';
+import { pipeline, env } from '@xenova/transformers';
 
 interface SeedSong {
   title: string;
