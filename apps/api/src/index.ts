@@ -1645,6 +1645,29 @@ const start = async () => {
     // Connect to database
     await connectDatabase();
 
+    // Verify required schema columns exist (migration guard)
+    try {
+      await prisma.$queryRaw`SELECT is_placeholder FROM songs LIMIT 0`;
+      logger.info('Schema migration check passed');
+    } catch (error: any) {
+      logger.fatal({
+        error: error.message,
+        hint: 'is_placeholder column missing'
+      }, '❌ FATAL: Database schema is out of date!');
+      logger.fatal('');
+      logger.fatal('Required migration has not been applied to the database.');
+      logger.fatal('');
+      logger.fatal('To fix this:');
+      logger.fatal('  1. Run: pnpm db:migrate:deploy');
+      logger.fatal('  2. Or emergency SQL: ALTER TABLE songs ADD COLUMN IF NOT EXISTS is_placeholder boolean NOT NULL DEFAULT false;');
+      logger.fatal('  3. Then restart the server');
+      logger.fatal('');
+      logger.fatal('If deploying to Railway, ensure startCommand runs migrations:');
+      logger.fatal('  startCommand = "pnpm start:railway" (runs migrations + starts server)');
+      logger.fatal('');
+      process.exit(1);
+    }
+
     // Initialize room service (creates default room)
     await roomService.initialize();
     
