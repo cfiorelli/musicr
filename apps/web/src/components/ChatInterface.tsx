@@ -241,8 +241,8 @@ const ChatInterface = () => {
                 <div className="mb-8 bg-gradient-to-br from-blue-500/20 to-purple-500/20 backdrop-blur-md border-2 border-blue-400/30 rounded-2xl p-6 shadow-2xl relative">
                   <button
                     onClick={dismissOnboarding}
-                    className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
-                    aria-label="Dismiss"
+                    className="absolute top-2 right-2 w-10 h-10 flex items-center justify-center text-gray-400 hover:text-white transition-colors rounded-full hover:bg-white/10 active:bg-white/20 text-2xl"
+                    aria-label="Close welcome message"
                   >
                     ✕
                   </button>
@@ -476,12 +476,12 @@ const ChatInterface = () => {
 
       {/* Onboarding Modal - Shows over messages when toggled */}
       {showOnboarding && messages.length > 0 && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="max-w-2xl w-full bg-gradient-to-br from-blue-500/30 to-purple-500/30 backdrop-blur-md border-2 border-blue-400/40 rounded-2xl p-8 shadow-2xl relative">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto">
+          <div className="max-w-2xl w-full bg-gradient-to-br from-blue-500/30 to-purple-500/30 backdrop-blur-md border-2 border-blue-400/40 rounded-2xl p-8 shadow-2xl relative my-8 max-h-[90vh] overflow-y-auto">
             <button
               onClick={dismissOnboarding}
-              className="absolute top-4 right-4 text-gray-300 hover:text-white transition-colors text-2xl"
-              aria-label="Dismiss"
+              className="sticky top-0 right-0 ml-auto mb-4 w-12 h-12 flex items-center justify-center text-gray-300 hover:text-white transition-colors rounded-full bg-black/30 hover:bg-black/50 active:bg-black/70 text-2xl z-10"
+              aria-label="Close welcome modal"
             >
               ✕
             </button>
