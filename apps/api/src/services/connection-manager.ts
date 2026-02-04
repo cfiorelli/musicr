@@ -1,12 +1,18 @@
 /**
  * WebSocket Connection Manager
- * 
+ *
  * Manages WebSocket connections, room assignments, and message broadcasting
  * for the real-time chat system.
  */
 
 import type { WebSocket } from 'ws';
 import { logger } from '../config/index.js';
+import { nanoid } from 'nanoid';
+import os from 'os';
+
+// Instance fingerprint for split-brain detection
+const INSTANCE_ID = `${os.hostname()}-${Date.now()}-${nanoid(6)}`;
+const DEBUG_PRESENCE = process.env.DEBUG_PRESENCE === '1';
 
 interface Connection {
   id: string;
@@ -99,9 +105,14 @@ export class ConnectionManager {
             id: conn.userId,
             handle: conn.anonHandle
           },
-          timestamp: conn.joinedAt.toISOString()
+          timestamp: conn.joinedAt.toISOString(),
+          instanceId: INSTANCE_ID
         });
       });
+
+      if (DEBUG_PRESENCE) {
+        logger.info({ instanceId: INSTANCE_ID }, '[DEBUG_PRESENCE] Sent existing users to new connection');
+      }
     } else {
       logger.info({ connectionId }, 'No existing users to send to new connection');
     }
@@ -113,8 +124,13 @@ export class ConnectionManager {
         id: userId,
         handle: anonHandle
       },
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      instanceId: INSTANCE_ID
     }); // Removed excludeConnectionId so new user sees themselves join
+
+    if (DEBUG_PRESENCE) {
+      logger.info({ instanceId: INSTANCE_ID, userId, anonHandle }, '[DEBUG_PRESENCE] Broadcast user_joined');
+    }
 
     return connectionId;
   }
@@ -160,15 +176,20 @@ export class ConnectionManager {
         id: connection.userId,
         handle: connection.anonHandle
       },
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      instanceId: INSTANCE_ID
     };
-    
+
     const sentCount = this.broadcastToRoom(connection.roomId, leaveEvent);
     logger.debug({
       userId: connection.userId,
       handle: connection.anonHandle,
       sentToUsers: sentCount
     }, 'User leave event broadcasted');
+
+    if (DEBUG_PRESENCE) {
+      logger.info({ instanceId: INSTANCE_ID, userId: connection.userId }, '[DEBUG_PRESENCE] Broadcast user_left');
+    }
   }
 
   /**

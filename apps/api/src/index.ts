@@ -21,6 +21,12 @@ import {
   SearchResponse
 } from './schemas/api.js';
 import { getInstanceFingerprint, createRequestFingerprint } from './utils/fingerprint.js';
+import { nanoid } from 'nanoid';
+import os from 'os';
+
+// Instance fingerprint for split-brain detection
+const INSTANCE_ID = `${os.hostname()}-${Date.now()}-${nanoid(6)}`;
+const DEBUG_PRESENCE = process.env.DEBUG_PRESENCE === '1';
 
 const fastify = Fastify({
   logger: {
@@ -1162,8 +1168,13 @@ fastify.register(async function (fastify) {
           roomId: defaultRoom.id,
           roomName: defaultRoom.name,
           allowExplicit: defaultRoom.allowExplicit,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
+          instanceId: INSTANCE_ID
         }));
+
+        if (DEBUG_PRESENCE) {
+          logger.info({ instanceId: INSTANCE_ID, userId: userSession.userId }, '[DEBUG_PRESENCE] Sent connection confirmation');
+        }
 
       } catch (error) {
         logger.error({ error, roomId: defaultRoom.id }, 'Failed to send message history');
@@ -1176,7 +1187,8 @@ fastify.register(async function (fastify) {
           roomId: defaultRoom.id,
           roomName: defaultRoom.name,
           allowExplicit: defaultRoom.allowExplicit,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
+          instanceId: INSTANCE_ID
         }));
       }
 
@@ -1251,8 +1263,13 @@ fastify.register(async function (fastify) {
                 emoji,
                 userId: userSession.userId,
                 anonHandle: userSession.anonHandle,
-                reactionId: reaction.id
+                reactionId: reaction.id,
+                instanceId: INSTANCE_ID
               });
+
+              if (DEBUG_PRESENCE) {
+                logger.info({ instanceId: INSTANCE_ID, messageId, emoji }, '[DEBUG_PRESENCE] Broadcast reaction_added');
+              }
 
             } catch (error) {
               logger.error({ error }, 'Failed to add reaction');
@@ -1291,8 +1308,13 @@ fastify.register(async function (fastify) {
                 type: 'reaction_removed',
                 messageId,
                 emoji,
-                userId: userSession.userId
+                userId: userSession.userId,
+                instanceId: INSTANCE_ID
               });
+
+              if (DEBUG_PRESENCE) {
+                logger.info({ instanceId: INSTANCE_ID, messageId, emoji }, '[DEBUG_PRESENCE] Broadcast reaction_removed');
+              }
 
             } catch (error) {
               logger.error({ error }, 'Failed to remove reaction');

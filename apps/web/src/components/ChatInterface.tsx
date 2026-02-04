@@ -32,8 +32,17 @@ const ChatInterface = () => {
     currentRoom,
     selectAlternate,
     addReaction,
-    removeReaction
+    removeReaction,
+    debugInfo
   } = useChatStore();
+
+  // Check if debug mode is enabled via ?debug=1 query parameter
+  const [debugMode, setDebugMode] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setDebugMode(params.get('debug') === '1');
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -236,6 +245,67 @@ const ChatInterface = () => {
           )}
         </div>
       </div>
+
+      {/* Debug Panel - Only shown when ?debug=1 */}
+      {debugMode && (
+        <div className="flex-none bg-yellow-900/20 border-2 border-yellow-500/50 rounded-xl p-3 mb-3">
+          <div className="text-yellow-300 font-bold text-sm mb-2 flex items-center gap-2">
+            <span>🔍</span>
+            <span>Split-Brain Debug Panel</span>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
+            <div className="bg-gray-800/50 rounded p-2">
+              <div className="text-gray-400 mb-1">Connection Instance:</div>
+              <div className="text-white font-mono break-all">
+                {debugInfo.connectionInstanceId || 'Not connected'}
+              </div>
+            </div>
+            <div className="bg-gray-800/50 rounded p-2">
+              <div className="text-gray-400 mb-1">Last User Join Instance:</div>
+              <div className="text-white font-mono break-all">
+                {debugInfo.lastUserJoinedInstanceId || 'No events yet'}
+              </div>
+            </div>
+            <div className="bg-gray-800/50 rounded p-2">
+              <div className="text-gray-400 mb-1">Last User Leave Instance:</div>
+              <div className="text-white font-mono break-all">
+                {debugInfo.lastUserLeftInstanceId || 'No events yet'}
+              </div>
+            </div>
+            <div className="bg-gray-800/50 rounded p-2">
+              <div className="text-gray-400 mb-1">Last Reaction Instance:</div>
+              <div className="text-white font-mono break-all">
+                {debugInfo.lastReactionInstanceId || 'No events yet'}
+              </div>
+            </div>
+          </div>
+          <details className="mt-3">
+            <summary className="text-yellow-300 cursor-pointer hover:text-yellow-200 text-xs">
+              Event Log (Last {debugInfo.eventLog.length} events)
+            </summary>
+            <div className="mt-2 bg-gray-900/50 rounded p-2 max-h-40 overflow-y-auto">
+              {debugInfo.eventLog.length > 0 ? (
+                <div className="space-y-1">
+                  {[...debugInfo.eventLog].reverse().map((event, idx) => (
+                    <div key={idx} className="text-xs font-mono text-gray-300">
+                      <span className="text-blue-400">{event.type}</span>
+                      {' → '}
+                      <span className="text-green-400">{event.instanceId || 'no-id'}</span>
+                      {' @ '}
+                      <span className="text-gray-500">{new Date(event.timestamp).toLocaleTimeString()}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-gray-500 text-xs">No events logged yet</div>
+              )}
+            </div>
+          </details>
+          <div className="mt-2 text-gray-400 text-xs italic">
+            💡 Open multiple tabs to test for split-brain. All instanceIds should match if using single backend.
+          </div>
+        </div>
+      )}
 
       {/* Chat Messages - Scrollable area that takes remaining space */}
       <div

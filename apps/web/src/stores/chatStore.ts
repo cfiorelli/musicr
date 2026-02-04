@@ -49,6 +49,13 @@ export interface ChatState {
   selectedMessage: string | null;
   alternates: Message['alternates'];
   roomUsers: RoomUser[];
+  debugInfo: {
+    connectionInstanceId?: string;
+    lastUserJoinedInstanceId?: string;
+    lastUserLeftInstanceId?: string;
+    lastReactionInstanceId?: string;
+    eventLog: Array<{ type: string; instanceId?: string; timestamp: string }>;
+  };
 
   connect: () => void;
   disconnect: () => void;
@@ -105,6 +112,9 @@ export const useChatStore = create<ChatState>((set, get) => ({
   selectedMessage: null,
   alternates: [],
   roomUsers: [],
+  debugInfo: {
+    eventLog: []
+  },
 
   getUserSession: async () => {
     try {
@@ -278,8 +288,18 @@ export const useChatStore = create<ChatState>((set, get) => ({
             }
           } else if (data.type === 'connected') {
             // Connection confirmation - update user handle
-            set({ userHandle: data.anonHandle });
-            console.log('Connected to room:', data.roomName, 'as', data.anonHandle);
+            set((state) => ({
+              userHandle: data.anonHandle,
+              debugInfo: {
+                ...state.debugInfo,
+                connectionInstanceId: data.instanceId,
+                eventLog: [
+                  ...state.debugInfo.eventLog,
+                  { type: 'connected', instanceId: data.instanceId, timestamp: new Date().toISOString() }
+                ].slice(-50) // Keep last 50 events
+              }
+            }));
+            console.log('Connected to room:', data.roomName, 'as', data.anonHandle, 'instanceId:', data.instanceId);
             console.log('Current users after WebSocket events:', get().roomUsers.length, get().roomUsers.map((u: RoomUser) => u.handle));
             
             // DON'T fetch from API - we already got the correct state via WebSocket events
@@ -323,12 +343,38 @@ export const useChatStore = create<ChatState>((set, get) => ({
               joinedAt: data.timestamp
             };
             addRoomUser(newUser);
-            console.log('User joined:', data.user.handle, 'Total users now:', get().roomUsers.length);
+
+            // Capture instanceId for debug
+            set((state) => ({
+              debugInfo: {
+                ...state.debugInfo,
+                lastUserJoinedInstanceId: data.instanceId,
+                eventLog: [
+                  ...state.debugInfo.eventLog,
+                  { type: 'user_joined', instanceId: data.instanceId, timestamp: new Date().toISOString() }
+                ].slice(-50)
+              }
+            }));
+
+            console.log('User joined:', data.user.handle, 'Total users now:', get().roomUsers.length, 'instanceId:', data.instanceId);
           } else if (data.type === 'user_left') {
             // User left the room
             const { removeRoomUser } = get();
             removeRoomUser(data.user.id);
-            console.log('User left:', data.user.handle);
+
+            // Capture instanceId for debug
+            set((state) => ({
+              debugInfo: {
+                ...state.debugInfo,
+                lastUserLeftInstanceId: data.instanceId,
+                eventLog: [
+                  ...state.debugInfo.eventLog,
+                  { type: 'user_left', instanceId: data.instanceId, timestamp: new Date().toISOString() }
+                ].slice(-50)
+              }
+            }));
+
+            console.log('User left:', data.user.handle, 'instanceId:', data.instanceId);
           } else if (data.type === 'reaction_added') {
             // Reaction added to a message
             set((state) => {
@@ -371,7 +417,17 @@ export const useChatStore = create<ChatState>((set, get) => ({
                 return msg;
               });
 
-              return { messages };
+              return {
+                messages,
+                debugInfo: {
+                  ...state.debugInfo,
+                  lastReactionInstanceId: data.instanceId,
+                  eventLog: [
+                    ...state.debugInfo.eventLog,
+                    { type: 'reaction_added', instanceId: data.instanceId, timestamp: new Date().toISOString() }
+                  ].slice(-50)
+                }
+              };
             });
           } else if (data.type === 'reaction_removed') {
             // Reaction removed from a message
@@ -398,7 +454,17 @@ export const useChatStore = create<ChatState>((set, get) => ({
                 return msg;
               });
 
-              return { messages };
+              return {
+                messages,
+                debugInfo: {
+                  ...state.debugInfo,
+                  lastReactionInstanceId: data.instanceId,
+                  eventLog: [
+                    ...state.debugInfo.eventLog,
+                    { type: 'reaction_removed', instanceId: data.instanceId, timestamp: new Date().toISOString() }
+                  ].slice(-50)
+                }
+              };
             });
           } else if (data.type === 'moderation_notice') {
             // Content was moderated - show notice to sender
