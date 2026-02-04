@@ -30,8 +30,6 @@ const ChatInterface = () => {
     connectionStatus,
     userHandle,
     currentRoom,
-    familyFriendly,
-    setFamilyFriendly,
     selectAlternate,
     addReaction,
     removeReaction
@@ -222,44 +220,17 @@ const ChatInterface = () => {
   return (
     <div className="flex flex-col h-full">
       {/* Header with Room and Handle */}
-      <div className="flex-none bg-white/10 backdrop-blur-md rounded-lg p-4 mb-4 flex justify-between items-center">
-        <div>
-          <h2 className="text-white font-semibold">#{currentRoom}</h2>
-          <p className="text-gray-300 text-sm">You are: <span className="font-medium">{userHandle || 'connecting...'}</span></p>
-          {familyFriendly && (
-            <p className="text-green-400 text-xs mt-1">🛡️ Family-friendly mode ON</p>
-          )}
-        </div>
-        <div className="flex items-center gap-3">
-          <label className="flex items-center gap-2 text-white text-sm cursor-pointer">
-            <input
-              type="checkbox"
-              checked={familyFriendly}
-              onChange={(e) => setFamilyFriendly(e.target.checked)}
-              className="rounded cursor-pointer"
-            />
-            Family-friendly
-          </label>
-          <div className={`px-3 py-1 rounded-full text-sm ${
-            connectionStatus === 'connected'
-              ? 'bg-green-500 text-white'
-              : connectionStatus === 'connecting'
-              ? 'bg-yellow-500 text-white'
-              : 'bg-red-500 text-white'
-          }`}>
-            {connectionStatus}
+      <div className="flex-none bg-gray-800/50 backdrop-blur-md rounded-xl p-3 mb-3 flex justify-between items-center border border-gray-700/50">
+        <div className="flex items-center gap-4">
+          <div>
+            <h2 className="text-white font-semibold text-base">#{currentRoom}</h2>
+            <p className="text-gray-400 text-xs">{userHandle || 'connecting...'}</p>
           </div>
           {songCount !== null && (
-            <div className="
-              flex items-center gap-2
-              bg-gradient-to-r from-purple-500/20 to-blue-500/20
-              border border-purple-400/30
-              rounded-full px-3 py-1
-              backdrop-blur-sm
-            ">
-              <span className="text-lg">🎵</span>
-              <span className="text-white text-sm font-medium">
-                {songCount.toLocaleString()} song{songCount !== 1 ? 's' : ''}
+            <div className="flex items-center gap-1.5 bg-gray-700/50 border border-gray-600/50 rounded-lg px-2.5 py-1">
+              <span className="text-base">🎵</span>
+              <span className="text-gray-300 text-xs font-medium">
+                {songCount.toLocaleString()}
               </span>
             </div>
           )}
@@ -270,24 +241,24 @@ const ChatInterface = () => {
       <div
         ref={messagesRef}
         onScroll={handleScroll}
-        className="flex-1 bg-white/10 backdrop-blur-md rounded-lg p-6 mb-4 overflow-y-auto min-h-0"
+        className="flex-1 bg-gray-800/30 backdrop-blur-sm rounded-xl p-4 mb-3 overflow-y-auto min-h-0 border border-gray-700/30"
       >
         {messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center px-4">
             <div className="max-w-2xl w-full">
               {/* Onboarding Panel */}
               {showOnboarding && (
-                <div className="mb-8 bg-gradient-to-br from-blue-500/20 to-purple-500/20 backdrop-blur-md border-2 border-blue-400/30 rounded-2xl p-6 shadow-2xl relative">
+                <div className="mb-6 bg-gray-800/70 backdrop-blur-md border border-gray-700 rounded-xl p-5 shadow-xl relative">
                   <button
                     onClick={dismissOnboarding}
-                    className="absolute top-2 right-2 w-10 h-10 flex items-center justify-center text-gray-400 hover:text-white transition-colors rounded-full hover:bg-white/10 active:bg-white/20 text-2xl"
+                    className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center text-gray-500 hover:text-gray-300 transition-colors rounded-lg hover:bg-gray-700/50 text-xl"
                     aria-label="Close welcome message"
                   >
                     ✕
                   </button>
-                  <h2 className="text-2xl font-bold text-white mb-4 flex items-center justify-center gap-2">
+                  <h2 className="text-xl font-bold text-white mb-3 flex items-center gap-2">
                     <span>👋</span>
-                    <span>Welcome to Musicr!</span>
+                    <span>Welcome to Musicr</span>
                   </h2>
                   <div className="space-y-3 text-left">
                     <div className="flex gap-3 items-start">
@@ -316,36 +287,36 @@ const ChatInterface = () => {
               )}
 
               {/* Main Welcome */}
-              <div className="text-6xl mb-6">🎵</div>
-              <h3 className="text-3xl font-bold text-white mb-4">Start Your Musical Journey</h3>
-              <p className="text-gray-300 text-lg mb-8">
-                Try one of these examples to get started:
+              <div className="text-5xl mb-4">🎵</div>
+              <h3 className="text-2xl font-bold text-white mb-3">Start a conversation</h3>
+              <p className="text-gray-400 text-base mb-6">
+                Try one of these examples:
               </p>
 
               {/* Example Prompts */}
-              <div className="space-y-3 mb-8">
+              <div className="space-y-2 mb-6">
                 {examplePrompts.map((prompt, index) => (
                   <button
                     key={index}
                     onClick={() => handleExampleClick(prompt)}
                     disabled={connectionStatus !== 'connected'}
-                    className="w-full p-4 bg-white/10 hover:bg-white/20 disabled:bg-white/5 disabled:cursor-not-allowed backdrop-blur-sm border border-white/20 rounded-xl text-white transition-all hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl text-left group"
+                    className="w-full p-3 bg-gray-800/50 hover:bg-gray-700/50 disabled:bg-gray-800/30 disabled:cursor-not-allowed backdrop-blur-sm border border-gray-700 rounded-lg text-white transition-all hover:border-gray-600 text-left group text-sm"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="font-medium">"{prompt}"</span>
-                      <span className="text-blue-300 opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+                      <span>"{prompt}"</span>
+                      <span className="text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity">→</span>
                     </div>
                   </button>
                 ))}
               </div>
 
               {/* Tips */}
-              <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 text-sm text-gray-400">
-                <p className="text-white font-semibold mb-2">💡 Keyboard Shortcuts</p>
-                <div className="space-y-1 text-xs">
-                  <p>• Press <kbd className="bg-white/10 px-2 py-1 rounded">↑</kbd> to edit your last message</p>
-                  <p>• Press <kbd className="bg-white/10 px-2 py-1 rounded">Cmd+K</kbd> to see alternative song matches</p>
-                  <p>• Click <span className="bg-blue-500/60 px-2 py-0.5 rounded-full">💡 why?</span> to understand why a song was matched</p>
+              <div className="bg-gray-800/40 backdrop-blur-sm rounded-lg p-3 text-sm text-gray-400 border border-gray-700/50">
+                <p className="text-gray-300 font-medium mb-1.5 text-xs">💡 Keyboard Shortcuts</p>
+                <div className="space-y-0.5 text-xs">
+                  <p>• Press <kbd className="bg-gray-700 px-1.5 py-0.5 rounded text-xs">↑</kbd> to edit your last message</p>
+                  <p>• Press <kbd className="bg-gray-700 px-1.5 py-0.5 rounded text-xs">Cmd+K</kbd> to see alternative songs</p>
+                  <p>• Click <span className="bg-blue-600/70 px-1.5 py-0.5 rounded text-xs">💡 why?</span> to see match reasoning</p>
                 </div>
               </div>
             </div>
@@ -361,40 +332,40 @@ const ChatInterface = () => {
                   <div className="flex items-start gap-3">
                     <div className="flex-1">
                       {/* Message content */}
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className={`font-semibold text-sm ${
-                          isModeration ? 'text-orange-300' : 'text-blue-300'
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <span className={`font-medium text-sm ${
+                          isModeration ? 'text-orange-400' : 'text-gray-300'
                         }`}>
                           {getUserEmoji(message.anonHandle)} {message.anonHandle}
                         </span>
-                        <span className="text-gray-500 text-xs">
+                        <span className="text-gray-600 text-xs">
                           {new Date(message.timestamp).toLocaleTimeString()}
                         </span>
                         {message.isOptimistic && (
-                          <span className="text-yellow-400 text-xs animate-pulse">sending...</span>
+                          <span className="text-amber-500 text-xs animate-pulse">sending...</span>
                         )}
                         {isModeration && (
-                          <span className="text-orange-400 text-xs font-medium bg-orange-500/20 px-2 py-0.5 rounded-full">
+                          <span className="text-orange-400 text-xs font-medium bg-orange-500/20 px-2 py-0.5 rounded">
                             Filtered
                           </span>
                         )}
                       </div>
 
-                      <div className={`rounded-xl p-4 text-white shadow-lg transition-all ${
+                      <div className={`rounded-lg p-3 text-white transition-all ${
                         isModeration
-                          ? 'bg-orange-600/20 border-2 border-orange-500/40'
-                          : 'bg-white/10 backdrop-blur-sm border border-white/10 hover:bg-white/15'
+                          ? 'bg-orange-600/20 border border-orange-500/40'
+                          : 'bg-gray-800/60 backdrop-blur-sm border border-gray-700/50 hover:border-gray-600/50'
                       }`}>
-                        <div className="flex items-center gap-2 flex-wrap">
+                        <div className="flex items-center gap-2 flex-wrap text-sm">
                           <span>{message.content}</span>
                           {songDisplay && (
                             <>
-                              <span className="text-gray-300">→</span>
+                              <span className="text-gray-500">→</span>
                               <a
                                 href={getYouTubeSearchUrl(message.songTitle!, message.songArtist!)}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="font-medium text-green-300 hover:text-green-200 underline decoration-green-400/50 hover:decoration-green-300 transition-colors"
+                                className="font-medium text-emerald-400 hover:text-emerald-300 underline decoration-emerald-500/30 hover:decoration-emerald-400/50 transition-colors"
                                 title="Listen on YouTube"
                               >
                                 {songDisplay}
@@ -404,7 +375,7 @@ const ChatInterface = () => {
                                   onClick={() => setExpandedWhyPanel(
                                     expandedWhyPanel === message.id ? null : message.id
                                   )}
-                                  className="text-xs bg-blue-500/60 hover:bg-blue-500 px-3 py-1.5 rounded-full text-white font-medium transition-all shadow-sm hover:shadow-md"
+                                  className="text-xs bg-gray-700 hover:bg-gray-600 px-2.5 py-1 rounded-md text-gray-300 font-medium transition-colors"
                                 >
                                   {expandedWhyPanel === message.id ? '✕ hide' : '💡 why?'}
                                 </button>
@@ -416,7 +387,7 @@ const ChatInterface = () => {
                                     setCurrentAlternates(message.alternates || []);
                                     setShowQuickPalette(true);
                                   }}
-                                  className="text-xs bg-purple-500/60 hover:bg-purple-500 px-3 py-1.5 rounded-full text-white font-medium transition-all shadow-sm hover:shadow-md opacity-0 group-hover:opacity-100"
+                                  className="text-xs bg-gray-700 hover:bg-gray-600 px-2.5 py-1 rounded-md text-gray-300 font-medium transition-colors opacity-0 group-hover:opacity-100"
                                 >
                                   🎵 alternatives ({message.alternates.length})
                                 </button>
@@ -428,13 +399,7 @@ const ChatInterface = () => {
 
                       {/* Why Panel - Compact Match Score */}
                       {expandedWhyPanel === message.id && message.reasoning && songDisplay && (
-                        <div className="
-                          mt-2 p-2.5
-                          bg-gradient-to-r from-blue-500/20 to-blue-600/15
-                          border border-blue-400/30 rounded-lg
-                          text-sm backdrop-blur-sm
-                          max-w-full
-                        ">
+                        <div className="mt-2 p-2.5 bg-gray-800/60 border border-gray-700/50 rounded-lg text-sm backdrop-blur-sm">
                           <div className="flex items-center justify-between gap-3">
                             {/* Match Score */}
                             {(() => {
@@ -443,14 +408,14 @@ const ChatInterface = () => {
 
                               return (
                                 <div className="flex items-center gap-2 flex-1">
-                                  <span className="text-blue-300 font-medium text-xs">
+                                  <span className="text-gray-400 font-medium text-xs">
                                     Match:
                                   </span>
                                   <span className={`font-semibold text-sm ${confidence.color}`}>
                                     {confidence.emoji} {confidence.label}
                                   </span>
                                   {message.similarity !== undefined && (
-                                    <span className="text-gray-300 text-xs">
+                                    <span className="text-gray-500 text-xs">
                                       ({(message.similarity * 100).toFixed(1)}%)
                                     </span>
                                   )}
@@ -461,7 +426,7 @@ const ChatInterface = () => {
                             {/* Close Button */}
                             <button
                               onClick={() => setExpandedWhyPanel(null)}
-                              className="text-gray-400 hover:text-white transition-colors px-2 py-1 rounded hover:bg-white/10"
+                              className="text-gray-500 hover:text-gray-300 transition-colors px-2 py-1 rounded hover:bg-gray-700/50"
                               aria-label="Close"
                             >
                               ✕
@@ -637,7 +602,7 @@ const ChatInterface = () => {
       )}
 
       {/* Message Input - Pinned at bottom */}
-      <form onSubmit={handleSubmit} className="flex-none flex gap-3">
+      <form onSubmit={handleSubmit} className="flex-none flex gap-2">
         <input
           ref={inputRef}
           type="text"
@@ -645,13 +610,13 @@ const ChatInterface = () => {
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={connectionStatus === 'connected' ? "Type anything to find a song..." : "Connecting..."}
-          className="flex-1 px-5 py-4 rounded-xl bg-white/10 backdrop-blur-md text-white placeholder-gray-400 border-2 border-white/20 focus:border-blue-400 focus:bg-white/15 focus:outline-none transition-all shadow-lg text-base"
+          className="flex-1 px-4 py-3 rounded-lg bg-gray-800/50 backdrop-blur-sm text-white placeholder-gray-500 border border-gray-700 focus:border-gray-600 focus:bg-gray-800/70 focus:outline-none transition-all text-sm"
           disabled={connectionStatus !== 'connected'}
         />
         <button
           type="submit"
           disabled={!inputValue.trim() || connectionStatus !== 'connected'}
-          className="px-8 py-4 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed text-white rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl hover:scale-105 active:scale-95"
+          className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 disabled:bg-gray-700 disabled:cursor-not-allowed text-white rounded-lg font-medium transition-colors text-sm"
         >
           Send 🎵
         </button>
@@ -673,50 +638,50 @@ const ChatInterface = () => {
 
       {/* Onboarding Modal - Shows over messages when toggled */}
       {showOnboarding && messages.length > 0 && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto">
-          <div className="max-w-2xl w-full bg-gradient-to-br from-blue-500/30 to-purple-500/30 backdrop-blur-md border-2 border-blue-400/40 rounded-2xl p-8 shadow-2xl relative my-8 max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto">
+          <div className="max-w-2xl w-full bg-gray-900/95 backdrop-blur-md border border-gray-700 rounded-xl p-6 shadow-2xl relative my-8 max-h-[90vh] overflow-y-auto">
             <button
               onClick={dismissOnboarding}
-              className="sticky top-0 right-0 ml-auto mb-4 w-12 h-12 flex items-center justify-center text-gray-300 hover:text-white transition-colors rounded-full bg-black/30 hover:bg-black/50 active:bg-black/70 text-2xl z-10"
+              className="sticky top-0 right-0 ml-auto mb-3 w-10 h-10 flex items-center justify-center text-gray-500 hover:text-gray-300 transition-colors rounded-lg bg-gray-800 hover:bg-gray-700 text-xl z-10"
               aria-label="Close welcome modal"
             >
               ✕
             </button>
-            <h2 className="text-3xl font-bold text-white mb-6 flex items-center gap-3">
+            <h2 className="text-2xl font-bold text-white mb-5 flex items-center gap-2">
               <span>👋</span>
-              <span>Welcome to Musicr!</span>
+              <span>Welcome to Musicr</span>
             </h2>
-            <div className="space-y-4 mb-6">
-              <div className="flex gap-4 items-start bg-white/10 rounded-xl p-4">
-                <span className="text-3xl">🎵</span>
+            <div className="space-y-3 mb-5">
+              <div className="flex gap-3 items-start bg-gray-800/50 rounded-lg p-3 border border-gray-700/50">
+                <span className="text-2xl">🎵</span>
                 <div>
-                  <p className="text-white font-bold text-lg">What it is</p>
-                  <p className="text-gray-200">A musical chat where every message gets matched to a song using AI semantic search</p>
+                  <p className="text-white font-semibold text-base">What it is</p>
+                  <p className="text-gray-400 text-sm">A musical chat where every message gets matched to a song using AI semantic search</p>
                 </div>
               </div>
-              <div className="flex gap-4 items-start bg-white/10 rounded-xl p-4">
-                <span className="text-3xl">💬</span>
+              <div className="flex gap-3 items-start bg-gray-800/50 rounded-lg p-3 border border-gray-700/50">
+                <span className="text-2xl">💬</span>
                 <div>
-                  <p className="text-white font-bold text-lg">How to use</p>
-                  <p className="text-gray-200">Type like you're chatting normally - emotions, situations, moods - and watch songs appear!</p>
+                  <p className="text-white font-semibold text-base">How to use</p>
+                  <p className="text-gray-400 text-sm">Type like you're chatting normally - emotions, situations, moods - and watch songs appear!</p>
                 </div>
               </div>
-              <div className="flex gap-4 items-start bg-white/10 rounded-xl p-4">
-                <span className="text-3xl">✨</span>
+              <div className="flex gap-3 items-start bg-gray-800/50 rounded-lg p-3 border border-gray-700/50">
+                <span className="text-2xl">✨</span>
                 <div>
-                  <p className="text-white font-bold text-lg">Why it's cool</p>
-                  <p className="text-gray-200">Semantic AI matching finds songs by meaning, not keywords. No lyrics stored or analyzed.</p>
+                  <p className="text-white font-semibold text-base">Why it's cool</p>
+                  <p className="text-gray-400 text-sm">Semantic AI matching finds songs by meaning, not keywords. No lyrics stored or analyzed.</p>
                 </div>
               </div>
-              <div className="flex gap-4 items-start bg-white/10 rounded-xl p-4">
-                <span className="text-3xl">🎬</span>
+              <div className="flex gap-3 items-start bg-gray-800/50 rounded-lg p-3 border border-gray-700/50">
+                <span className="text-2xl">🎬</span>
                 <div>
-                  <p className="text-white font-bold text-lg">Listen to songs</p>
-                  <p className="text-gray-200">Click any song name to search and play it on YouTube!</p>
+                  <p className="text-white font-semibold text-base">Listen to songs</p>
+                  <p className="text-gray-400 text-sm">Click any song name to search and play it on YouTube!</p>
                 </div>
               </div>
             </div>
-            <div className="bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-xl p-4 text-sm border border-blue-400/30">
+            <div className="bg-gray-800/60 rounded-lg p-3 text-sm border border-gray-700/50">
               <p className="text-white font-semibold mb-3 flex items-center gap-2">
                 <span className="text-xl">🔬</span>
                 <span>How it works (technical)</span>

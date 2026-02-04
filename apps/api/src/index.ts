@@ -873,11 +873,10 @@ fastify.get('/api/debug/connections', async (_, reply) => {
           handle: conn.anonHandle,
           joinedAt: conn.joinedAt,
           lastActivity: conn.lastActivity,
-          familyFriendly: conn.familyFriendly,
           socketState: conn.socket.readyState,
           socketStates: {
             '0': 'CONNECTING',
-            '1': 'OPEN', 
+            '1': 'OPEN',
             '2': 'CLOSING',
             '3': 'CLOSED'
           }[conn.socket.readyState.toString()]
@@ -1133,30 +1132,10 @@ fastify.register(async function (fastify) {
         });
 
         // Send messages in chronological order (oldest first)
-        // Apply family-friendly filtering based on user's current preference
-        const messagesToSend = await Promise.all(
-          recentMessages.reverse().map(async (msg) => {
-            let displayText = msg.text;
-            
-            // Get user's current family-friendly setting
-            const userConnection = connectionManager.getConnection(connectionId);
-            const isFamilyFriendly = userConnection?.familyFriendly ?? true;
-            
-            // If user has family-friendly ON, check if message needs filtering
-            if (isFamilyFriendly) {
-              try {
-                const modResult = await moderationService.moderateContent(msg.text);
-                if (!modResult.allowed && modResult.replacementText) {
-                  displayText = modResult.replacementText;
-                }
-              } catch (error) {
-                logger.warn({ error, messageId: msg.id }, 'Failed to moderate historical message');
-              }
-            }
-            
+        const messagesToSend = recentMessages.reverse().map((msg) => {
             return {
               type: 'display',
-              originalText: displayText,
+              originalText: msg.text,
               userId: msg.userId,
               anonHandle: msg.user.anonHandle,
               primary: msg.scores ? (msg.scores as any).primary : null,
@@ -1214,18 +1193,6 @@ fastify.register(async function (fastify) {
               type: 'error',
               message: 'Invalid message format. Expected: {type:"msg"|"pref", ...}'
             }));
-            return;
-          }
-
-          // Handle preference updates
-          if (messageData.type === 'pref') {
-            if (typeof messageData.familyFriendly === 'boolean') {
-              connectionManager.updateFamilyFriendly(connectionId, messageData.familyFriendly);
-              connection.send(JSON.stringify({
-                type: 'pref_updated',
-                familyFriendly: messageData.familyFriendly
-              }));
-            }
             return;
           }
 
@@ -1376,20 +1343,15 @@ fastify.register(async function (fastify) {
           // Process message for song matching
           let songMatchResult;
           try {
-            // Get user's family-friendly preference from connection
-            const userConnection = connectionManager.getConnection(connectionId);
-            const userAllowsExplicit = userConnection ? !userConnection.familyFriendly : !defaultRoom.allowExplicit;
-
             logger.info({
               text: messageData.text,
               userId: userSession.userId,
-              allowExplicit: userAllowsExplicit,
-              familyFriendly: userConnection?.familyFriendly
+              allowExplicit: true
             }, 'About to call songMatchingService.matchSongs');
 
             songMatchResult = await songMatchingService.matchSongs(
               messageData.text,
-              userAllowsExplicit,
+              true, // Always allow explicit
               userSession.userId,
               defaultRoom.allowExplicit
             );

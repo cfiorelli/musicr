@@ -19,43 +19,43 @@ function HomePage() {
   }, [connect, disconnect]);
 
   return (
-    <div className="flex flex-col h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
+    <div className="flex flex-col h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-gray-800">
       {/* Header */}
-      <header className="flex-none px-4 py-4 border-b border-white/10">
-        <div className="container mx-auto flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-white">
+      <header className="flex-none px-4 md:px-6 py-3 border-b border-white/10 bg-black/20 backdrop-blur-sm">
+        <div className="max-w-screen-2xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <h1 className="text-2xl font-bold text-white tracking-tight">
               🎵 Musicr
             </h1>
-            <p className="text-sm text-gray-300">
-              AI-powered chat where every message finds a song ·{' '}
-              <Link
-                to="/"
-                onClick={(e) => {
-                  e.preventDefault();
-                  // Trigger onboarding modal
-                  const event = new CustomEvent('show-onboarding');
-                  window.dispatchEvent(event);
-                }}
-                className="text-blue-300 hover:text-blue-200 underline cursor-pointer"
-              >
-                what is this?
-              </Link>
-            </p>
+            <Link
+              to="/"
+              onClick={(e) => {
+                e.preventDefault();
+                // Trigger onboarding modal
+                const event = new CustomEvent('show-onboarding');
+                window.dispatchEvent(event);
+              }}
+              className="text-sm text-gray-400 hover:text-gray-300 transition-colors"
+            >
+              what is this?
+            </Link>
           </div>
           <div className="flex items-center gap-3">
-            <span className={`px-3 py-1 rounded-full text-sm ${
-              connectionStatus === 'connected'
-                ? 'bg-green-500 text-white'
-                : connectionStatus === 'connecting'
-                ? 'bg-yellow-500 text-white'
-                : 'bg-red-500 text-white'
-            }`}>
-              {connectionStatus}
-            </span>
+            <div className="flex items-center gap-2">
+              <div className={`w-2 h-2 rounded-full ${
+                connectionStatus === 'connected'
+                  ? 'bg-emerald-500'
+                  : connectionStatus === 'connecting'
+                  ? 'bg-amber-500 animate-pulse'
+                  : 'bg-red-500'
+              }`} />
+              <span className="text-sm text-gray-400 hidden md:inline">
+                {connectionStatus}
+              </span>
+            </div>
             <Link
               to="/admin"
-              className="px-3 py-1 bg-gray-700 text-white rounded-full text-sm hover:bg-gray-600 transition-colors"
+              className="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-lg text-sm transition-colors border border-gray-700"
             >
               Admin
             </Link>
@@ -65,15 +65,15 @@ function HomePage() {
 
       {/* Main Content Area */}
       <div className="flex-1 overflow-hidden">
-        <div className="container mx-auto h-full px-4 py-4">
-          <div className="flex gap-6 h-full">
+        <div className="max-w-screen-2xl mx-auto h-full px-3 md:px-6 py-3 md:py-4">
+          <div className="flex gap-3 md:gap-4 h-full">
             {/* Left: Chat Interface (takes full height) */}
             <div className="flex-1 min-w-0">
               <ChatInterface />
             </div>
 
             {/* Right: Sidebar (hidden on mobile, shown on md+) */}
-            <div className="hidden md:block w-80 flex-none">
+            <div className="hidden md:block w-72 lg:w-80 flex-none">
               <RoomUserList />
             </div>
           </div>

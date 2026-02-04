@@ -46,17 +46,15 @@ export interface ChatState {
   ws: WebSocket | null;
   userHandle: string;
   currentRoom: string;
-  familyFriendly: boolean;
   selectedMessage: string | null;
   alternates: Message['alternates'];
   roomUsers: RoomUser[];
-  
+
   connect: () => void;
   disconnect: () => void;
   sendMessage: (content: string) => void;
   addMessage: (message: Message) => void;
   updateMessage: (id: string, updates: Partial<Message>) => void;
-  setFamilyFriendly: (value: boolean) => void;
   selectAlternate: (messageId: string, alternate: NonNullable<Message['alternates']>[0]) => void;
   addReaction: (messageId: string, emoji: string) => void;
   removeReaction: (messageId: string, emoji: string) => void;
@@ -104,7 +102,6 @@ export const useChatStore = create<ChatState>((set, get) => ({
   ws: null,
   userHandle: '',
   currentRoom: 'main',
-  familyFriendly: true,
   selectedMessage: null,
   alternates: [],
   roomUsers: [],
@@ -194,14 +191,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
       websocket.onopen = () => {
         console.log('WebSocket connected');
         set({ connectionStatus: 'connected', ws: websocket });
-        
-        // Send initial preference to server
-        const { familyFriendly } = get();
-        websocket.send(JSON.stringify({
-          type: 'pref',
-          familyFriendly
-        }));
-        
+
         // Room joining happens automatically on the server side
       };
       
@@ -498,10 +488,9 @@ export const useChatStore = create<ChatState>((set, get) => ({
       get().addMessage(userMessage);
       
       // Send to server
-      const messageData = { 
-        type: 'msg', 
-        text: content,
-        allowExplicit: !familyFriendly
+      const messageData = {
+        type: 'msg',
+        text: content
       };
       console.log('[SEND DEBUG] Sending WebSocket message:', messageData);
       ws.send(JSON.stringify(messageData));
@@ -522,23 +511,10 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
   updateMessage: (id: string, updates: Partial<Message>) => {
     set((state) => ({
-      messages: state.messages.map(message => 
+      messages: state.messages.map(message =>
         message.id === id ? { ...message, ...updates } : message
       )
     }));
-  },
-
-  setFamilyFriendly: (value: boolean) => {
-    set({ familyFriendly: value });
-    
-    // Send preference update to server
-    const { ws } = get();
-    if (ws && ws.readyState === WebSocket.OPEN) {
-      ws.send(JSON.stringify({
-        type: 'pref',
-        familyFriendly: value
-      }));
-    }
   },
 
   selectAlternate: (messageId: string, alternate: NonNullable<Message['alternates']>[0]) => {

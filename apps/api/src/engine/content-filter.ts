@@ -9,7 +9,6 @@ import { logger } from '../config/index.js';
 
 export interface ContentFilterConfig {
   allowExplicit: boolean;
-  familyFriendlyMode: boolean;
   strictFiltering: boolean;
   logFilteredContent: boolean;
 }
