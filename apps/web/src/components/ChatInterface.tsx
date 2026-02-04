@@ -97,15 +97,15 @@ const ChatInterface = () => {
     return emojis[Math.abs(hash) % emojis.length];
   };
 
-  const getConfidenceLabel = (similarity?: number): { label: string; color: string; emoji: string } | null => {
-    if (similarity === undefined || similarity === null) {
-      return { label: 'Unknown', color: 'text-gray-400', emoji: '❓' };
-    }
-    if (similarity >= 0.7) return { label: 'Very Strong', color: 'text-green-400', emoji: '🎯' };
-    if (similarity >= 0.5) return { label: 'Strong', color: 'text-green-300', emoji: '✨' };
-    if (similarity >= 0.35) return { label: 'Moderate', color: 'text-yellow-300', emoji: '🎵' };
-    if (similarity >= 0.2) return { label: 'Weak', color: 'text-orange-300', emoji: '🔍' };
-    return { label: 'Very Weak (Fallback)', color: 'text-red-300', emoji: '⚠️' };
+  const getConfidenceLabel = (similarity?: number): { label: string; color: string; emoji: string } => {
+    // Never return null or "Unknown" - always provide a numeric value
+    const score = similarity ?? 0.001; // Default to very low if undefined
+
+    if (score >= 0.7) return { label: 'Very Strong', color: 'text-green-400', emoji: '🎯' };
+    if (score >= 0.5) return { label: 'Strong', color: 'text-green-300', emoji: '✨' };
+    if (score >= 0.35) return { label: 'Moderate', color: 'text-yellow-300', emoji: '🎵' };
+    if (score >= 0.2) return { label: 'Weak', color: 'text-orange-300', emoji: '🔍' };
+    return { label: 'Very Weak', color: 'text-red-300', emoji: '⚠️' };
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -395,7 +395,7 @@ const ChatInterface = () => {
                             {/* Match Score */}
                             {(() => {
                               const confidence = getConfidenceLabel(message.similarity);
-                              if (!confidence) return null;
+                              const score = message.similarity ?? 0.001; // Guaranteed numeric value
 
                               return (
                                 <div className="flex items-center gap-2 flex-1">
@@ -405,11 +405,9 @@ const ChatInterface = () => {
                                   <span className={`font-semibold text-sm ${confidence.color}`}>
                                     {confidence.emoji} {confidence.label}
                                   </span>
-                                  {message.similarity !== undefined && (
-                                    <span className="text-gray-500 text-xs">
-                                      ({(message.similarity * 100).toFixed(1)}%)
-                                    </span>
-                                  )}
+                                  <span className="text-gray-500 text-xs">
+                                    ({(score * 100).toFixed(1)}%)
+                                  </span>
                                 </div>
                               );
                             })()}

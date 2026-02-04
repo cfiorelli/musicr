@@ -349,7 +349,7 @@ export class SongMatchingService {
       primarySong: `${primary.song.artist} - ${primary.song.title}`,
       strategy: primary.reason.strategy,
       score: primary.score,
-      confidence: Math.round(confidence * 100) / 100,
+      confidence: confidence, // Keep full precision
       alternatesCount: alternates.length
     }, 'Song matching completed');
 
@@ -357,7 +357,7 @@ export class SongMatchingService {
       primary: primary.song,
       alternates: alternates.map(match => match.song),
       scores: {
-        confidence: Math.round(confidence * 100) / 100,
+        confidence: confidence, // Keep full precision
         strategy: primary.reason.strategy,
         debugInfo: {
           primaryScore: primary.score,
