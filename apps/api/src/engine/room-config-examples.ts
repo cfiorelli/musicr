@@ -14,31 +14,26 @@ export const roomConfigurations = {
   // Default room - allows all content
   default: {
     allowExplicit: true,
-    familyFriendlyMode: false
   } as RoomConfig,
   
   // Family-friendly room - filters explicit content, prefers radio edits
   familyFriendly: {
     allowExplicit: false,
-    familyFriendlyMode: true
   } as RoomConfig,
   
   // School/workplace - strict filtering
   school: {
     allowExplicit: false, 
-    familyFriendlyMode: true
   } as RoomConfig,
   
   // Teen room - allows mild content but filters explicit
   teen: {
     allowExplicit: false,
-    familyFriendlyMode: false
   } as RoomConfig,
   
   // Adult room - allows all content
   adult: {
     allowExplicit: true,
-    familyFriendlyMode: false
   } as RoomConfig
 };
 
@@ -82,8 +77,7 @@ export const usageExamples = {
     return await pipeline.generateCandidates(message, {
       roomConfig: {
         allowExplicit: false,
-        familyFriendlyMode: true
-      }
+          }
     });
   },
   
@@ -92,8 +86,7 @@ export const usageExamples = {
     return await pipeline.generateCandidates(message, {
       roomConfig: {
         allowExplicit: true,
-        familyFriendlyMode: false
-      }
+          }
     });
   },
   
@@ -109,8 +102,7 @@ export const usageExamples = {
       recentSongs: recentlyPlayed,
       roomConfig: {
         allowExplicit: false,  // Safe default
-        familyFriendlyMode: true
-      }
+          }
     });
   }
 };

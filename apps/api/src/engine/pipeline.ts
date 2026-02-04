@@ -73,7 +73,6 @@ export interface PipelineCandidate {
 
 export interface RoomConfig {
   allowExplicit?: boolean;
-  familyFriendlyMode?: boolean;
 }
 
 export interface PipelineConfig {
@@ -139,7 +138,6 @@ export class SongRecommendationPipeline {
     // Initialize content filter
     this.contentFilter = new ContentFilter({
       allowExplicit: true,
-      familyFriendlyMode: false,
       strictFiltering: false,
       logFilteredContent: false
     });
@@ -192,7 +190,7 @@ export class SongRecommendationPipeline {
       
       // Step 6: Content Filtering (if room config requires it)
       let filteredCandidates = allCandidates;
-      if (roomConfig && (!roomConfig.allowExplicit || roomConfig.familyFriendlyMode)) {
+      if (roomConfig && !roomConfig.allowExplicit) {
         logger.debug('Pipeline step 6: Content filtering');
         filteredCandidates = await this.filterExplicitContent(allCandidates, roomConfig);
       }
