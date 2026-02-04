@@ -445,8 +445,7 @@ export class SongMatchingService {
       score: 0.3,
       reason: {
         strategy: 'semantic',
-        mood: 'neutral',
-        similarity: 0.3
+        mood: 'neutral'
       }
     }));
   }
