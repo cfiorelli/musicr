@@ -13,12 +13,20 @@ const RoomUserList = () => {
   };
 
   const getUserEmoji = (handle: string) => {
-    // Generate consistent emoji from username
-    const emojis = ['🦊', '🐼', '🦁', '🐯', '🐸', '🐙', '🦋', '🐝', '🦄', '🐲', '🦖', '🐢', '🦉', '🦅', '🐺', '🐨', '🐻', '🐰', '🐹', '🦔'];
-    let hash = 0;
+    // Generate consistent emoji from username with expanded pool (60 emojis)
+    const emojis = [
+      '🦊', '🐼', '🦁', '🐯', '🐸', '🐙', '🦋', '🐝', '🦄', '🐲',
+      '🦖', '🐢', '🦉', '🦅', '🐺', '🐨', '🐻', '🐰', '🐹', '🦔',
+      '🦇', '🦦', '🦫', '🦡', '🦨', '🦥', '🐿️', '🦘', '🦚', '🦩',
+      '🦜', '🦢', '🦤', '🐊', '🦭', '🦈', '🐋', '🐬', '🐠', '🐡',
+      '🦀', '🦞', '🦑', '🐌', '🦗', '🐞', '🐛', '🦟', '🕷️', '🕸️',
+      '🐚', '🦎', '🐍', '🦴', '🎃', '🌻', '🌺', '🌸', '🌷', '🌹'
+    ];
+    // Use FNV-1a hash for better distribution
+    let hash = 2166136261;
     for (let i = 0; i < handle.length; i++) {
-      hash = ((hash << 5) - hash) + handle.charCodeAt(i);
-      hash = hash & hash;
+      hash ^= handle.charCodeAt(i);
+      hash += (hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24);
     }
     return emojis[Math.abs(hash) % emojis.length];
   };

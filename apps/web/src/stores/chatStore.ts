@@ -339,6 +339,30 @@ export const useChatStore = create<ChatState>((set, get) => ({
               moderationCategory: data.category
             };
             get().addMessage(moderationMessage);
+          } else if (data.type === 'error') {
+            // Server error - remove optimistic message and show error
+            console.error('Server error:', data.message);
+
+            // Remove the optimistic message that failed
+            const { messages } = get();
+            const lastOptimisticMessage = messages.filter(m => m.isOptimistic && m.userId === 'user').pop();
+            if (lastOptimisticMessage) {
+              console.log('Removing failed optimistic message:', lastOptimisticMessage.id);
+              set((state) => ({
+                messages: state.messages.filter(m => m.id !== lastOptimisticMessage.id)
+              }));
+            }
+
+            // Add system error message
+            const errorMessage: Message = {
+              id: generateId(),
+              content: `Error: ${data.message}`,
+              timestamp: new Date().toISOString(),
+              userId: 'system',
+              anonHandle: 'System',
+              isModeration: true,
+            };
+            get().addMessage(errorMessage);
           }
         } catch (error) {
           console.error('Error parsing WebSocket message:', error);
