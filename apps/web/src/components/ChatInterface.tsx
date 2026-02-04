@@ -243,87 +243,8 @@ const ChatInterface = () => {
         onScroll={handleScroll}
         className="flex-1 bg-gray-800/30 backdrop-blur-sm rounded-xl p-4 mb-3 overflow-y-auto min-h-0 border border-gray-700/30"
       >
-        {messages.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-center px-4">
-            <div className="max-w-2xl w-full">
-              {/* Onboarding Panel */}
-              {showOnboarding && (
-                <div className="mb-6 bg-gray-800/70 backdrop-blur-md border border-gray-700 rounded-xl p-5 shadow-xl relative">
-                  <button
-                    onClick={dismissOnboarding}
-                    className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center text-gray-500 hover:text-gray-300 transition-colors rounded-lg hover:bg-gray-700/50 text-xl"
-                    aria-label="Close welcome message"
-                  >
-                    ✕
-                  </button>
-                  <h2 className="text-xl font-bold text-white mb-3 flex items-center gap-2">
-                    <span>👋</span>
-                    <span>Welcome to Musicr</span>
-                  </h2>
-                  <div className="space-y-3 text-left">
-                    <div className="flex gap-3 items-start">
-                      <span className="text-2xl">🎵</span>
-                      <div>
-                        <p className="text-white font-semibold">What it is</p>
-                        <p className="text-gray-300 text-sm">A musical chat where every message gets matched to a song using AI semantic search</p>
-                      </div>
-                    </div>
-                    <div className="flex gap-3 items-start">
-                      <span className="text-2xl">💬</span>
-                      <div>
-                        <p className="text-white font-semibold">How to use</p>
-                        <p className="text-gray-300 text-sm">Type like you're chatting normally - emotions, situations, moods - and watch songs appear!</p>
-                      </div>
-                    </div>
-                    <div className="flex gap-3 items-start">
-                      <span className="text-2xl">✨</span>
-                      <div>
-                        <p className="text-white font-semibold">Why it's cool</p>
-                        <p className="text-gray-300 text-sm">Semantic AI matching finds songs by meaning, not keywords. No lyrics are stored or analyzed.</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Main Welcome */}
-              <div className="text-5xl mb-4">🎵</div>
-              <h3 className="text-2xl font-bold text-white mb-3">Start a conversation</h3>
-              <p className="text-gray-400 text-base mb-6">
-                Try one of these examples:
-              </p>
-
-              {/* Example Prompts */}
-              <div className="space-y-2 mb-6">
-                {examplePrompts.map((prompt, index) => (
-                  <button
-                    key={index}
-                    onClick={() => handleExampleClick(prompt)}
-                    disabled={connectionStatus !== 'connected'}
-                    className="w-full p-3 bg-gray-800/50 hover:bg-gray-700/50 disabled:bg-gray-800/30 disabled:cursor-not-allowed backdrop-blur-sm border border-gray-700 rounded-lg text-white transition-all hover:border-gray-600 text-left group text-sm"
-                  >
-                    <div className="flex items-center justify-between">
-                      <span>"{prompt}"</span>
-                      <span className="text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity">→</span>
-                    </div>
-                  </button>
-                ))}
-              </div>
-
-              {/* Tips */}
-              <div className="bg-gray-800/40 backdrop-blur-sm rounded-lg p-3 text-sm text-gray-400 border border-gray-700/50">
-                <p className="text-gray-300 font-medium mb-1.5 text-xs">💡 Keyboard Shortcuts</p>
-                <div className="space-y-0.5 text-xs">
-                  <p>• Press <kbd className="bg-gray-700 px-1.5 py-0.5 rounded text-xs">↑</kbd> to edit your last message</p>
-                  <p>• Press <kbd className="bg-gray-700 px-1.5 py-0.5 rounded text-xs">Cmd+K</kbd> to see alternative songs</p>
-                  <p>• Click <span className="bg-blue-600/70 px-1.5 py-0.5 rounded text-xs">💡 why?</span> to see match reasoning</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {messages.map((message) => {
+        <div className="space-y-3">
+          {messages.map((message) => {
               const songDisplay = formatSongDisplay(message);
               const isModeration = message.isModeration;
               
@@ -545,8 +466,7 @@ const ChatInterface = () => {
                 </div>
               );
             })}
-          </div>
-        )}
+        </div>
       </div>
 
       {/* Jump to Bottom Button */}
