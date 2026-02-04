@@ -192,7 +192,7 @@ title,artist,year,popularity,tags,phrases
 "American Life",Madonna,2003,11,"pop,2000s,critique,american","american life,I live the american dream"
 "Hollywood",Madonna,2003,10,"pop,2000s,fame,illusion","hollywood,everybody comes to hollywood,they wanna make it"
 "I'm So Stupid",Madonna,2003,9,"pop,2000s,self-criticism,mistake","I'm so stupid,cause I used to live,in a beautiful world"
-"Easy Ride",Madonna,2003,8,"pop,2000s,journey,life","easy ride,life's an easy,easy ride"I Want to Hold Your Hand,The Beatles,1963,95,"rock,pop,classic","love,romance,happy"
+I Want to Hold Your Hand,The Beatles,1963,95,"rock,pop,classic","love,romance,happy"
 A Day in the Life,The Beatles,1967,94,"rock,psychedelic,experimental","dream,surreal,reflective"
 My Girl,The Temptations,1964,91,"soul,r&b,classic","love,romance,sweet"
 Light My Fire,The Doors,1967,90,"rock,psychedelic,classic","passion,intense,fire"
@@ -228,432 +228,271 @@ Levitating,Dua Lipa feat. DaBaby,2020,92,"pop,disco,dance","upbeat,fun,disco"
 Flowers,Miley Cyrus,2023,92,"pop,disco,empowerment","self-love,independence,strong"
 Vampire,Olivia Rodrigo,2023,88,"pop,ballad,dramatic","betrayal,dramatic,emotional"
 Kill Bill,SZA,2022,87,"r&b,alternative,dark","revenge,dark,emotional"
-Africa,Toto,1982,91,rock|pop|classic,rain|bless|journey
-Livin' on a Prayer,Bon Jovi,1986,92,rock|anthem|80s,hope|struggle|determination
-Take On Me,a-ha,1985,90,pop|synth-pop|80s,upbeat|energetic|synth
-Girls Just Want to Have Fun,Cyndi Lauper,1983,89,pop|dance|80s,fun|freedom|celebration
-With or Without You,U2,1987,91,rock|alternative|ballad,love|longing|emotional
-Sweet Dreams (Are Made of This),Eurythmics,1983,90,pop|synth-pop|dark,dreams|mystery|powerful
-Everybody Wants to Rule the World,Tears for Fears,1985,88,pop|new wave|80s,ambition|power|world
-Eye of the Tiger,Survivor,1982,90,rock|motivational|80s,determination|fighting|strength
-Footloose,Kenny Loggins,1984,87,pop|rock|dance,dance|freedom|energetic
-Tainted Love,Soft Cell,1981,88,synth-pop|new wave|80s,love|dark|electronic
-I Wanna Dance with Somebody,Whitney Houston,1987,92,pop|dance|80s,joy|dancing|love
-Time After Time,Cyndi Lauper,1984,89,pop|ballad|80s,waiting|love|patience
-The Power of Love,Huey Lewis & The News,1985,87,rock|pop|80s,love|powerful|upbeat
-Total Eclipse of the Heart,Bonnie Tyler,1983,90,pop|rock|power ballad,heartbreak|dramatic|emotional
-Karma Chameleon,Culture Club,1983,86,pop|new wave|80s,change|colorful|fun
-Wake Me Up Before You Go-Go,Wham!,1984,85,pop|dance|upbeat,happy|energetic|fun
-Come On Eileen,Dexys Midnight Runners,1982,87,pop|new wave|celtic,energetic|nostalgic|upbeat
-Physical,Olivia Newton-John,1981,88,pop|dance|80s,workout|energy|physical
-Manic Monday,The Bangles,1986,85,pop|rock|80s,monday|work|tired
-Walk Like an Egyptian,The Bangles,1986,86,pop|dance|quirky,fun|dance|egypt
-True,Spandau Ballet,1983,87,pop|ballad|romantic,love|truth|heartfelt
-Hungry Like the Wolf,Duran Duran,1982,88,new wave|synth-pop|80s,pursuit|hunt|desire
-Rio,Duran Duran,1982,86,new wave|dance|80s,exotic|adventure|fun
-Blue Monday,New Order,1983,89,electronic|new wave|dance,melancholy|dance|electronic
-Just Can't Get Enough,Depeche Mode,1981,87,synth-pop|new wave|80s,love|obsession|upbeat
-Don't You (Forget About Me),Simple Minds,1985,89,rock|new wave|soundtrack,nostalgia|remember|80s
-In the Air Tonight,Phil Collins,1981,91,pop|rock|dramatic,tension|drums|powerful
-Against All Odds,Phil Collins,1984,88,pop|ballad|emotional,heartbreak|longing|desperate
-I Can't Go for That (No Can Do),Hall & Oates,1981,87,pop|r&b|soul,refusal|groove|smooth
-Another One Bites the Dust,Queen,1980,92,rock|funk|disco,rhythm|powerful|groove
-We Are the Champions,Queen,1977,94,rock|anthem|victory,triumph|winning|powerful
-Don't Bring Me Down,Electric Light Orchestra,1979,85,rock|pop|disco,upbeat|positive|energetic
-Video Killed the Radio Star,The Buggles,1979,86,pop|new wave|electronic,technology|change|nostalgia
-Heart of Glass,Blondie,1978,88,disco|new wave|pop,dance|heartbreak|disco
-Call Me,Blondie,1980,89,rock|new wave|pop,passion|urgent|calling
-I Love Rock 'n Roll,Joan Jett,1981,90,rock|punk|cover,rock|jukebox|attitude
-Gloria,Laura Branigan,1982,85,pop|dance|80s,empowerment|energetic|disco
-Flashdance... What a Feeling,Irene Cara,1983,87,pop|dance|soundtrack,triumph|dance|emotion
-Maniac,Michael Sembello,1983,85,pop|rock|dance,intense|dancing|energy
-Say Something,A Great Big World feat. Christina Aguilera,2013,88,pop|ballad|emotional,goodbye|heartbreak|sad
-Thinking Out Loud,Ed Sheeran,2014,91,pop|ballad|romantic,love|romance|sweet
-All of Me,John Legend,2013,92,pop|ballad|piano,love|devotion|wedding
-Counting Stars,OneRepublic,2013,89,pop|rock|alternative,hope|dreams|optimistic
-Demons,Imagine Dragons,2012,87,alternative|rock|emotional,inner demons|struggle|dark
-Wake Me Up,Avicii,2013,90,electronic|dance|folk,awakening|freedom|young
-Titanium,David Guetta feat. Sia,2011,89,electronic|dance|pop,strength|powerful|resilient
-Firework,Katy Perry,2010,88,pop|dance|empowering,confidence|shine|celebration
-Roar,Katy Perry,2013,87,pop|empowerment|anthem,strength|voice|fighter
-Dark Horse,Katy Perry feat. Juicy J,2013,86,pop|trap|dark,magic|mysterious|powerful
-We Found Love,Rihanna feat. Calvin Harris,2011,91,electronic|dance|pop,love|hopeless|intense
-Only Girl (In the World),Rihanna,2010,87,dance|pop|electronic,love|exclusive|dancing
-Diamonds,Rihanna,2012,89,pop|ballad|uplifting,shine|beauty|hopeful
-Work,Rihanna feat. Drake,2016,88,dancehall|r&b|caribbean,work|relationship|groove
-This Is What You Came For,Calvin Harris feat. Rihanna,2016,87,electronic|dance|summer,party|dance|summer
-Closer,The Chainsmokers feat. Halsey,2016,90,electronic|pop|nostalgic,nostalgia|young love|memories
-Don't Let Me Down,The Chainsmokers feat. Daya,2016,86,electronic|pop|emotional,need|dependency|love
-Something Just Like This,The Chainsmokers & Coldplay,2017,88,electronic|pop|uplifting,heroes|love|ordinary
-Starboy,The Weeknd feat. Daft Punk,2016,89,r&b|electronic|dark,fame|success|transformation
-Can't Feel My Face,The Weeknd,2015,90,pop|funk|disco,love|addiction|upbeat
-The Hills,The Weeknd,2015,88,r&b|dark|moody,dark|secretive|intense
-Earned It,The Weeknd,2015,87,r&b|sensual|ballad,deserving|sensual|slow
-I Feel It Coming,The Weeknd feat. Daft Punk,2016,86,pop|disco|funk,anticipation|love|groove
-Love Yourself,Justin Bieber,2015,89,pop|acoustic|breakup,moving on|self-respect|goodbye
-Sorry,Justin Bieber,2015,90,electronic|pop|dance,apology|remorse|danceable
-What Do You Mean?,Justin Bieber,2015,88,pop|dance|tropical,confusion|mixed signals|dance
-Where Are Ü Now,Jack Ü with Justin Bieber,2015,87,electronic|dance|emotional,searching|longing|electronic
-Despacito,Luis Fonsi feat. Daddy Yankee,2017,94,latin|pop|reggaeton,slow|sensual|spanish
-Havana,Camila Cabello feat. Young Thug,2017,91,pop|latin|tropical,havana|longing|romantic
-Señorita,Shawn Mendes & Camila Cabello,2019,90,pop|latin|romantic,romance|summer|attraction
-Stitches,Shawn Mendes,2015,87,pop|emotional|heartbreak,pain|heartbreak|wounded
-Treat You Better,Shawn Mendes,2016,86,pop|romantic|pleading,better love|deserve|promise
-There's Nothing Holdin' Me Back,Shawn Mendes,2017,88,pop|upbeat|energetic,freedom|attraction|energetic
-Attention,Charlie Puth,2017,88,pop|r&b|funk,games|attention seeking|groovy
-See You Again,Wiz Khalifa feat. Charlie Puth,2015,92,hip-hop|pop|emotional,farewell|memory|tribute
-We Don't Talk Anymore,Charlie Puth feat. Selena Gomez,2016,87,pop|breakup|bittersweet,silence|distance|breakup
-One Call Away,Charlie Puth,2016,85,pop|romantic|uplifting,support|there for you|promise
-New Rules,Dua Lipa,2017,89,pop|dance|empowerment,rules|self-respect|moving on
-IDGAF,Dua Lipa,2018,87,pop|confident|breakup,don't care|strong|over it
-One Kiss,Calvin Harris & Dua Lipa,2018,88,electronic|dance|summer,romance|kiss|summer
-Don't Start Now,Dua Lipa,2019,91,pop|disco|dance,moving on|confidence|disco
-Break My Heart,Dua Lipa,2020,87,pop|disco|upbeat,risk|love|disco
-Physical,Dua Lipa,2020,86,pop|disco|energetic,energy|physical|workout
-Levitating (feat. DaBaby),Dua Lipa,2020,92,pop|disco|funk,floating|love|groovy
-Cold Heart,Elton John & Dua Lipa,2021,88,pop|disco|classic,collaboration|nostalgic|dance
-Dance The Night,Dua Lipa,2023,87,pop|disco|dance,dancing|night|barbie
-Houdini,Dua Lipa,2023,85,pop|dance|electronic,escape|magic|mysterious
-Watermelon Sugar,Harry Styles,2019,89,pop|rock|summer,summer|sweet|sensual
-Adore You,Harry Styles,2019,87,pop|rock|romantic,adoration|love|upbeat
-Golden,Harry Styles,2020,86,pop|rock|hopeful,golden|fear|running
-Treat People With Kindness,Harry Styles,2019,84,pop|uplifting|retro,kindness|love|positive
-Sign of the Times,Harry Styles,2017,88,rock|ballad|epic,hope|time|dramatic
-Kiwi,Harry Styles,2017,85,rock|energetic|raw,wild|energetic|rock
-Late Night Talking,Harry Styles,2022,87,pop|funk|groove,late night|talking|groove
-Music For a Sushi Restaurant,Harry Styles,2022,84,funk|pop|quirky,sushi|funky|playful
-Satellite,Harry Styles,2022,85,pop|rock|longing,orbit|distance|longing
-Boyfriend,Ariana Grande & Social House,2019,86,pop|r&b|playful,friendship|attraction|tease
-7 rings,Ariana Grande,2019,89,pop|trap|confident,luxury|confidence|shopping
-thank u, next,Ariana Grande,2018,91,pop|empowerment|grateful,moving on|growth|thankful
-break up with your girlfriend,Ariana Grande,2019,87,pop|r&b|provocative,desire|bold|flirty
-God is a woman,Ariana Grande,2018,88,pop|r&b|powerful,empowerment|divine|sensual
-no tears left to cry,Ariana Grande,2018,88,pop|electronic|uplifting,resilience|moving forward|positive
-breathin,Ariana Grande,2018,87,pop|anxiety|hopeful,breathing|anxiety|surviving
-Side To Side,Ariana Grande feat. Nicki Minaj,2016,87,pop|r&b|provocative,physical|sensual|workout
-Into You,Ariana Grande,2016,88,pop|dance|passionate,desire|attraction|intense
-Dangerous Woman,Ariana Grande,2016,87,pop|r&b|confident,danger|confidence|powerful
-Be Alright,Ariana Grande,2016,85,pop|uplifting|hopeful,reassurance|hope|positive
-One Last Time,Ariana Grande,2014,86,pop|dance|desperate,please|one more|longing
-Problem,Ariana Grande feat. Iggy Azalea,2014,88,pop|dance|sassy,problems|confident|catchy
-Bang Bang,Jessie J, Ariana Grande & Nicki Minaj,2014,88,pop|confident|powerful,bang|powerful|confident
-positions,Ariana Grande,2020,87,pop|r&b|sensual,positions|love|versatile
-34+35,Ariana Grande,2020,85,pop|r&b|playful,math|flirty|playful
-pov,Ariana Grande,2020,86,pop|ballad|romantic,perspective|love|adoration
-Bad Guy,Billie Eilish,2019,93,pop|alternative|dark,edgy|villain|unique
-bury a friend,Billie Eilish,2019,87,alternative|dark|experimental,dark|monster|disturbing
-when the party's over,Billie Eilish,2018,88,pop|ballad|melancholic,loneliness|party over|sad
-all the good girls go to hell,Billie Eilish,2019,86,alternative|pop|dark,hell|rebellion|dark
-you should see me in a crown,Billie Eilish,2019,85,alternative|electronic|powerful,power|royalty|confident
-everything i wanted,Billie Eilish,2019,87,pop|introspective|dreamy,dreams|suicide|brother
-my future,Billie Eilish,2020,85,pop|jazz|introspective,future|self-love|growth
-Therefore I Am,Billie Eilish,2020,86,pop|alternative|confident,confidence|dismissive|strong
-Happier Than Ever,Billie Eilish,2021,88,pop|rock|angry,anger|breakup|intense
-Getting Older,Billie Eilish,2021,84,pop|introspective|honest,aging|reflection|honest
-Your Power,Billie Eilish,2021,85,folk|pop|vulnerable,abuse|power|vulnerable
-Lost Cause,Billie Eilish,2021,84,pop|r&b|dismissive,over it|not worth it|moving on
-NDA,Billie Eilish,2021,85,pop|electronic|mysterious,secrets|privacy|mysterious
-What Was I Made For?,Billie Eilish,2023,89,ballad|emotional|existential,purpose|barbie|vulnerable
-Circles,Post Malone,2019,89,pop|hip-hop|melancholic,cycles|repetition|stuck
-Sunflower,Post Malone & Swae Lee,2018,90,hip-hop|pop|upbeat,sunflower|good vibes|spiderverse
-Congratulations,Post Malone feat. Quavo,2017,88,hip-hop|trap|celebration,success|celebration|winning
-Rockstar,Post Malone feat. 21 Savage,2017,90,hip-hop|trap|rock,rockstar|fame|lifestyle
-Psycho,Post Malone feat. Ty Dolla $ign,2018,88,hip-hop|trap|dark,crazy|dark|intense
-Better Now,Post Malone,2018,87,hip-hop|pop|melancholic,breakup|better|moving on
-I Fall Apart,Post Malone,2016,86,hip-hop|ballad|emotional,heartbreak|falling apart|emotional
-Stay,Post Malone,2016,85,hip-hop|pop|pleading,please stay|desperate|emotional
-White Iverson,Post Malone,2015,87,hip-hop|trap|confident,ballin|success|confident
-Wow,Post Malone,2019,88,hip-hop|trap|energetic,wow|success|energetic
-Bohemian Rhapsody,Queen,1975,98,rock|opera|epic,dramatic|theatrical|masterpiece
-Somebody to Love,Queen,1976,91,rock|gospel|powerful,longing|love|powerful
-We Will Rock You,Queen,1977,94,rock|anthem|stadium,stomp|chant|powerful
-Killer Queen,Queen,1974,90,rock|glam|theatrical,elegant|classy|dramatic
-Under Pressure,Queen & David Bowie,1981,92,rock|pop|collaboration,pressure|stress|powerful
-Radio Ga Ga,Queen,1984,88,rock|synth|nostalgic,radio|technology|nostalgic
-I Want It All,Queen,1989,87,rock|anthem|ambitious,want it all|desire|powerful
-The Show Must Go On,Queen,1991,89,rock|ballad|defiant,perseverance|continuation|powerful
-Fat Bottomed Girls,Queen,1978,86,rock|fun|cheeky,fun|celebration|cheeky
-Bicycle Race,Queen,1978,85,rock|quirky|fun,bicycle|quirky|fun
-Crazy Little Thing Called Love,Queen,1980,89,rockabilly|rock|love,love|elvis|upbeat
-Good Old-Fashioned Lover Boy,Queen,1976,84,rock|vaudeville|romantic,romance|classic|charming
-'39,Queen,1975,85,folk|rock|space,space|time|acoustic
-Lazing on a Sunday Afternoon,Queen,1975,82,rock|vaudeville|relaxed,lazy|sunday|relaxed
-Don't Stop Me Now,Queen,1979,93,rock|upbeat|euphoric,having a good time|unstoppable|flying
-The Miracle,Queen,1989,85,rock|pop|hopeful,miracle|peace|optimistic
-Innuendo,Queen,1991,86,rock|flamenco|epic,innuendo|powerful|epic
-Who Wants to Live Forever,Queen,1986,88,rock|ballad|eternal,immortality|love|eternal
-It's a Kind of Magic,Queen,1986,87,rock|pop|magic,magic|fantasy|powerful
-Friends Will Be Friends,Queen,1986,85,rock|pop|friendship,friends|support|solidarity
-A Kind of Magic,Queen,1986,86,rock|fantasy|uplifting,magic|dreams|uplifting
-Hammer to Fall,Queen,1984,86,rock|hard rock|apocalyptic,hammer|apocalypse|powerful
-I Want to Break Free,Queen,1984,89,rock|pop|liberation,freedom|escape|liberation
-Tie Your Mother Down,Queen,1977,87,rock|hard rock|energetic,rock|energetic|guitar
-Spread Your Wings,Queen,1977,84,rock|ballad|inspirational,freedom|flight|dreams
-Seven Seas of Rhye,Queen,1974,85,rock|fantasy|powerful,rhye|queen|powerful
-Stone Cold Crazy,Queen,1974,86,rock|metal|fast,crazy|fast|intense
-Brighton Rock,Queen,1974,85,rock|instrumental|guitar,instrumental|guitar solo|rock
-Now I'm Here,Queen,1974,86,rock|hard rock|energetic,here|arrival|energetic
-Tenement Funster,Queen,1974,83,rock|funky|groove,funster|groove|funky
-Jealousy,Queen,1989,83,rock|emotional|dramatic,jealousy|emotion|dramatic
-Breakthru,Queen,1989,84,rock|upbeat|breakthrough,breakthrough|freedom|upbeat
-Scandal,Queen,1989,83,rock|emotional|betrayal,scandal|tabloids|betrayal
-The Invisible Man,Queen,1989,84,rock|electronic|mysterious,invisible|mysterious|electronic
-Khashoggi's Ship,Queen,1989,82,rock|political|mysterious,yacht|intrigue|mysterious
-My Melancholy Blues,Queen,1977,85,jazz|ballad|blues,blues|melancholy|piano
-Good Company,Queen,1975,83,jazz|dixieland|nostalgic,company|jazz|nostalgic
-Seaside Rendezvous,Queen,1975,84,vaudeville|jazz|romantic,seaside|romantic|quirky
-Flick of the Wrist,Queen,1974,84,rock|dark|aggressive,manipulation|dark|aggressive
-Lily of the Valley,Queen,1974,83,rock|ballad|melancholic,lily|loss|melancholic
-Dear Friends,Queen,1974,82,ballad|emotional|short,friends|emotional|intimate
-Misfire,Queen,1974,81,rock|upbeat|quirky,misfire|quirky|upbeat
-Bring Back That Leroy Brown,Queen,1974,82,dixieland|jazz|fun,leroy|jazz|fun
-She Makes Me (Stormtrooper in Stilettoes),Queen,1974,83,rock|prog|complex,complex|prog|rock
-In the Lap of the Gods,Queen,1974,84,rock|epic|powerful,gods|epic|powerful
-In the Lap of the Gods... Revisited,Queen,1974,85,rock|anthem|powerful,gods|powerful|anthem
-The March of the Black Queen,Queen,1974,87,rock|opera|epic,queen|march|opera
-Ogre Battle,Queen,1974,85,rock|metal|fantasy,battle|ogre|intense
-The Night Comes Down,Queen,1973,83,rock|ballad|introspective,night|introspection|early
-Modern Times Rock 'n' Roll,Queen,1973,84,rock|hard rock|energetic,rock|modern|energetic
-Son and Daughter,Queen,1973,83,rock|blues|guitar,western|guitar|rock
-Liar,Queen,1973,85,rock|prog|dynamic,liar|prog|dynamic
-Great King Rat,Queen,1973,84,rock|prog|theatrical,rat|king|theatrical
-My Fairy King,Queen,1973,85,rock|fantasy|mystical,fairy|fantasy|mystical
-Doing All Right,Queen,1973,83,rock|ballad|hopeful,optimism|early|hopeful
-Keep Yourself Alive,Queen,1973,86,rock|anthem|energetic,survival|energetic|debut
-In the Death Cell,Queen,1974,82,rock|opera|dark,death|prisoner|opera
-The Fairy Feller's Master-Stroke,Queen,1974,85,rock|fantasy|whimsical,fairy|painting|whimsical
-Father to Son,Queen,1974,86,rock|epic|generational,father|son|wisdom
-White Queen (As It Began),Queen,1974,87,rock|ballad|epic,queen|love|epic
-Procession,Queen,1974,81,instrumental|classical|dramatic,procession|classical|intro
-Some Day One Day,Queen,1974,83,rock|ballad|hopeful,someday|hope|guitar
-Loser in the End,Queen,1974,82,rock|aggressive|powerful,loser|aggressive|rock
-The Loser in the End,Queen,1974,82,rock|powerful|defiant,loser|defiant|powerful
-All Dead, All Dead,Queen,1977,84,ballad|melancholic|loss,death|loss|cat
-Sleeping on the Sidewalk,Queen,1977,83,rock|country|acoustic,sleeping|homeless|acoustic
-Get Down, Make Love,Queen,1977,85,rock|funky|provocative,provocative|funky|rock
-Fight from the Inside,Queen,1977,83,rock|defiant|struggle,fight|struggle|defiant
-It's Late,Queen,1977,86,rock|ballad|regret,late|regret|time
-Sheer Heart Attack,Queen,1977,86,punk|rock|fast,heart attack|fast|punk
-All God's People,Queen,1991,83,rock|gospel|spiritual,god|people|spiritual
-These Are the Days of Our Lives,Queen,1991,87,rock|ballad|nostalgic,nostalgia|reflection|life
-Ride the Wild Wind,Queen,1991,84,rock|energetic|wild,wind|wild|energetic
-I Can't Live with You,Queen,1991,85,rock|conflicted|emotional,conflict|can't live|emotional
-Headlong,Queen,1991,86,rock|energetic|driving,headlong|fast|driving
-The Hitman,Queen,1991,84,rock|dark|mysterious,hitman|dark|killer
-Delilah,Queen,1991,83,rock|playful|cat,cat|pet|playful
-Don't Try So Hard,Queen,1991,84,rock|ballad|comfort,don't try|comfort|ease
-Was It All Worth It,Queen,1989,84,rock|reflective|questioning,worth|reflection|life
-Hang On in There,Queen,1989,82,rock|uplifting|encouragement,hang on|encouragement|persevere
-Rain Must Fall,Queen,1989,83,rock|melancholic|rain,rain|melancholy|acceptance
-Chinese Torture,Queen,1989,81,rock|dark|torture,torture|pain|dark
-My Baby Does Me,Queen,1989,82,rock|upbeat|fun,baby|fun|upbeat
-Stealin',Queen,1989,81,rock|blues|groove,stealing|blues|groove
-Party,Queen,1989,83,rock|party|fun,party|celebration|fun
-Pain Is So Close to Pleasure,Queen,1986,84,rock|electronic|dualism,pain|pleasure|duality
-Don't Lose Your Head,Queen,1986,85,rock|funk|advice,head|advice|funk
-Gimme the Prize (Kurgan's Theme),Queen,1986,85,rock|metal|epic,prize|immortal|highlander
-Princes of the Universe,Queen,1986,87,rock|epic|highlander,princes|highlander|powerful
-One Vision,Queen,1985,88,rock|anthem|unity,vision|unity|powerful
-Pain Is So Close to Pleasure,Queen,1986,84,rock|electronic|paradox,pain|pleasure|paradox
-One Year of Love,Queen,1986,84,ballad|romantic|anniversary,love|anniversary|romantic
-Machines (Or 'Back to Humans'),Queen,1984,83,rock|electronic|humanity,machines|technology|human
-Is This the World We Created...?,Queen,1984,84,ballad|political|questioning,world|poverty|questioning
-Man on the Prowl,Queen,1984,82,rock|prowl|hunting,prowl|hunting|rock
-Keep Passing the Open Windows,Queen,1984,83,rock|uplifting|advice,windows|advice|persevere
-Tear It Up,Queen,1984,84,rock|energetic|aggressive,tear|aggressive|rock
-Life Is Real (Song for Lennon),Queen,1982,85,ballad|tribute|emotional,lennon|real|tribute
-Staying Power,Queen,1982,84,rock|funk|groove,power|staying|funk
-Las Palabras de Amor,Queen,1982,84,ballad|romantic|spanish,love|words|spanish
-Put Out the Fire,Queen,1982,84,rock|political|guns,guns|fire|violence
-Action This Day,Queen,1982,83,rock|new wave|urgent,action|now|urgent
-Calling All Girls,Queen,1982,83,rock|pop|communication,calling|girls|communication
-Dancer,Queen,1982,82,rock|dance|energetic,dancer|movement|energetic
-Back Chat,Queen,1982,83,funk|rock|sassy,chat|sassy|funk
-Body Language,Queen,1982,84,funk|disco|sensual,body|language|sensual
-Cool Cat,Queen,1982,83,funk|r&b|smooth,cat|cool|smooth
-Save Me,Queen,1980,87,rock|ballad|plea,save|rescue|emotional
-Dragon Attack,Queen,1980,85,rock|hard rock|powerful,dragon|attack|powerful
-Need Your Loving Tonight,Queen,1980,83,rock|upbeat|desire,need|loving|desire
-Rock It (Prime Jive),Queen,1980,82,rock|funk|groove,rock|jive|groove
-Don't Try Suicide,Queen,1980,84,rock|dark|advice,suicide|don't|advice
-Sail Away Sweet Sister,Queen,1980,83,rock|ballad|farewell,sister|sail|farewell
-Coming Soon,Queen,1980,82,rock|anticipation|teaser,coming|soon|anticipation
-Play the Game,Queen,1980,86,rock|synth|game,game|love|synth
-EOFCrazy,Gnarls Barkley,2006,91,soul|alternative|unique,crazy|insanity|soulful
-Rehab,Amy Winehouse,2006,92,soul|jazz|r&b,refusal|addiction|defiant
-Back to Black,Amy Winehouse,2006,90,soul|r&b|retro,heartbreak|black|retro
-Valerie,Amy Winehouse,2007,88,soul|pop|cover,valerie|longing|upbeat
-Tears Dry on Their Own,Amy Winehouse,2007,87,soul|motown|moving on,tears|dry|moving on
-You Know I'm No Good,Amy Winehouse,2006,88,soul|jazz|confession,bad girl|honest|confession
-Love Is a Losing Game,Amy Winehouse,2006,89,soul|ballad|heartbreak,losing|love|game
-Just Friends,Amy Winehouse,2006,85,jazz|soul|friendship,friends|boundaries|jazz
-Me & Mr Jones,Amy Winehouse,2006,86,soul|r&b|attitude,mr jones|attitude|sassy
-Wake Up Alone,Amy Winehouse,2006,85,soul|melancholic|lonely,alone|waking|lonely
-Some Unholy War,Amy Winehouse,2006,84,soul|dramatic|war,war|unholy|dramatic
-He Can Only Hold Her,Amy Winehouse,2006,84,soul|observational|sad,hold|can't save|sad
-Addicted,Amy Winehouse,2006,83,soul|r&b|addiction,addiction|dependency|soul
-You Sent Me Flying,Amy Winehouse,2003,82,jazz|soul|playful,flying|playful|jazz
-In My Bed,Amy Winehouse,2003,84,r&b|soul|intimate,bed|intimate|r&b
-Take the Box,Amy Winehouse,2003,85,jazz|soul|breakup,belongings|breakup|jazz
-October Song,Amy Winehouse,2003,83,folk|soul|autumn,october|seasons|folk
-Stronger Than Me,Amy Winehouse,2003,86,jazz|soul|feminist,stronger|gender roles|jazz
-What Is It About Men,Amy Winehouse,2003,83,jazz|soul|questioning,men|questioning|jazz
-Help Yourself,Amy Winehouse,2003,82,soul|r&b|moving on,help yourself|done|moving on
-Amy Amy Amy,Amy Winehouse,2003,81,ska|soul|quirky,name|grandmother|quirky
-F.E.E.L.I.N.G.C.A.L.L.E.D.L.O.V.E,Pulp,1995,85,britpop|alternative|romance,love|feelings|britpop
-Common People,Pulp,1995,91,britpop|class|narrative,class|poor|story
-Disco 2000,Pulp,1995,88,britpop|nostalgia|disco,nostalgia|reunion|disco
-Something Changed,Pulp,1995,86,britpop|ballad|romantic,fate|chance|romance
-Sorted for E's & Wizz,Pulp,1995,87,britpop|drugs|rave,drugs|rave culture|commentary
-Underwear,Pulp,1995,84,britpop|intimate|voyeuristic,underwear|intimate|observing
-Monday Morning,Pulp,1995,83,britpop|melancholic|monday,monday|aftermath|melancholic
-Pencil Skirt,Pulp,1995,84,britpop|desire|fashion,pencil skirt|desire|fashion
-Live Bed Show,Pulp,1995,85,britpop|intimate|theatrical,bed|show|intimate
-Do You Remember the First Time?,Pulp,1994,87,britpop|nostalgic|first time,first time|nostalgia|virginity
-Babies,Pulp,1992,86,britpop|voyeuristic|youth,babies|watching|youth
-Razzmatazz,Pulp,1993,84,britpop|showbiz|critical,showbiz|fake|razzmatazz
-Lipgloss,Pulp,1993,83,britpop|superficial|makeup,lipgloss|appearance|superficial
-Acrylic Afternoons,Pulp,1995,82,britpop|mundane|domestic,domestic|mundane|afternoons
-Mis-Shapes,Pulp,1995,86,britpop|outsiders|anthem,misfits|outsiders|revenge
-I Spy,Pulp,1995,85,britpop|class|spying,spying|jealousy|class
-A Little Soul,Pulp,1998,84,britpop|orchestral|epic,soul|drama|orchestral
-Party Hard,Pulp,1998,85,britpop|ironic|party,party|getting old|ironic
-Help the Aged,Pulp,1998,86,britpop|aging|compassion,aged|growing old|help
-This Is Hardcore,Pulp,1998,87,alternative|dark|intense,hardcore|dark|intense
-Seductive Barry,Pulp,1998,83,britpop|seduction|character,barry|seductive|character
-Sylvia,Pulp,1998,84,britpop|narrative|sad,sylvia|story|domestic
-Glory Days,Pulp,1998,83,britpop|nostalgia|past,glory|past|nostalgia
-The Fear,Pulp,1998,85,britpop|anxiety|fear,fear|paranoia|anxiety
-Dishes,Pulp,1998,82,britpop|domestic|mundane,dishes|chores|mundane
-The Day After the Revolution,Pulp,1998,84,britpop|aftermath|disillusion,revolution|after|disappointment
-Street Life,Roxy Music,1973,86,glam rock|art rock|urban,street|city|night
-Virginia Plain,Roxy Music,1972,87,glam rock|art rock|quirky,virginia|surreal|glam
-Love Is the Drug,Roxy Music,1975,89,glam rock|funk|addiction,love|drug|addiction
-More Than This,Roxy Music,1982,88,new wave|synth-pop|longing,more|longing|atmospheric
-Avalon,Roxy Music,1982,87,new wave|dreamy|smooth,avalon|dreamy|smooth
-Jealous Guy,Roxy Music,1981,86,cover|ballad|emotional,jealous|lennon cover|emotional
-Dance Away,Roxy Music,1979,85,rock|disco|heartbreak,dance|heartbreak|disco
-Angel Eyes,Roxy Music,1979,84,rock|pop|longing,angel|eyes|longing
-Both Ends Burning,Roxy Music,1975,85,rock|energetic|lifestyle,burning|fast life|energetic
-In Every Dream Home a Heartache,Roxy Music,1973,86,art rock|dark|disturbing,dream home|inflatable|dark
-Do the Strand,Roxy Music,1973,85,glam rock|dance|theatrical,strand|dance|theatrical
-Editions of You,Roxy Music,1973,84,glam rock|rock|energetic,editions|versions|rock
-Beauty Queen,Roxy Music,1973,83,glam rock|beauty|pageant,beauty queen|appearance|glam
-Strictly Confidential,Roxy Music,1973,82,glam rock|secrets|mysterious,confidential|secrets|mysterious
-Psalm,Roxy Music,1973,81,art rock|experimental|instrumental,psalm|experimental|art
-Bitters End,Roxy Music,1973,82,art rock|melancholic|end,bitter|ending|melancholic
-For Your Pleasure,Roxy Music,1973,84,art rock|theatrical|pleasure,pleasure|serving|theatrical
-A Song for Europe,Roxy Music,1973,85,art rock|political|europe,europe|political|art
-Mother of Pearl,Roxy Music,1973,86,glam rock|theatrical|dramatic,mother|pearl|theatrical
-The Bogus Man,Roxy Music,1973,83,art rock|experimental|long,bogus|experiment|long
-Grey Lagoons,Roxy Music,1973,82,art rock|atmospheric|grey,lagoons|grey|atmospheric
-Out of the Blue,Roxy Music,1980,84,rock|new wave|unexpected,blue|surprise|new wave
-Oh Yeah,Roxy Music,1980,85,rock|upbeat|celebratory,oh yeah|celebration|upbeat
-Over You,Roxy Music,1980,84,rock|moving on|upbeat,over|moving on|upbeat
-My Only Love,Roxy Music,1980,83,rock|ballad|love,only love|devotion|ballad
-Take a Chance with Me,Roxy Music,1982,84,new wave|romantic|chance,chance|risk|romantic
-The Main Thing,Roxy Music,1982,83,new wave|important|focus,main thing|priority|synth
-India,Roxy Music,1982,85,new wave|exotic|atmospheric,india|exotic|atmospheric
-While My Heart Is Still Beating,Roxy Music,1982,84,new wave|ballad|heartbeat,heart|beating|ballad
-The Space Between,Roxy Music,1982,83,new wave|space|distance,space|between|distance
-True to Life,Roxy Music,1982,82,new wave|authentic|real,true|authentic|life
-Tara,Roxy Music,1982,83,new wave|atmospheric|mysterious,tara|mysterious|atmospheric
-Manifesto,Roxy Music,1979,84,rock|new wave|statement,manifesto|statement|declaration
-Stronger Through the Years,Roxy Music,1979,82,rock|enduring|strength,stronger|years|enduring
-Trash,Roxy Music,1979,85,rock|punk|trash,trash|punk|edgy
-Ain't That So,Roxy Music,1979,83,rock|blues|agreement,ain't that so|blues|rock
-My Little Girl,Roxy Music,1979,82,rock|affection|girl,little girl|affection|love
-Spin Me Round,Roxy Music,1979,83,rock|dizzy|spinning,spin|dizzy|round
-Cry Cry Cry,Roxy Music,1979,84,rock|emotional|crying,cry|emotional|sadness
-Bitter-Sweet,Roxy Music,1975,84,rock|dualism|bittersweet,bittersweet|paradox|emotion
-Sentimental Fool,Roxy Music,1975,83,rock|fool|sentimental,fool|sentiment|romance
-Whirlwind,Roxy Music,1975,82,rock|chaos|whirlwind,whirlwind|chaos|spinning
-She Sells,Roxy Music,1975,83,rock|transactional|selling,sells|transaction|rock
-Can't Let Go,Roxy Music,1975,84,rock|attachment|holding on,can't let go|attachment|holding
-All I Want Is You,Roxy Music,1974,85,rock|desire|wanting,want|you|desire
-The Thrill of It All,Roxy Music,1974,84,rock|excitement|thrill,thrill|excitement|life
-Three and Nine,Roxy Music,1974,82,rock|numbers|mysterious,three|nine|cryptic
-Casanova,Roxy Music,1974,85,rock|romantic|casanova,casanova|lover|romantic
-A Really Good Time,Roxy Music,1974,83,rock|fun|good time,good time|fun|celebration
-Prairie Rose,Roxy Music,1974,82,rock|country|flower,prairie|rose|western
-Sunset,Roxy Music,1974,83,rock|atmospheric|sunset,sunset|evening|atmospheric
-If It Takes All Night,Roxy Music,1974,84,rock|determination|night,all night|determination|persevere
-Triptych,Roxy Music,1974,81,art rock|experimental|three parts,triptych|art|three
-Just Like You,Roxy Music|,1973,83,rock|similarity|like you,like you|similarity|comparison
-Chance Meeting,Roxy Music,1973,84,rock|fate|meeting,chance|fate|meeting
-Would You Believe?,Roxy Music,1972,83,glam rock|questioning|believe,believe|question|glam
-Sea Breezes,Roxy Music,1972,85,art rock|ocean|atmospheric,sea|breeze|ocean
-2 H.B.,Roxy Music,1972,84,art rock|tribute|humphrey bogart,tribute|bogart|art
-The Bob (Medley),Roxy Music,1972,82,glam rock|medley|bob,bob|medley|glam
-Chance Meeting,Roxy Music,1972,83,glam rock|fate|encounter,chance|fate|encounter
-Would You Believe?,Roxy Music,1972,82,glam rock|doubt|question,would you|doubt|question
-If There Is Something,Roxy Music,1972,86,art rock|dramatic|love,if there is|dramatic|devotion
-The Song Remains the Same,Led Zeppelin,1973,88,rock|epic|live,same|consistency|epic
-Black Dog,Led Zeppelin,1971,91,rock|hard rock|riff,black dog|riff|powerful
-Rock and Roll,Led Zeppelin,1971,90,rock|classic|energetic,rock and roll|energetic|classic
-When the Levee Breaks,Led Zeppelin,1971,92,blues rock|epic|drums,levee|flood|drums
-Going to California,Led Zeppelin,1971,89,folk|acoustic|california,california|seeking|acoustic
-Misty Mountain Hop,Led Zeppelin,1971,87,rock|hippie|mountain,mountain|hippie|rock
-Four Sticks,Led Zeppelin,1971,85,rock|eastern|drums,sticks|eastern|drums
-Battle of Evermore,Led Zeppelin,1971,88,folk|fantasy|battle,battle|fantasy|folk
-The Rain Song,Led Zeppelin,1973,89,rock|orchestral|rain,rain|orchestral|beautiful
-Over the Hills and Far Away,Led Zeppelin,1973,88,rock|acoustic|journey,hills|far away|journey
-The Crunge,Led Zeppelin,1973,84,funk|rock|groove,crunge|funk|groove
-Dancing Days,Led Zeppelin,1973,86,rock|upbeat|dancing,dancing|days|upbeat
-D'yer Mak'er,Led Zeppelin,1973,85,reggae|rock|jamaica,jamaica|reggae|playful
-No Quarter,Led Zeppelin,1973,90,rock|atmospheric|keyboards,no quarter|atmospheric|mystical
-The Ocean,Led Zeppelin,1973,87,rock|energetic|ocean,ocean|powerful|rock
-Houses of the Holy,Led Zeppelin,1975,86,rock|mystical|houses,houses|holy|mystical
-Kashmir,Led Zeppelin,1975,94,rock|epic|eastern,kashmir|epic|eastern
-Trampled Under Foot,Led Zeppelin,1975,88,rock|funk|car,trampled|funk|automobile
-In the Light,Led Zeppelin,1975,87,rock|mystical|keyboards,light|mystical|spiritual
-Bron-Yr-Aur,Led Zeppelin,1975,85,acoustic|instrumental|peaceful,welsh|acoustic|instrumental
-Down by the Seaside,Led Zeppelin,1975,84,rock|mellow|seaside,seaside|mellow|beach
-Ten Years Gone,Led Zeppelin,1975,89,rock|epic|nostalgic,ten years|gone|nostalgia
-Night Flight,Led Zeppelin,1975,85,rock|night|flying,night|flight|soaring
-The Wanton Song,Led Zeppelin,1975,86,rock|hard rock|wanton,wanton|desire|hard
-Boogie with Stu,Led Zeppelin,1975,84,boogie|piano|fun,boogie|stu|piano
-Black Country Woman,Led Zeppelin,1975,85,folk|acoustic|woman,country|woman|acoustic
-Sick Again,Led Zeppelin,1975,86,rock|groupies|sick,sick|groupies|touring
-Achilles Last Stand,Led Zeppelin,1976,92,rock|epic|achilles,achilles|epic|mythology
-For Your Life,Led Zeppelin,1976,87,rock|dark|addiction,life|addiction|dark
-Royal Orleans,Led Zeppelin,1976,85,rock|funk|new orleans,orleans|funk|story
-Nobody's Fault but Mine,Led Zeppelin,1976,88,blues rock|powerful|fault,fault|blues|powerful
-Candy Store Rock,Led Zeppelin,1976,84,rock|upbeat|candy,candy|rock|upbeat
-Hots On for Nowhere,Led Zeppelin,1976,86,rock|energetic|nowhere,nowhere|energetic|rock
-Tea for One,Led Zeppelin,1976,89,blues|ballad|lonely,tea|lonely|blues
-In the Evening,Led Zeppelin,1979,88,rock|dark|evening,evening|dark|atmospheric
-South Bound Saurez,Led Zeppelin,1979,85,rock|latin|saurez,saurez|latin|rock
-Fool in the Rain,Led Zeppelin,1979,87,rock|rain|latin,fool|rain|latin
-Hot Dog,Led Zeppelin,1979,84,rockabilly|country|fun,hot dog|country|fun
-Carouselambra,Led Zeppelin,1979,86,rock|progressive|long,carousel|progressive|journey
-All My Love,Led Zeppelin,1979,89,rock|ballad|love,love|loss|dedication
-I'm Gonna Crawl,Led Zeppelin,1979,87,blues|ballad|crawling,crawl|blues|desperate
-Immigrant Song,Led Zeppelin,1970,93,rock|viking|powerful,vikings|battle|powerful
-Friends,Led Zeppelin,1970,85,folk|eastern|friendship,friends|eastern|mystical
-Celebration Day,Led Zeppelin,1970,86,rock|celebration|upbeat,celebration|day|victory
-Since I've Been Loving You,Led Zeppelin,1970,91,blues rock|emotional|love,loving you|blues|emotional
-Out on the Tiles,Led Zeppelin,1970,85,rock|tiles|drinking,tiles|partying|rock
-Gallows Pole,Led Zeppelin,1970,88,folk|traditional|execution,gallows|execution|folk
-Tangerine,Led Zeppelin,1970,87,folk|acoustic|bittersweet,tangerine|nostalgia|acoustic
-That's the Way,Led Zeppelin,1970,88,folk|acoustic|acceptance,that's the way|acceptance|folk
-Bron-Y-Aur Stomp,Led Zeppelin,1970,86,folk|acoustic|dog,stomp|dog|acoustic
-Hats Off to (Roy) Harper,Led Zeppelin,1970,83,blues|tribute|harper,harper|tribute|blues
-Whole Lotta Love,Led Zeppelin,1969,95,rock|blues|classic,whole lotta|desire|riff
-What Is and What Should Never Be,Led Zeppelin,1969,87,rock|psychedelic|love,what is|should|psychedelic
-The Lemon Song,Led Zeppelin,1969,88,blues rock|lemon|squeeze,lemon|blues|squeeze
-Thank You,Led Zeppelin,1969,89,rock|ballad|gratitude,thank you|love|gratitude
-Heartbreaker,Led Zeppelin,1969,90,rock|guitar solo|heartbreak,heartbreaker|solo|powerful
-Living Loving Maid,Led Zeppelin,1969,84,rock|upbeat|maid,maid|groupie|rock
-Ramble On,Led Zeppelin,1969,89,rock|fantasy|rambling,ramble|tolkien|journey
-Moby Dick,Led Zeppelin,1969,88,rock|drums|instrumental,moby dick|drums|solo
-Bring It On Home,Led Zeppelin,1969,87,blues rock|powerful|home,bring it home|blues|powerful
-Good Times Bad Times,Led Zeppelin,1968,89,rock|debut|energetic,good times|bad times|debut
-Babe I'm Gonna Leave You,Led Zeppelin,1968,90,folk rock|emotional|leaving,leave you|emotional|folk
-You Shook Me,Led Zeppelin,1968,86,blues rock|shook|cover,shook|blues|cover
-Dazed and Confused,Led Zeppelin,1968,92,rock|psychedelic|dark,dazed|confused|dark
-Your Time Is Gonna Come,Led Zeppelin,1968,85,rock|organ|prophecy,time|come|organ
-Black Mountain Side,Led Zeppelin,1968,84,folk|instrumental|acoustic,mountain|instrumental|eastern
-Communication Breakdown,Led Zeppelin,1968,91,rock|fast|communication,breakdown|communication|fast
-I Can't Quit You Baby,Led Zeppelin,1968,87,blues rock|addiction|can't quit,can't quit|blues|addiction
-How Many More Times,Led Zeppelin,1968,88,blues rock|epic|medley,how many|times|epic
+Another One Bites the Dust,Queen,1980,94,"rock,funk,bass","bass line,bites the dust,funk"
+Under Pressure,Queen & David Bowie,1981,93,"rock,collaboration,pressure","pressure,collaboration,intense"
+I Want to Break Free,Queen,1984,91,"rock,pop,freedom","break free,freedom,liberation"
+Radio Ga Ga,Queen,1984,90,"rock,pop,radio","radio,nostalgia,media"
+Killer Queen,Queen,1974,92,"rock,glam,sophisticated","killer queen,sophisticated,champagne"
+Don't Stop Me Now,Queen,1978,94,"rock,upbeat,energetic","good time,having fun,energetic"
+Somebody to Love,Queen,1976,93,"rock,gospel,soul","somebody to love,longing,gospel"
+Crazy Little Thing Called Love,Queen,1979,91,"rock,rockabilly,love","crazy,love,rockabilly"
+The Show Must Go On,Queen,1991,92,"rock,ballad,defiance","show must go on,defiance,powerful"
+Who Wants to Live Forever,Queen,1986,90,"rock,ballad,orchestral","live forever,immortal,eternal"
+Love of My Life,Queen,1975,91,"rock,ballad,love","love of my life,heartbreak,beautiful"
+Fat Bottomed Girls,Queen,1978,88,"rock,humorous,upbeat","fat bottomed,bicycle,fun"
+Bicycle Race,Queen,1978,87,"rock,quirky,bicycle","bicycle,quirky,fun"
+You're My Best Friend,Queen,1975,89,"rock,pop,friendship","best friend,love,warm"
+Tie Your Mother Down,Queen,1976,86,"hard rock,heavy,energetic","tie down,rock,heavy"
+Good Old-Fashioned Lover Boy,Queen,1977,85,"rock,vintage,charm","lover boy,charm,old fashioned"
+Spread Your Wings,Queen,1977,84,"rock,ballad,inspirational","spread wings,fly away,freedom"
+Keep Yourself Alive,Queen,1973,86,"rock,debut,energetic","keep alive,survive,rock"
+Kashmir,Led Zeppelin,1975,95,"rock,epic,eastern","kashmir,journey,epic"
+Black Dog,Led Zeppelin,1971,93,"hard rock,blues,riff","black dog,riff,powerful"
+Rock and Roll,Led Zeppelin,1971,92,"rock,energetic,classic","rock and roll,energetic,classic"
+Immigrant Song,Led Zeppelin,1970,93,"rock,viking,powerful","vikings,battle,powerful"
+Whole Lotta Love,Led Zeppelin,1969,95,"rock,blues,classic","whole lotta,desire,riff"
+Ramble On,Led Zeppelin,1969,89,"rock,fantasy,rambling","ramble,tolkien,journey"
+Dazed and Confused,Led Zeppelin,1968,92,"rock,psychedelic,dark","dazed,confused,dark"
+Communication Breakdown,Led Zeppelin,1968,91,"rock,fast,communication","breakdown,communication,fast"
+The Rain Song,Led Zeppelin,1973,88,"rock,ballad,rain","rain,love,emotional"
+Over the Hills and Far Away,Led Zeppelin,1973,90,"rock,acoustic,journey","hills,journey,adventure"
+D'yer Mak'er,Led Zeppelin,1973,85,"rock,reggae,experimental","reggae,love,jamaica"
+No Quarter,Led Zeppelin,1973,89,"rock,atmospheric,keyboard","no quarter,atmospheric,journey"
+Trampled Under Foot,Led Zeppelin,1975,87,"rock,funk,groove","trampled,groove,funk"
+In My Time of Dying,Led Zeppelin,1975,88,"blues,rock,spiritual","dying,blues,spiritual"
+Ten Years Gone,Led Zeppelin,1975,86,"rock,emotional,retrospective","years gone,loss,reflection"
+Achilles Last Stand,Led Zeppelin,1976,89,"rock,epic,complex","achilles,epic,journey"
+Nobody's Fault but Mine,Led Zeppelin,1976,85,"blues,rock,gospel","nobody's fault,blues,gospel"
+All My Love,Led Zeppelin,1979,89,"rock,ballad,love","love,loss,dedication"
+In the Evening,Led Zeppelin,1979,84,"rock,blues,atmospheric","evening,blues,atmospheric"
+Fool in the Rain,Led Zeppelin,1979,87,"rock,rain,latin","fool,rain,latin"
+Wish You Were Here,Pink Floyd,1975,96,"rock,progressive,emotional","wish you here,absence,longing"
+Time,Pink Floyd,1973,95,"progressive,rock,philosophical","time,clocks,mortality"
+Us and Them,Pink Floyd,1973,92,"progressive,rock,atmospheric","us and them,division,society"
+Shine On You Crazy Diamond,Pink Floyd,1975,94,"progressive,rock,tribute","shine on,syd barrett,tribute"
+Brain Damage,Pink Floyd,1973,91,"progressive,rock,madness","lunatic,grass,madness"
+Eclipse,Pink Floyd,1973,90,"progressive,rock,finale","eclipse,everything,universe"
+Have a Cigar,Pink Floyd,1975,88,"progressive,rock,industry","cigar,music industry,satire"
+Come Together,The Beatles,1969,94,"rock,psychedelic,groove","come together,right now,groove"
+Here Comes the Sun,The Beatles,1969,95,"rock,folk,uplifting","sun,hope,optimistic"
+Eleanor Rigby,The Beatles,1966,92,"pop,strings,story","lonely people,eleanor,loneliness"
+All You Need Is Love,The Beatles,1967,93,"pop,psychedelic,love","love is all,anthem,peace"
+Help!,The Beatles,1965,91,"rock,pop,plea","help,need somebody,desperate"
+Ticket to Ride,The Beatles,1965,88,"rock,pop,melancholy","ticket to ride,leaving,sad"
+Drive My Car,The Beatles,1965,86,"rock,pop,playful","drive my car,beep beep,fun"
+Penny Lane,The Beatles,1967,90,"pop,psychedelic,nostalgic","penny lane,memories,nostalgic"
+Paint It Black,The Rolling Stones,1966,94,"rock,psychedelic,dark","paint it black,dark,sitar"
+Sympathy for the Devil,The Rolling Stones,1968,95,"rock,experimental,dark","sympathy,devil,pleased to meet you"
+(I Can't Get No) Satisfaction,The Rolling Stones,1965,96,"rock,rebellion,classic","satisfaction,rebellion,riff"
+Gimme Shelter,The Rolling Stones,1969,93,"rock,dark,powerful","shelter,war,apocalyptic"
+Jumpin' Jack Flash,The Rolling Stones,1968,91,"rock,energetic,classic","jumping jack,gas,energy"
+Angie,The Rolling Stones,1973,89,"rock,ballad,melancholy","angie,goodbye,sad"
+Wild Horses,The Rolling Stones,1971,90,"rock,ballad,emotional","wild horses,drag me away,love"
+Start Me Up,The Rolling Stones,1981,88,"rock,energetic,upbeat","start me up,never stop,energetic"
+Miss You,The Rolling Stones,1978,86,"rock,disco,funky","miss you,disco,groove"
+Brown Sugar,The Rolling Stones,1971,87,"rock,blues,controversial","brown sugar,blues,powerful"
+Space Oddity,David Bowie,1969,94,"rock,space,psychedelic","major tom,space,oddity"
+Life on Mars?,David Bowie,1971,93,"rock,theatrical,surreal","life on mars,surreal,theatrical"
+Heroes,David Bowie,1977,95,"rock,new wave,inspirational","heroes,just for one day,inspirational"
+Changes,David Bowie,1971,91,"rock,glam,transformation","changes,time,transformation"
+Starman,David Bowie,1972,92,"glam rock,space,hope","starman,waiting,sky"
+Rebel Rebel,David Bowie,1974,89,"glam rock,rebellion,energetic","rebel,hot tramp,glam"
+Let's Dance,David Bowie,1983,90,"pop,dance,upbeat","let's dance,red shoes,upbeat"
+Ashes to Ashes,David Bowie,1980,88,"new wave,electronic,theatrical","ashes,major tom,theatrical"
+The Man Who Sold the World,David Bowie,1970,87,"rock,dark,mysterious","sold the world,mysterious,dark"
+Ziggy Stardust,David Bowie,1972,91,"glam rock,theatrical,space","ziggy,spiders from mars,glam"
+Dreams,Fleetwood Mac,1977,95,"soft rock,pop,smooth","dreams,thunder,rain,wash you clean"
+Go Your Own Way,Fleetwood Mac,1977,93,"rock,breakup,energetic","go your own way,breakup,shackle"
+The Chain,Fleetwood Mac,1977,92,"rock,powerful,dramatic","chain,damn your love,powerful"
+Rhiannon,Fleetwood Mac,1975,91,"rock,mystical,ethereal","rhiannon,rings like bell,mystical"
+Landslide,Fleetwood Mac,1975,94,"folk rock,emotional,introspective","landslide,getting older,reflection"
+Don't Stop,Fleetwood Mac,1977,89,"pop rock,upbeat,optimistic","don't stop,thinking tomorrow,optimistic"
+Everywhere,Fleetwood Mac,1987,88,"pop,upbeat,love","everywhere,want to be,love"
+Little Lies,Fleetwood Mac,1987,87,"pop,synth,80s","little lies,tell me,sweet"
+Gypsy,Fleetwood Mac,1982,86,"pop rock,nostalgic,dreamy","gypsy,lightning,dancer"
+Sara,Fleetwood Mac,1979,85,"rock,emotional,mystical","sara,drowning,sea,mystical"
+Take It Easy,Eagles,1972,91,"rock,country,laid back","take it easy,corner,winslow arizona"
+Desperado,Eagles,1973,92,"country rock,ballad,emotional","desperado,fences,come to senses"
+One of These Nights,Eagles,1975,88,"rock,smooth,romantic","one of these nights,searching,someone"
+Lyin' Eyes,Eagles,1975,89,"country rock,story,cheating","lyin eyes,city,cheating"
+New Kid in Town,Eagles,1976,87,"soft rock,melancholy,fame","new kid,town,johnny come lately"
+Life in the Fast Lane,Eagles,1976,90,"rock,driving,lifestyle","fast lane,surely,lose mind"
+Heartache Tonight,Eagles,1979,86,"rock,upbeat,heartbreak","heartache tonight,gonna be,party"
+I Can't Tell You Why,Eagles,1979,85,"soft rock,ballad,love","can't tell you why,love,reason"
+The Long Run,Eagles,1979,84,"rock,endurance,relationship","long run,who is gonna,win"
+Already Gone,Eagles,1974,83,"rock,freedom,moving on","already gone,free,quit"
+Rocket Man,Elton John,1972,95,"rock,space,melancholy","rocket man,mars,lonely"
+Tiny Dancer,Elton John,1971,94,"rock,ballad,nostalgic","tiny dancer,blue jean baby,california"
+Bennie and the Jets,Elton John,1973,92,"rock,glam,funky","bennie,jets,electric,funky"
+Your Song,Elton John,1970,93,"pop,ballad,romantic","your song,wonderful,life"
+Candle in the Wind,Elton John,1973,91,"ballad,tribute,emotional","candle,wind,marilyn monroe"
+Goodbye Yellow Brick Road,Elton John,1973,92,"rock,theatrical,journey","yellow brick road,goodbye,wizard of oz"
+Crocodile Rock,Elton John,1972,88,"rock,upbeat,nostalgic","crocodile rock,dancing,suzie"
+I'm Still Standing,Elton John,1983,89,"pop,resilience,upbeat","still standing,better,stronger"
+Don't Let the Sun Go Down on Me,Elton John,1974,90,"ballad,emotional,pleading","sun go down,losing,light"
+Saturday Night's Alright for Fighting,Elton John,1973,87,"rock,energetic,party","saturday night,fighting,party"
+Thunder Road,Bruce Springsteen,1975,94,"rock,epic,hopeful","thunder road,screen door,mary"
+Dancing in the Dark,Bruce Springsteen,1984,92,"rock,pop,upbeat","dancing in dark,fire,spark"
+Born in the U.S.A.,Bruce Springsteen,1984,93,"rock,anthem,patriotic","born in usa,vietnam,working class"
+The River,Bruce Springsteen,1980,89,"rock,ballad,storytelling","river,valley,mary,dreams"
+Atlantic City,Bruce Springsteen,1982,87,"folk rock,dark,desperate","atlantic city,debt,gambling"
+Glory Days,Bruce Springsteen,1984,88,"rock,nostalgic,upbeat","glory days,past,nostalgia"
+I'm on Fire,Bruce Springsteen,1985,86,"rock,sensual,minimal","on fire,desire,cool down"
+Badlands,Bruce Springsteen,1978,90,"rock,defiant,powerful","badlands,believe,faith"
+Hungry Heart,Bruce Springsteen,1980,85,"rock,pop,catchy","hungry heart,everybody,needs place"
+Back in Black,AC/DC,1980,96,"hard rock,anthem,powerful","back in black,bell,tribute"
+Highway to Hell,AC/DC,1979,95,"hard rock,anthem,rebellious","highway to hell,no stop,party"
+Thunderstruck,AC/DC,1990,94,"hard rock,energetic,electric","thunderstruck,thunder,caught"
+You Shook Me All Night Long,AC/DC,1980,93,"hard rock,party,upbeat","shook me,all night,american thighs"
+T.N.T.,AC/DC,1975,91,"hard rock,explosive,energetic","tnt,dynamite,explosive"
+Dirty Deeds Done Dirt Cheap,AC/DC,1976,90,"hard rock,dark,heavy","dirty deeds,cheap,revenge"
+Hells Bells,AC/DC,1980,92,"hard rock,dark,powerful","hells bells,satan,calling"
+Shoot to Thrill,AC/DC,1980,89,"hard rock,energetic,confident","shoot to thrill,play to kill,thrill"
+For Those About to Rock,AC/DC,1981,88,"hard rock,anthem,salute","about to rock,salute,cannon"
+Whole Lotta Rosie,AC/DC,1977,87,"hard rock,heavy,blues","rosie,whole lotta woman,heavyweight"
+Heart-Shaped Box,Nirvana,1993,92,"grunge,alternative,dark","heart shaped box,umbilical,dark"
+Lithium,Nirvana,1991,90,"grunge,alternative,emotional","lithium,happy,sad,yeah"
+In Bloom,Nirvana,1991,89,"grunge,alternative,ironic","in bloom,guns,nature"
+All Apologies,Nirvana,1993,91,"grunge,alternative,melancholy","all apologies,sun,guilt"
+The Man Who Sold the World,Nirvana,1993,88,"grunge,cover,acoustic","sold the world,bowie,unplugged"
+About a Girl,Nirvana,1989,87,"grunge,alternative,melodic","about a girl,need,easy"
+Drain You,Nirvana,1991,85,"grunge,alternative,intense","drain you,chew,spit"
+Breed,Nirvana,1991,84,"grunge,punk,aggressive","breed,don't care,attitude"
+Aneurysm,Nirvana,1991,83,"grunge,alternative,raw","aneurysm,love you,beat it"
+Even Flow,Pearl Jam,1991,91,"grunge,rock,homeless","even flow,thoughts,homeless"
+Better Man,Pearl Jam,1994,90,"grunge,rock,melancholy","better man,wait,deserve"
+Daughter,Pearl Jam,1993,89,"grunge,emotional,powerful","daughter,don't call,shaken"
+Elderly Woman Behind the Counter,Pearl Jam,1993,88,"folk,rock,nostalgic","elderly woman,recognize,small town"
+Given to Fly,Pearl Jam,1998,87,"rock,uplifting,soaring","given to fly,wave,lifted"
+Corduroy,Pearl Jam,1994,85,"grunge,rock,rebellious","corduroy,everything,owned"
+Do the Evolution,Pearl Jam,1998,86,"hard rock,aggressive,social","evolution,ahead,curve"
+Paranoid Android,Radiohead,1997,94,"alternative,progressive,epic","paranoid android,kicking squealing,epic"
+Karma Police,Radiohead,1997,93,"alternative,atmospheric,haunting","karma police,arrest this man,haunting"
+No Surprises,Radiohead,1997,91,"alternative,melancholy,bells","no surprises,handshake,carbon monoxide"
+Fake Plastic Trees,Radiohead,1995,92,"alternative,emotional,acoustic","fake plastic,wears out,crumbles"
+Street Spirit,Radiohead,1995,90,"alternative,dark,atmospheric","fade out,immerse,soul,spirit"
+High and Dry,Radiohead,1995,88,"alternative,rock,melodic","high and dry,killing time,broken"
+Lucky,Radiohead,1997,87,"alternative,uplifting,atmospheric","lucky,pull me out,air"
+Everything in Its Right Place,Radiohead,2000,89,"electronic,experimental,atmospheric","everything,right place,yesterday"
+Idioteque,Radiohead,2000,86,"electronic,dance,apocalyptic","ice age,coming,who's in bunker"
+Pyramid Song,Radiohead,2001,85,"alternative,atmospheric,surreal","jumped in river,black eyed angels"
+505,Arctic Monkeys,2007,93,"indie rock,emotional,desert","505,crumbling,tease"
+Do I Wanna Know?,Arctic Monkeys,2013,94,"indie rock,groovy,dark","do i wanna know,crawling,back"
+R U Mine?,Arctic Monkeys,2012,92,"indie rock,energetic,riff","are you mine,thighs,riff"
+I Bet You Look Good on the Dancefloor,Arctic Monkeys,2005,90,"indie rock,energetic,dance","dancefloor,bet,look good"
+Why'd You Only Call Me When You're High,Arctic Monkeys,2013,91,"indie rock,psychedelic,catchy","call me,high,mirror"
+Fluorescent Adolescent,Arctic Monkeys,2007,89,"indie rock,nostalgic,upbeat","fluorescent,best,settle,second"
+Arabella,Arctic Monkeys,2013,88,"indie rock,groovy,seductive","arabella,leopard,wraparound"
+Knee Socks,Arctic Monkeys,2013,87,"indie rock,emotional,atmospheric","knee socks,poetry,late afternoon"
+When the Sun Goes Down,Arctic Monkeys,2006,86,"indie rock,storytelling,dark","scummy man,sun goes down,streets"
+Crying Lightning,Arctic Monkeys,2009,85,"indie rock,quirky,energetic","crying lightning,secrets,magazine"
+Last Nite,The Strokes,2001,92,"indie rock,garage,energetic","last night,said,things"
+Someday,The Strokes,2001,91,"indie rock,upbeat,melodic","someday,argue,lot"
+Reptilia,The Strokes,2003,90,"indie rock,energetic,riff","room on fire,please don't,slow"
+Hard to Explain,The Strokes,2001,88,"indie rock,garage,raw","hard to explain,raised,cain"
+12:51,The Strokes,2003,87,"indie rock,upbeat,catchy","twelve fifty one,heart,stop"
+Juicebox,The Strokes,2005,85,"indie rock,aggressive,distorted","juicebox,problems,television"
+You Only Live Once,The Strokes,2006,89,"indie rock,anthemic,existential","live once,strife,life"
+The Modern Age,The Strokes,2001,86,"indie rock,raw,garage","modern age,nineteen,time"
+Under Cover of Darkness,The Strokes,2011,84,"indie rock,upbeat,comeback","slip back,time,darkness"
+Ize of the World,The Strokes,2006,83,"indie rock,epic,political","eyes of world,lies,taught"
+When You Were Young,The Killers,2006,92,"rock,anthemic,nostalgic","when young,devil,waiting,turn"
+Somebody Told Me,The Killers,2004,91,"rock,dance,energetic","somebody told me,boyfriend,girlfriend"
+Human,The Killers,2008,90,"rock,synth,anthemic","are we human,dancer,sign"
+Smile Like You Mean It,The Killers,2004,88,"rock,melancholy,nostalgic","smile mean it,someone,looking"
+All These Things That I've Done,The Killers,2004,89,"rock,epic,gospel","got soul,need direction,help me"
+Spaceman,The Killers,2008,87,"rock,space,theatrical","spaceman,stars,lifted"
+Read My Mind,The Killers,2006,91,"rock,emotional,building","read my mind,stars,slipping"
+Jenny Was a Friend of Mine,The Killers,2004,85,"rock,dark,storytelling","jenny,friend,alibi,murder"
+Runaways,The Killers,2012,84,"rock,nostalgic,anthemic","runaways,blonde hair,daydream"
+Bones,The Killers,2006,86,"rock,quirky,energetic","bones,come on,crawling"
+Everlong,Foo Fighters,1997,95,"alternative,rock,passionate","everlong,breathe out,wait"
+The Pretender,Foo Fighters,2007,93,"hard rock,aggressive,powerful","pretender,what if i say,defender"
+Learn to Fly,Foo Fighters,1999,92,"rock,uplifting,melodic","learn to fly,looking,sky"
+Best of You,Foo Fighters,2005,94,"rock,anthemic,emotional","best of you,someone,getting"
+My Hero,Foo Fighters,1997,91,"rock,anthemic,tribute","my hero,ordinary man,kudos"
+Times Like These,Foo Fighters,2002,90,"rock,reflective,hopeful","times like these,new revolution,brand"
+Monkey Wrench,Foo Fighters,1997,89,"hard rock,aggressive,energetic","monkey wrench,fall,apart"
+All My Life,Foo Fighters,2002,88,"hard rock,intense,passionate","all my life,done,waiting"
+Walk,Foo Fighters,2011,87,"rock,groovy,confident","walk,learning,walk again"
+Big Me,Foo Fighters,1995,85,"rock,soft,melodic","big me,talk,sweet"
+Under the Bridge,Red Hot Chili Peppers,1991,96,"rock,emotional,introspective","under bridge,city,angels,lonely"
+Californication,Red Hot Chili Peppers,1999,95,"rock,melodic,social commentary","californication,dream,destruction"
+Scar Tissue,Red Hot Chili Peppers,1999,94,"rock,mellow,emotional","scar tissue,birds,fly away"
+Otherside,Red Hot Chili Peppers,1999,93,"rock,dark,addiction","otherside,slipped away,addiction"
+Can't Stop,Red Hot Chili Peppers,2002,92,"funk rock,energetic,groovy","can't stop,addicted,shindig"
+By the Way,Red Hot Chili Peppers,2002,91,"rock,upbeat,melodic","by the way,love you,die"
+Give It Away,Red Hot Chili Peppers,1991,93,"funk rock,energetic,philanthropic","give it away,now,give"
+Snow (Hey Oh),Red Hot Chili Peppers,2006,92,"rock,melodic,uplifting","snow,deep beneath,cover"
+Dani California,Red Hot Chili Peppers,2006,90,"rock,storytelling,energetic","dani california,mississippi,running"
+Soul to Squeeze,Red Hot Chili Peppers,1993,89,"rock,emotional,introspective","soul to squeeze,things,seen"
+Stronger,Kanye West,2007,95,"hip-hop,electronic,anthemic","stronger,work it,harder,faster"
+Gold Digger,Kanye West,2005,94,"hip-hop,soul,storytelling","gold digger,ain't messing,broke"
+Heartless,Kanye West,2008,93,"hip-hop,auto-tune,emotional","heartless,night,coldest"
+Power,Kanye West,2010,94,"hip-hop,epic,powerful","power,no one man,system"
+Runaway,Kanye West,2010,95,"hip-hop,emotional,epic","runaway,toast,douchebags"
+Jesus Walks,Kanye West,2004,92,"hip-hop,gospel,spiritual","jesus walks,god,show me way"
+Through the Wire,Kanye West,2003,90,"hip-hop,inspirational,personal","through wire,accident,jaw wired"
+All of the Lights,Kanye West,2010,93,"hip-hop,pop,orchestral","lights,turn up,rihanna"
+Flashing Lights,Kanye West,2007,91,"hip-hop,atmospheric,emotional","flashing lights,blinded,paparazzi"
+Touch the Sky,Kanye West,2005,89,"hip-hop,uplifting,soulful","touch sky,feeling,fly"
+Started from the Bottom,Drake,2013,92,"hip-hop,motivational,anthemic","started bottom,now we here,whole team"
+"Hold On, We're Going Home",Drake,2013,91,"r&b,pop,smooth","hold on,going home,good girl"
+Passionfruit,Drake,2017,90,"r&b,tropical,mellow","passionfruit,passionate,distance"
+Take Care,Drake,2011,89,"r&b,emotional,rihanna","take care,know yourself,rihanna"
+Marvin's Room,Drake,2011,88,"r&b,emotional,drunk dialing","marvin's room,drunk,call"
+HUMBLE.,Kendrick Lamar,2017,96,"hip-hop,trap,confident","sit down,humble,biyombo"
+DNA.,Kendrick Lamar,2017,94,"hip-hop,aggressive,identity","dna,loyalty,royalty"
+Alright,Kendrick Lamar,2015,95,"hip-hop,hopeful,anthem","alright,we gonna be,hope"
+Swimming Pools (Drank),Kendrick Lamar,2012,93,"hip-hop,dark,substance abuse","swimming pools,drank,alcohol"
+m.A.A.d city,Kendrick Lamar,2012,92,"hip-hop,storytelling,intense","mad city,yawk yawk,compton"
+King Kunta,Kendrick Lamar,2015,91,"hip-hop,funky,confident","king kunta,black man,roots"
+Money Trees,Kendrick Lamar,2012,90,"hip-hop,smooth,storytelling","money trees,perfect place,shade"
+"Bitch, Don't Kill My Vibe",Kendrick Lamar,2012,91,"hip-hop,smooth,spiritual","kill my vibe,sanctified,mind"
+LOYALTY.,Kendrick Lamar feat. Rihanna,2017,89,"hip-hop,r&b,collaboration","loyalty,royalty,rihanna"
+The Blacker the Berry,Kendrick Lamar,2015,88,"hip-hop,political,aggressive","blacker berry,sweeter juice,black"
+Starboy,The Weeknd feat. Daft Punk,2016,94,"r&b,electronic,dark","starboy,look what,done"
+Can't Feel My Face,The Weeknd,2015,95,"pop,r&b,upbeat","can't feel face,love,addicted"
+The Hills,The Weeknd,2015,96,"r&b,dark,atmospheric","hills,secrets,hide"
+Save Your Tears,The Weeknd,2020,93,"pop,synth,emotional","save tears,another day,rain"
+Earned It,The Weeknd,2015,91,"r&b,sensual,orchestral","earned it,fifty shades,perfect"
+I Feel It Coming,The Weeknd feat. Daft Punk,2016,92,"pop,electronic,smooth","feel it coming,fear love,daft punk"
+Often,The Weeknd,2014,89,"r&b,explicit,atmospheric","often,work,body"
+Wicked Games,The Weeknd,2011,90,"r&b,dark,emotional","wicked games,world,cold,empty"
+Die For You,The Weeknd,2016,88,"r&b,emotional,passionate","die for you,distance,time"
+After Hours,The Weeknd,2020,87,"r&b,dark,epic","after hours,heartless,alone"
+"Harder, Better, Faster, Stronger",Daft Punk,2001,94,"electronic,house,robotic","harder,better,faster,stronger"
+Instant Crush,Daft Punk feat. Julian Casablancas,2013,90,"electronic,indie,emotional","instant crush,fall apart,strokes"
+Lose Yourself to Dance,Daft Punk feat. Pharrell,2013,89,"electronic,disco,dance","lose yourself,dance,pharrell"
+Da Funk,Daft Punk,1995,87,"electronic,house,raw","da funk,raw,underground"
+Aerodynamic,Daft Punk,2001,86,"electronic,rock,epic","aerodynamic,guitar,epic"
+Summer,Calvin Harris,2014,93,"edm,pop,upbeat","summer,when i met you,sun"
+Feel So Close,Calvin Harris,2011,92,"edm,euphoric,uplifting","feel so close,you,euphoric"
+This Is What You Came For,Calvin Harris feat. Rihanna,2016,94,"edm,pop,dance","came for,lightning,strikes,rihanna"
+We Found Love,Calvin Harris feat. Rihanna,2011,96,"edm,anthem,emotional","found love,hopeless place,rihanna"
+Sweet Nothing,Calvin Harris feat. Florence Welch,2012,91,"edm,emotional,uplifting","sweet nothing,patience,florence"
+I Need Your Love,Calvin Harris feat. Ellie Goulding,2012,90,"edm,pop,catchy","need your love,reflection,ellie"
+Outside,Calvin Harris feat. Ellie Goulding,2014,89,"edm,emotional,uplifting","outside,look at,we could be,stars"
+Bounce,Calvin Harris feat. Kelis,2011,87,"edm,bounce,energetic","bounce,stand up,kelis"
+Blame,Calvin Harris feat. John Newman,2014,88,"edm,deep house,emotional","can't blame,love,john newman"
+How Deep Is Your Love,Calvin Harris & Disciples,2015,90,"edm,deep house,atmospheric","how deep,love,pull me,deeper"
+Back to Black,Amy Winehouse,2006,95,"soul,r&b,retro","back to black,died,hundred times"
+Valerie,Amy Winehouse,2007,93,"soul,pop,upbeat","valerie,ginger hair,zurton"
+You Know I'm No Good,Amy Winehouse,2006,91,"soul,r&b,confessional","no good,sweet,upstairs,cheating"
+Tears Dry on Their Own,Amy Winehouse,2006,90,"soul,motown,heartbreak","tears dry,own,walked,away"
+Love Is a Losing Game,Amy Winehouse,2006,92,"soul,ballad,heartbreak","love,losing game,self professed"
+Stronger Than Me,Amy Winehouse,2003,86,"jazz,soul,attitude","stronger than me,wimpy,man"
+Wake Up Alone,Amy Winehouse,2006,88,"soul,emotional,intimate","wake up alone,rather,him"
+Our Day Will Come,Amy Winehouse,2011,85,"soul,jazz,romantic","day will come,tender,dreams"
+Will You Still Love Me Tomorrow,Amy Winehouse,2011,84,"soul,ballad,vulnerable","love me tomorrow,tonight,forever"
+Just Friends,Amy Winehouse,2003,83,"jazz,soul,playful","just friends,lovers,not,supposed"
+Feel Good Inc.,Gorillaz,2005,96,"alternative,hip-hop,electronic","feel good,windmill,laughing"
+Clint Eastwood,Gorillaz,2001,94,"alternative,hip-hop,trip-hop","sunshine,bag,useless,del"
+On Melancholy Hill,Gorillaz,2010,93,"alternative,electronic,dreamy","melancholy hill,plastic,tree"
+Rhinestone Eyes,Gorillaz,2010,90,"alternative,electronic,dark","rhinestone eyes,nature,distant"
+Stylo,Gorillaz feat. Mos Def,2010,89,"electronic,funk,groovy","stylo,overload,bobby womack"
+Dare,Gorillaz,2005,91,"electronic,dance,minimal","dare,coming up,it's there"
+Dirty Harry,Gorillaz,2005,88,"alternative,hip-hop,atmospheric","dirty harry,coming up,children"
+Empire Ants,Gorillaz,2010,87,"electronic,dreamy,atmospheric","empire ants,little memories,yukimi"
+Saturnz Barz,Gorillaz,2017,86,"electronic,grime,dark","saturnz barz,all my life,popcaan"
+Andromeda,Gorillaz,2017,85,"electronic,pop,atmospheric","andromeda,outside,cold,stars"
