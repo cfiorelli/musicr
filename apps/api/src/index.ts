@@ -1270,15 +1270,20 @@ fastify.register(async function (fastify) {
           // Process message for song matching
           let songMatchResult;
           try {
+            // Get user's family-friendly preference from connection
+            const userConnection = connectionManager.getConnection(connectionId);
+            const userAllowsExplicit = userConnection ? !userConnection.familyFriendly : !defaultRoom.allowExplicit;
+
             logger.info({
               text: messageData.text,
               userId: userSession.userId,
-              allowExplicit: defaultRoom.allowExplicit
+              allowExplicit: userAllowsExplicit,
+              familyFriendly: userConnection?.familyFriendly
             }, 'About to call songMatchingService.matchSongs');
 
             songMatchResult = await songMatchingService.matchSongs(
-              messageData.text, 
-              defaultRoom.allowExplicit,
+              messageData.text,
+              userAllowsExplicit,
               userSession.userId,
               defaultRoom.allowExplicit
             );

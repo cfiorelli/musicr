@@ -19,44 +19,51 @@ function HomePage() {
   }, [connect, disconnect]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
-      <div className="container mx-auto px-4 py-8">
-        <header className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">
-            🎵 Musicr
-          </h1>
-          <p className="text-lg text-gray-300">
-            Chat where your messages become song titles
-          </p>
-          <div className="mt-2 flex items-center justify-center gap-4">
-            <span className={`inline-block px-3 py-1 rounded-full text-sm ${
-              connectionStatus === 'connected' 
-                ? 'bg-green-500 text-white' 
+    <div className="flex flex-col h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
+      {/* Header */}
+      <header className="flex-none px-4 py-4 border-b border-white/10">
+        <div className="container mx-auto flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-white">
+              🎵 Musicr
+            </h1>
+            <p className="text-sm text-gray-300">
+              Your messages become song titles
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className={`px-3 py-1 rounded-full text-sm ${
+              connectionStatus === 'connected'
+                ? 'bg-green-500 text-white'
                 : connectionStatus === 'connecting'
                 ? 'bg-yellow-500 text-white'
                 : 'bg-red-500 text-white'
             }`}>
               {connectionStatus}
             </span>
-            {/* Admin dashboard link (backend handles dev-only restriction) */}
             <Link
               to="/admin"
               className="px-3 py-1 bg-gray-700 text-white rounded-full text-sm hover:bg-gray-600 transition-colors"
             >
-              Admin Dashboard
+              Admin
             </Link>
           </div>
-        </header>
-        
-        <div className="flex gap-6">
-          {/* Main chat area */}
-          <div className="flex-1">
-            <ChatInterface />
-          </div>
-          
-          {/* Sidebar with room users */}
-          <div className="w-80">
-            <RoomUserList />
+        </div>
+      </header>
+
+      {/* Main Content Area */}
+      <div className="flex-1 overflow-hidden">
+        <div className="container mx-auto h-full px-4 py-4">
+          <div className="flex gap-6 h-full">
+            {/* Left: Chat Interface (takes full height) */}
+            <div className="flex-1 min-w-0">
+              <ChatInterface />
+            </div>
+
+            {/* Right: Sidebar (hidden on mobile, shown on md+) */}
+            <div className="hidden md:block w-80 flex-none">
+              <RoomUserList />
+            </div>
           </div>
         </div>
       </div>
