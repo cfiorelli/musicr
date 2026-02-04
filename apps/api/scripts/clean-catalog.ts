@@ -115,16 +115,24 @@ async function cleanCatalog(inputPath: string, outputCleanPath: string, outputQu
 }
 
 async function main() {
-  const dataDir = path.join(process.cwd(), 'data');
+  const archiveDir = path.join(process.cwd(), '..', '..', 'docs', 'archive');
+  const quarantineDir = path.join(process.cwd(), '..', '..', 'docs', 'quarantine');
 
-  // Clean 5k_songs.csv
+  // IMPORTANT: This script processes the CONTAMINATED archive file
+  // Output goes to quarantine folder, NOT production data folder
+  console.log('⚠️  Processing contaminated archive file (catalog_contaminated_DO_NOT_USE.csv)');
+  console.log('⚠️  Output will go to docs/quarantine/ folder\n');
+
   await cleanCatalog(
-    path.join(dataDir, '5k_songs.csv'),
-    path.join(dataDir, 'catalog_clean.csv'),
-    path.join(dataDir, 'catalog_placeholders.csv')
+    path.join(archiveDir, 'catalog_contaminated_DO_NOT_USE.csv'),
+    path.join(quarantineDir, 'catalog_clean.csv'),
+    path.join(quarantineDir, 'catalog_placeholders.csv')
   );
 
-  console.log('✅ Catalog cleanup complete!\n');
+  console.log('✅ Catalog cleanup complete!');
+  console.log('\n⚠️  REMINDER: These output files are in docs/quarantine/');
+  console.log('⚠️  To update production catalog, manually copy catalog_clean.csv to data/songs_seed.csv');
+  console.log('⚠️  Then run: pnpm catalog:validate\n');
 }
 
 main().catch(console.error);

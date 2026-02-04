@@ -1,3 +1,14 @@
+/**
+ * ⚠️  DEPRECATED: DO NOT USE IN PRODUCTION
+ *
+ * This script seeds from the contaminated 5k_songs.csv file (94.7% placeholders).
+ * File has been moved to docs/archive/catalog_contaminated_DO_NOT_USE.csv
+ *
+ * Use scripts/seed.ts instead, which imports from the clean songs_seed.csv
+ *
+ * @deprecated This script is kept for historical reference only
+ */
+
 import 'dotenv/config';
 import fs from 'fs';
 import path from 'path';
@@ -5,6 +16,12 @@ import csv from 'csv-parser';
 import { prisma } from '../src/services/database.js';
 import { logger } from '../src/config/index.js';
 import { pipeline, env } from '@xenova/transformers';
+
+console.error('\n⚠️  WARNING: This script uses contaminated data (94.7% placeholders)');
+console.error('⚠️  Use "pnpm seed" instead to import from clean catalog');
+console.error('⚠️  Press Ctrl+C to abort, or wait 5 seconds to continue...\n');
+
+await new Promise(resolve => setTimeout(resolve, 5000));
 
 interface SeedSong {
   title: string;
@@ -172,8 +189,8 @@ async function main() {
     // Initialize embedding model
     await initializeEmbedder();
 
-    // Read CSV file
-    const csvPath = path.join(process.cwd(), 'data', '5k_songs.csv');
+    // Read CSV file from archive (contaminated data - 94.7% placeholders)
+    const csvPath = path.join(process.cwd(), '..', '..', 'docs', 'archive', 'catalog_contaminated_DO_NOT_USE.csv');
     const songs = await readCSVFile(csvPath);
 
     if (songs.length === 0) {
