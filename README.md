@@ -1,97 +1,159 @@
 # Musicr
 
-A music-themed chat website where anonymous users chat with each other, but their messages are converted to relevant song titles using AI.
+Real-time anonymous chat where user messages are converted into relevant song recommendations using AI-powered semantic search.
 
-## Features
+**What it is:** A WebSocket-based chat application that transforms conversational text into music suggestions using 384-dimensional embeddings and pgvector similarity search.
 
-- Anonymous real-time chat via WebSocket
-- AI-powered message to song title conversion
-- Modern React frontend with Tailwind CSS
-- TypeScript monorepo with shared types
-- Fastify backend with Prisma database
+**What it isn't:** A music player, streaming service, or lyrics database. Musicr recommends songs based on message content but doesn't play audio.
 
 ## Tech Stack
 
-### Backend (`apps/api`)
-- **Fastify** - Fast web framework
-- **@fastify/websocket** - WebSocket support
-- **Prisma** - Database ORM
-- **Zod** - Schema validation
-- **OpenAI** - AI song title generation
-- **@huggingface/transformers** - Alternative AI processing
-- **Pino** - Structured logging
+### Backend
+- **Fastify** - HTTP server and WebSocket handling
+- **Prisma ORM** - Database client with TypeScript types
+- **PostgreSQL + pgvector** - Vector similarity search with HNSW indexing
+- **Xenova/all-MiniLM-L6-v2** - Local embedding model (384-dim)
+- **Pino** - Structured JSON logging
 
-### Frontend (`apps/web`)
-- **Vite** - Build tool
+### Frontend
 - **React 18** - UI framework
-- **TypeScript** - Type safety
-- **Tailwind CSS** - Styling
-- **Zustand** - State management
+- **Vite** - Build tool and dev server
+- **Zustand** - Lightweight state management
+- **Tailwind CSS** - Utility-first styling
 
-### Shared (`shared/types`)
-- **TypeScript** - Shared types and interfaces
+### Monorepo
+- **pnpm workspaces** - Package management
+- **TypeScript** - Type safety across all packages
 
 ## Project Structure
 
 ```
 musicr/
 ├── apps/
-│   ├── api/          # Fastify backend
-│   └── web/          # React frontend
+│   ├── api/              # Fastify backend (port 4000)
+│   │   ├── src/
+│   │   │   ├── index.ts  # API entrypoint
+│   │   │   ├── engine/   # Song matching logic
+│   │   │   └── services/ # Database, WebSocket, users
+│   │   ├── prisma/       # Database schema and migrations
+│   │   └── scripts/      # Seeding and utilities
+│   └── web/              # React frontend (port 5173)
+│       └── src/
+│           ├── main.tsx  # Web entrypoint
+│           └── stores/   # Zustand state
 ├── shared/
-│   └── types/        # Shared TypeScript types
-├── package.json      # Root package.json with workspace config
-└── pnpm-workspace.yaml
+│   └── types/            # Shared TypeScript types
+└── package.json          # Root workspace config
 ```
 
-## Development
+## Local Development
 
 ### Prerequisites
-- Node.js 20+
-- pnpm 8+
-- PostgreSQL 14+ with pgvector extension
 
-## 🚀 Quick Start
+- **Node.js 20+**
+- **pnpm 8+**
+- **PostgreSQL 14+** with pgvector extension
 
-### Option 1: One-Command Docker Deployment (Recommended)
+### Setup
+
+1. **Install dependencies**
+   ```bash
+   pnpm install
+   ```
+
+2. **Configure environment**
+   ```bash
+   cp .env.example .env
+   # Edit .env with your DATABASE_URL
+   ```
+
+3. **Set up database**
+   ```bash
+   cd apps/api
+
+   # Generate Prisma client
+   pnpm prisma generate
+
+   # Run migrations
+   pnpm prisma migrate deploy
+
+   # Seed database with songs (includes embedding generation)
+   pnpm seed
+   ```
+
+4. **Start development servers**
+   ```bash
+   # From root directory
+   pnpm dev
+
+   # OR run separately:
+   pnpm --filter @musicr/api dev    # API on http://localhost:4000
+   pnpm --filter @musicr/web dev    # Web on http://localhost:5173
+   ```
+
+5. **Verify setup**
+   - API health: http://localhost:4000/health
+   - Web UI: http://localhost:5173
+
+## Environment Variables
+
+Create `.env` in the project root with the following:
+
+### Required
+
+- `DATABASE_URL` - PostgreSQL connection string with pgvector support
+  ```
+  postgresql://user:password@host:5432/musicr?schema=public
+  ```
+
+### Optional
+
+- `NODE_ENV` - Environment (`development` | `production`) [default: `development`]
+- `PORT` - API server port [default: `4000`]
+- `HOST` - API bind address [default: `0.0.0.0`]
+- `FRONTEND_ORIGIN` - CORS allowed origins [default: `http://localhost:5173`]
+- `COOKIE_SECRET` - Session secret (required in production, 32+ characters)
+- `OPENAI_API_KEY` - Optional OpenAI key (local Xenova model used by default)
+- `VITE_API_URL` - Frontend API URL [default: auto-detected from window.location]
+- `LOG_LEVEL` - Pino log level (`debug` | `info` | `warn` | `error`) [default: `info`]
+
+See `.env.example` for complete reference with Railway-specific variables.
+
+## Database
+
+### Schema
+
+- **Songs** - Title, artist, year, tags, phrases, embeddings (384-dim vectors)
+- **Users** - Anonymous handles, IP hashing for rate limiting
+- **Rooms** - Chat room isolation with per-room configs
+- **Messages** - User messages linked to chosen songs
+- **MessageReactions** - Emoji reactions on messages
+
+Schema location: [apps/api/prisma/schema.prisma](apps/api/prisma/schema.prisma)
+
+### Embeddings
+
+Musicr uses **Xenova/all-MiniLM-L6-v2** to generate 384-dimensional embeddings:
+- **Storage:** Dual-format (JSONB `embedding` + native pgvector `embedding_vector`)
+- **Index:** HNSW on `embedding_vector` for fast approximate nearest neighbor search
+- **Search:** Cosine distance operator (`<=>`) for semantic similarity
+
+### Migrations
+
 ```bash
-# Clone and deploy everything with Docker
-git clone <repository-url>
-cd musicr
-./deploy.sh
+cd apps/api
+
+# Create new migration (development)
+pnpm prisma migrate dev --name description_of_change
+
+# Apply pending migrations (production)
+pnpm prisma migrate deploy
+
+# View database in Prisma Studio
+pnpm db:studio
 ```
 
-That's it! The application will be running at:
-- **Frontend**: http://localhost:5173
-- **API**: http://localhost:4000
-- **Health Check**: http://localhost:4000/health
-
-See [DEPLOYMENT.md](DEPLOYMENT.md) for complete deployment documentation.
-
-### Option 2: Local Development Setup
-
-### Installation
-
-```bash
-# Install all dependencies
-pnpm install
-
-# Set up environment files
-cp apps/api/.env.example apps/api/.env
-```
-
-### Running the project
-
-```bash
-# Start both API and web in development mode
-pnpm dev
-
-# Or start them separately:
-pnpm --filter @musicr/api dev    # API on http://localhost:3001
-pnpm --filter @musicr/web dev    # Web on http://localhost:3000
-```
-
-### Building
+## Building for Production
 
 ```bash
 # Build all packages
@@ -100,181 +162,80 @@ pnpm build
 # Build specific package
 pnpm --filter @musicr/api build
 pnpm --filter @musicr/web build
+
+# Start API in production mode
+cd apps/api
+pnpm start  # Runs: node dist/index.js
 ```
 
-### Other Commands
+## Deployment
+
+Musicr is deployed on **Railway**:
+- **API:** Dockerfile-based build ([apps/api/Dockerfile](apps/api/Dockerfile))
+- **Web:** Nixpacks build ([apps/web/nixpacks.toml](apps/web/nixpacks.toml))
+- **Database:** Railway PostgreSQL with pgvector extension
+
+Deployment is automatic via GitHub integration. Push to `main` triggers Railway builds.
+
+### Railway Environment Variables
+
+Set in Railway dashboard:
+- `DATABASE_URL` - Auto-provided by Railway PostgreSQL addon
+- `COOKIE_SECRET` - Generate with `openssl rand -hex 32`
+- `FRONTEND_ORIGIN` - Your Railway web domain
+- `NODE_ENV=production`
+
+## Commands Reference
+
+### Root Workspace
 
 ```bash
-# Lint all packages
-pnpm lint
-
-# Run tests
-pnpm test
-
-# Clean build artifacts
-pnpm clean
+pnpm dev          # Run API + web concurrently
+pnpm build        # Build all packages
+pnpm lint         # Lint all packages
+pnpm clean        # Remove all build artifacts
 ```
 
-## Environment Variables
+### API Package
 
-### API (`apps/api/.env`)
+```bash
+cd apps/api
 
-```env
-NODE_ENV=development
-PORT=3001
-HOST=localhost
-DATABASE_URL="file:./dev.db"
-OPENAI_API_KEY=your_openai_api_key_here  # Optional
+pnpm dev          # Start dev server with hot reload
+pnpm build        # Compile TypeScript to dist/
+pnpm start        # Run compiled production build
+pnpm seed         # Seed database with songs + embeddings
+pnpm db:generate  # Generate Prisma client
+pnpm db:push      # Push schema changes (dev only)
+pnpm db:migrate   # Create migration (dev)
+pnpm db:studio    # Open Prisma Studio GUI
 ```
 
-## 🎵 How Mapping Works
+### Web Package
 
-Musicr transforms your everyday messages into relevant songs using a sophisticated AI-powered mapping system. Here's how it works:
+```bash
+cd apps/web
 
-### The Process
-
-1. **Text Analysis** - Your message is analyzed for emotional context, keywords, and intent
-2. **Strategy Selection** - The system chooses the best matching strategy (exact phrase, semantic similarity, or mood mapping)
-3. **Song Retrieval** - Relevant songs are found from our curated database
-4. **Confidence Scoring** - Each match is scored based on relevance and context
-5. **Result Selection** - The highest confidence match is returned, with alternatives for close calls
-
-### Mapping Strategies
-
-#### 1. **Exact Match** (Highest Confidence)
-Direct phrase matches from song lyrics or titles:
-
+pnpm dev          # Start Vite dev server
+pnpm build        # Build static production files
+pnpm preview      # Preview production build locally
 ```
-"hey jude" → "Hey Jude" by The Beatles
-"bohemian rhapsody" → "Bohemian Rhapsody" by Queen  
-"shake it off" → "Shake It Off" by Taylor Swift
-```
-
-#### 2. **Semantic Similarity** (Medium-High Confidence)
-AI understands context and emotional meaning:
-
-```
-"running late, train delayed" → "Waiting on the World to Change" by John Mayer
-"I got promoted!" → "Good Life" by OneRepublic
-"feeling lonely tonight" → "Somebody That I Used to Know" by Gotye
-"stuck in traffic jam" → "Don't Stop Believin'" by Journey
-```
-
-#### 3. **Mood Mapping** (Medium Confidence)
-Emotional context drives song selection:
-
-```
-"celebrating my birthday" → "Dancing Queen" by ABBA
-"she broke up with me" → "Rolling in the Deep" by Adele
-"perfect sunny day" → "Happy" by Pharrell Williams
-"stressed about work" → "Stressed Out" by Twenty One Pilots
-```
-
-### Real Examples
-
-#### Simple Cases
-```
-Input: "just got engaged!"
-→ Song: "Dancing Queen" by ABBA
-→ Strategy: mood (celebration)
-→ Confidence: 87%
-```
-
-#### Complex Cases with Tie-Breaking
-```
-Input: "We need to talk"
-→ Primary: "Since U Been Gone" by Kelly Clarkson (confidence: 76%)
-→ Alternative: "Irreplaceable" by Beyoncé (confidence: 74%)
-
-Why "Since U Been Gone" won:
-• Higher semantic similarity to relationship confrontation
-• More direct lyrical connection to difficult conversations
-• Stronger association with relationship endings in our training data
-```
-
-#### Context-Aware Mapping
-```
-Input: "california dreaming again"
-→ Song: "Hotel California" by Eagles
-→ Strategy: semantic + geographic
-→ Confidence: 92%
-
-The system recognized:
-• Geographic reference (California)
-• Nostalgic emotional tone ("dreaming")
-• Cultural association with classic rock
-```
-
-#### Ambiguous Input Resolution
-```
-Input: "love song"
-→ Primary: "I Want It That Way" by Backstreet Boys (confidence: 45%)
-→ Alternatives: 12 other love songs
-
-Low confidence indicates multiple valid matches:
-• "Shape of You" by Ed Sheeran (confidence: 44%)
-• "Perfect" by Ed Sheeran (confidence: 43%)
-• "All of Me" by John Legend (confidence: 42%)
-```
-
-### Confidence Scoring
-
-- **90-100%**: Exact phrase match or unmistakable context
-- **75-89%**: Strong semantic similarity, clear intent
-- **60-74%**: Good contextual match, some ambiguity
-- **45-59%**: Multiple valid interpretations
-- **Below 45%**: Fallback to popular/generic songs
-
-### Edge Cases & Limitations
-
-#### What Works Well
-✅ Emotional expressions: "feeling happy", "so sad"  
-✅ Life events: "got married", "new job"  
-✅ Weather/mood: "sunny day", "rainy mood"  
-✅ Direct song references: "hey jude", "bohemian"  
-
-#### Challenging Cases
-⚠️ Abstract concepts: "quantum physics breakthrough"  
-⚠️ Very specific scenarios: "left my keys in the car"  
-⚠️ Cultural references: "like Shakespeare said"  
-⚠️ Technical language: "API endpoint returning 404"  
-
-#### Fallback Behavior
-When confidence is very low, the system falls back to:
-1. Popular songs from relevant genres
-2. Mood-appropriate selections
-3. Generic crowd-pleasers like "Don't Stop Believin'"
-
-### System Learning
-The mapping system continuously improves through:
-- **Usage patterns**: Popular mappings get reinforced
-- **Context analysis**: Better understanding of phrase meanings  
-- **Cultural updates**: New songs and trends incorporated
-- **Feedback loops**: User interactions inform future mappings
 
 ## API Endpoints
 
-- `GET /health` - Health check
-- `POST /api/map` - Map text to song (see mapping examples above)
-- `GET /ws` - WebSocket connection for real-time chat
+- `GET /health` - Health check (returns `{ status: "ok", timestamp: "..." }`)
+- `GET /test` - WebSocket test page (HTML interface)
+- `GET /api/admin/analytics` - Admin analytics (song count, user stats)
+- `GET /api/rooms/:roomId/users` - List users in a room
+- `GET /debug/connections` - Debug WebSocket connections
+- `WS /` - WebSocket connection for real-time chat
 
-## WebSocket Events
+## Documentation
 
-### Client → Server
-```json
-{
-  "message": "Hello, how are you?"
-}
-```
-
-### Server → Client
-```json
-{
-  "type": "message",
-  "data": "♪ How You Remind Me - Nickelback ♪",
-  "timestamp": "2025-01-01T12:00:00.000Z"
-}
-```
+- **Architecture:** [ARCHITECTURE.md](ARCHITECTURE.md) - System design and matching engine
+- **Contributing:** [CONTRIBUTING.md](CONTRIBUTING.md) - Development guidelines
+- **Operations:** [RUNBOOK.md](RUNBOOK.md) - Deployment and troubleshooting
+- **Test Fixtures:** [apps/api/fixtures/FIXTURES_README.md](apps/api/fixtures/FIXTURES_README.md)
 
 ## License
 
