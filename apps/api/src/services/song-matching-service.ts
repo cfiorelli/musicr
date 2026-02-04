@@ -71,7 +71,7 @@ export class SongMatchingService {
     this.prisma = prisma;
     this.semanticSearcher = new SemanticSearcher(prisma, {
       knn_size: 50,
-      similarity_threshold: 0.5,
+      similarity_threshold: 0.2, // Lowered from 0.5 for semantic-only matching
       use_reranking: true
     });
     // Initialize phrase lexicon in the background
