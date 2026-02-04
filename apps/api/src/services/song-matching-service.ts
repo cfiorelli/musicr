@@ -275,10 +275,15 @@ export class SongMatchingService {
     // Embedding-based semantic search
     matches = await this.findEmbeddingMatches(cleanText);
 
-    // If semantic search fails, return error instead of fallback
+    // If semantic search fails, use popular songs as fallback
     if (matches.length === 0) {
-      logger.error({ text: cleanText }, 'Semantic search returned no results');
-      throw new Error('Semantic search failed - no matching songs found');
+      logger.info({ text: cleanText }, 'Semantic search returned no results, using fallback');
+      matches = await this.getDefaultMatches();
+
+      // If still no matches (empty database), throw error
+      if (matches.length === 0) {
+        throw new Error('Database is empty - no songs available');
+      }
     }
 
     // Filter out recently shown songs to avoid repetition
