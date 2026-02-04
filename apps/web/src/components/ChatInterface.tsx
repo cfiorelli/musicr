@@ -65,6 +65,17 @@ const ChatInterface = () => {
     return `https://www.youtube.com/results?search_query=${query}`;
   };
 
+  const getUserEmoji = (handle: string) => {
+    // Generate consistent emoji from username
+    const emojis = ['🦊', '🐼', '🦁', '🐯', '🐸', '🐙', '🦋', '🐝', '🦄', '🐲', '🦖', '🐢', '🦉', '🦅', '🐺', '🐨', '🐻', '🐰', '🐹', '🦔'];
+    let hash = 0;
+    for (let i = 0; i < handle.length; i++) {
+      hash = ((hash << 5) - hash) + handle.charCodeAt(i);
+      hash = hash & hash;
+    }
+    return emojis[Math.abs(hash) % emojis.length];
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'ArrowUp' && inputValue === '' && lastMessage) {
       e.preventDefault();
@@ -85,6 +96,16 @@ const ChatInterface = () => {
     if (inputRef.current) {
       inputRef.current.focus();
     }
+
+    // Listen for show-onboarding event from header link
+    const handleShowOnboarding = () => {
+      resetOnboarding();
+    };
+    window.addEventListener('show-onboarding', handleShowOnboarding);
+
+    return () => {
+      window.removeEventListener('show-onboarding', handleShowOnboarding);
+    };
   }, []);
 
   // Auto-scroll to bottom when new messages arrive (if auto-scroll is enabled)
@@ -167,13 +188,6 @@ const ChatInterface = () => {
           )}
         </div>
         <div className="flex items-center gap-3">
-          <button
-            onClick={resetOnboarding}
-            className="text-white/70 hover:text-white transition-colors text-xl"
-            title="Show help/welcome guide"
-          >
-            ❓
-          </button>
           <label className="flex items-center gap-2 text-white text-sm cursor-pointer">
             <input
               type="checkbox"
@@ -294,7 +308,7 @@ const ChatInterface = () => {
                         <span className={`font-semibold text-sm ${
                           isModeration ? 'text-orange-300' : 'text-blue-300'
                         }`}>
-                          {message.anonHandle}
+                          {getUserEmoji(message.anonHandle)} {message.anonHandle}
                         </span>
                         <span className="text-gray-500 text-xs">
                           {new Date(message.timestamp).toLocaleTimeString()}
@@ -323,11 +337,10 @@ const ChatInterface = () => {
                                 href={getYouTubeSearchUrl(message.songTitle!, message.songArtist!)}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="font-medium text-green-300 hover:text-green-200 underline decoration-green-400/50 hover:decoration-green-300 transition-colors inline-flex items-center gap-1"
+                                className="font-medium text-green-300 hover:text-green-200 underline decoration-green-400/50 hover:decoration-green-300 transition-colors"
                                 title="Listen on YouTube"
                               >
-                                <span>{songDisplay}</span>
-                                <span className="text-xs">🎬</span>
+                                {songDisplay}
                               </a>
                               {message.reasoning && (
                                 <button
