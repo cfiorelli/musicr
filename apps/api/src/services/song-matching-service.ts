@@ -281,6 +281,29 @@ export class SongMatchingService {
       throw new Error('Semantic search failed - no matching songs found');
     }
 
+    // Filter out recently shown songs to avoid repetition
+    if (userId) {
+      try {
+        const recentMessages = await this.prisma.message.findMany({
+          where: { userId },
+          include: { song: true },
+          orderBy: { createdAt: 'desc' },
+          take: 10 // Look at last 10 songs shown to user
+        });
+
+        const recentSongIds = new Set(recentMessages.map(m => m.song?.id).filter(Boolean));
+
+        // Filter out recently shown songs, but keep at least 5 matches
+        const filteredMatches = matches.filter(m => !recentSongIds.has(m.song.id));
+        if (filteredMatches.length >= 5) {
+          matches = filteredMatches;
+          logger.debug({ removedCount: matches.length - filteredMatches.length }, 'Filtered out recently shown songs');
+        }
+      } catch (error) {
+        logger.warn({ error }, 'Failed to fetch recent songs for filtering');
+      }
+    }
+
     // Filter explicit content if needed
     if (!allowExplicit) {
       matches = matches.filter(match => !this.isExplicit(match.song));
