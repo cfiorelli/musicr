@@ -426,6 +426,15 @@ fastify.get('/test', async (_, reply) => {
 </html>`;
 });
 
+// Health check endpoint - Railway uses this to verify service is up
+fastify.get('/health', async (_, reply) => {
+  return reply.code(200).send({
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime()
+  });
+});
+
 // User session endpoint - establishes anonymous user with cookie
 fastify.get('/api/user/session', async (request, reply) => {
   try {
@@ -1646,56 +1655,75 @@ const start = async () => {
     await connectDatabase();
 
     // Verify required schema columns exist (migration guard)
+    // Wait a moment for database connection to stabilize
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
     try {
+      logger.info('Checking database schema...');
       await prisma.$queryRaw`SELECT is_placeholder FROM songs LIMIT 0`;
-      logger.info('Schema migration check passed');
+      logger.info('✅ Schema migration check passed');
     } catch (error: any) {
-      logger.fatal({
-        error: error.message,
-        hint: 'is_placeholder column missing'
-      }, '❌ FATAL: Database schema is out of date!');
-      logger.fatal('');
-      logger.fatal('Required migration has not been applied to the database.');
-      logger.fatal('');
-      logger.fatal('To fix this:');
-      logger.fatal('  1. Run: pnpm db:migrate:deploy');
-      logger.fatal('  2. Or emergency SQL: ALTER TABLE songs ADD COLUMN IF NOT EXISTS is_placeholder boolean NOT NULL DEFAULT false;');
-      logger.fatal('  3. Then restart the server');
-      logger.fatal('');
-      logger.fatal('If deploying to Railway, ensure startCommand runs migrations:');
-      logger.fatal('  startCommand = "pnpm start:railway" (runs migrations + starts server)');
-      logger.fatal('');
-      process.exit(1);
+      const errorMsg = error.message || String(error);
+
+      // Check if it's a connection error vs schema error
+      if (errorMsg.includes('connection') || errorMsg.includes('ECONNREFUSED') || errorMsg.includes('ETIMEDOUT')) {
+        logger.error({ error: errorMsg }, '❌ Database connection failed during schema check');
+        logger.error('Database may still be initializing. Server will continue but may have issues.');
+      } else if (errorMsg.includes('column') && errorMsg.includes('does not exist')) {
+        // This is the schema error we care about
+        logger.fatal({
+          error: errorMsg,
+          hint: 'is_placeholder column missing'
+        }, '❌ FATAL: Database schema is out of date!');
+        logger.fatal('');
+        logger.fatal('Required migration has not been applied to the database.');
+        logger.fatal('');
+        logger.fatal('To fix this:');
+        logger.fatal('  1. Run: pnpm db:migrate:deploy');
+        logger.fatal('  2. Or emergency SQL: ALTER TABLE songs ADD COLUMN IF NOT EXISTS is_placeholder boolean NOT NULL DEFAULT false;');
+        logger.fatal('  3. Then restart the server');
+        logger.fatal('');
+        logger.fatal('If deploying to Railway, ensure startCommand runs migrations:');
+        logger.fatal('  startCommand = "pnpm start:railway" (runs migrations + starts server)');
+        logger.fatal('');
+        process.exit(1);
+      } else {
+        // Unknown error - log but don't exit
+        logger.warn({ error: errorMsg }, '⚠️  Schema check had unexpected error, continuing anyway');
+      }
     }
 
     // Initialize room service (creates default room)
     await roomService.initialize();
-    
-    // Initialize embedding service
-    try {
-      await getEmbeddingService({
-        primaryProvider: 'local',
-        fallbackProvider: 'openai',
-        local: {
-          model: 'Xenova/all-MiniLM-L6-v2',
-          dimensions: 384
-        },
-        openai: process.env.OPENAI_API_KEY ? {
-          apiKey: process.env.OPENAI_API_KEY,
-          model: 'text-embedding-3-small',
-          dimensions: 1536
-        } : undefined
-      });
-      logger.info('Embedding service initialized');
-    } catch (error) {
-      logger.warn({ error }, 'Embedding service initialization failed - song matching may be limited');
-    }
-    
-    await fastify.listen({ 
-      port: config.server.port, 
-      host: config.server.host 
+    logger.info('Room service initialized');
+
+    // Start server FIRST (so Railway health checks pass)
+    await fastify.listen({
+      port: config.server.port,
+      host: config.server.host
     });
-    logger.info(`Server listening on ${config.server.host}:${config.server.port}`);
+    logger.info(`✅ Server listening on ${config.server.host}:${config.server.port}`);
+    logger.info('Server is healthy and accepting connections');
+
+    // Initialize embedding service in background (can take several minutes to download model)
+    logger.info('Starting embedding service initialization (background)...');
+    getEmbeddingService({
+      primaryProvider: 'local',
+      fallbackProvider: 'openai',
+      local: {
+        model: 'Xenova/all-MiniLM-L6-v2',
+        dimensions: 384
+      },
+      openai: process.env.OPENAI_API_KEY ? {
+        apiKey: process.env.OPENAI_API_KEY,
+        model: 'text-embedding-3-small',
+        dimensions: 1536
+      } : undefined
+    }).then(() => {
+      logger.info('✅ Embedding service initialized - full semantic search available');
+    }).catch(error => {
+      logger.warn({ error }, '⚠️  Embedding service initialization failed - semantic search may be limited');
+    });
   } catch (err) {
     fastify.log.error(err);
     await disconnectDatabase();

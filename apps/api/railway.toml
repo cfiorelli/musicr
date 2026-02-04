@@ -2,6 +2,6 @@
 restartPolicyType = "on_failure"
 # Run migrations before starting server
 startCommand = "pnpm start:railway"
-# Explicitly disable health check
-healthcheckPath = ""
-healthcheckTimeout = 0
+# Health check endpoint
+healthcheckPath = "/health"
+healthcheckTimeout = 300
