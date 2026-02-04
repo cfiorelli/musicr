@@ -15,6 +15,12 @@ Central index for all Musicr documentation.
 ## Operations
 
 - **[RUNBOOK.md](../RUNBOOK.md)** - Deployment and operational procedures
+- **[REDIS_DEPLOYMENT.md](../REDIS_DEPLOYMENT.md)** - Redis setup for multi-instance deployments
+
+## Diagnostics & Scaling
+
+- **[SPLIT_BRAIN_TEST.md](../SPLIT_BRAIN_TEST.md)** - Instance coordination diagnostic procedures
+- **[REDIS_DEPLOYMENT.md](../REDIS_DEPLOYMENT.md)** - Horizontal scaling with Redis pub/sub
 
 ## Testing
 
