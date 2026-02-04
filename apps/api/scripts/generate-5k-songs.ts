@@ -844,36 +844,22 @@ function generateInternational(): Song[] {
   return songs;
 }
 
-// Helper function to generate variations of artist songs
+/**
+ * DEPRECATED: This function generates placeholder/synthetic song titles
+ *
+ * DO NOT USE - Creates fake songs like "Blue Song", "Found Track 2", etc.
+ * These placeholder songs pollute the catalog and degrade matching quality.
+ *
+ * This function is disabled and returns an empty array. All calls to this
+ * function throughout this file are now no-ops.
+ *
+ * @deprecated Use real song data only. See songs_seed.csv for examples.
+ */
 function generateVariations(artist: string, tags: string, count: number): any[] {
-  const variations = [];
-  const songTypes = [
-    "Song", "Track", "Anthem", "Hit", "Tune", "Number", "Single",
-    "Piece", "Jam", "Record", "Ballad", "Beat"
-  ];
-
-  const adjectives = [
-    "Blue", "Red", "Golden", "Silver", "Dark", "Bright", "Sweet", "Wild",
-    "Free", "Lost", "Found", "True", "Faded", "Shining", "Burning", "Rising"
-  ];
-
-  for (let i = 0; i < count; i++) {
-    const adjective = adjectives[i % adjectives.length];
-    const type = songTypes[Math.floor(i / adjectives.length) % songTypes.length];
-    const num = Math.floor(i / (adjectives.length * songTypes.length)) + 1;
-
-    const title = num > 1 ? `${adjective} ${type} ${num}` : `${adjective} ${type}`;
-    const phrases = `${adjective.toLowerCase()},${type.toLowerCase()},${artist.toLowerCase().replace(/\s+/g, ' ')}`;
-
-    variations.push({
-      title,
-      artist,
-      phrases,
-      tags
-    });
-  }
-
-  return variations;
+  // DISABLED: This function generated placeholder songs that pollute the database
+  // Return empty array instead of generating synthetic titles
+  console.warn(`⚠️  generateVariations() called but is DISABLED (would have generated ${count} placeholders for ${artist})`);
+  return [];
 }
 
 async function main() {

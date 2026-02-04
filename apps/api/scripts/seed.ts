@@ -5,6 +5,7 @@ import csv from 'csv-parser';
 import { prisma } from '../src/services/database.js';
 import { logger } from '../src/config/index.js';
 import { pipeline, env } from '@xenova/transformers';
+import { isPlaceholderSong } from './utils/placeholder-detector.js';
 
 interface SeedSong {
   title: string;
@@ -133,6 +134,16 @@ async function seedDatabase(songs: SeedSong[]) {
       const searchText = createSearchableText(song);
       const embedding = await generateEmbedding(searchText);
 
+      // Check if song is a placeholder
+      const isPlaceholder = isPlaceholderSong({
+        title: song.title,
+        artist: song.artist,
+        year: song.year.toString(),
+        popularity: song.popularity.toString(),
+        tags: song.tags.join(','),
+        phrases: song.phrases.join(',')
+      });
+
       // Insert song using Prisma client
       await prisma.song.create({
         data: {
@@ -142,7 +153,8 @@ async function seedDatabase(songs: SeedSong[]) {
           popularity: song.popularity,
           tags: song.tags,
           phrases: song.phrases,
-          embedding: embedding || null
+          embedding: embedding || null,
+          isPlaceholder: isPlaceholder
         }
       });
 
