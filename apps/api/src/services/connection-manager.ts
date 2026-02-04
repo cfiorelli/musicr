@@ -3,12 +3,16 @@
  *
  * Manages WebSocket connections, room assignments, and message broadcasting
  * for the real-time chat system.
+ *
+ * With Redis enabled: Coordinates presence across multiple instances via pub/sub
+ * Without Redis: Operates in standalone mode (single instance only)
  */
 
 import type { WebSocket } from 'ws';
 import { logger } from '../config/index.js';
 import { nanoid } from 'nanoid';
 import os from 'os';
+import { redisService } from './redis-service.js';
 
 // Instance fingerprint for split-brain detection
 const INSTANCE_ID = `${os.hostname()}-${Date.now()}-${nanoid(6)}`;
@@ -41,7 +45,69 @@ export class ConnectionManager {
       this.cleanupStaleConnections();
     }, 30000);
 
-    logger.info('Connection manager initialized');
+    // Subscribe to Redis presence events from other instances
+    this.setupRedisSubscriptions();
+
+    logger.info({
+      instanceId: INSTANCE_ID,
+      redisEnabled: redisService.isEnabled()
+    }, 'Connection manager initialized');
+  }
+
+  /**
+   * Setup Redis subscriptions for cross-instance coordination
+   */
+  private async setupRedisSubscriptions() {
+    if (!redisService.isEnabled()) {
+      logger.info('Redis not enabled - presence limited to single instance');
+      return;
+    }
+
+    // Subscribe to presence events from all rooms
+    await redisService.subscribe('presence:events', (event) => {
+      // Type guard to ensure this is a presence event
+      if (event.type !== 'user_joined' && event.type !== 'user_left') {
+        return;
+      }
+
+      // Ignore events from this instance (we already handled them locally)
+      if (event.instanceId === INSTANCE_ID) {
+        return;
+      }
+
+      logger.debug({
+        eventType: event.type,
+        fromInstance: event.instanceId,
+        thisInstance: INSTANCE_ID,
+        userId: event.userId,
+        roomId: event.roomId
+      }, 'Received presence event from another instance');
+
+      // Broadcast to local connections in the room
+      if (event.type === 'user_joined') {
+        this.broadcastToRoom(event.roomId, {
+          type: 'user_joined',
+          user: {
+            id: event.userId,
+            handle: event.anonHandle
+          },
+          timestamp: event.timestamp,
+          instanceId: event.instanceId
+        });
+      } else if (event.type === 'user_left') {
+        this.broadcastToRoom(event.roomId, {
+          type: 'user_left',
+          user: {
+            id: event.userId,
+            handle: event.anonHandle
+          },
+          timestamp: event.timestamp,
+          instanceId: event.instanceId
+        });
+      }
+    });
+
+    logger.info('Redis presence subscriptions active');
   }
 
   /**
@@ -118,18 +184,39 @@ export class ConnectionManager {
     }
 
     // Notify ALL users in the room about the new user (including the new user themselves)
+    const timestamp = new Date().toISOString();
     this.broadcastToRoom(roomId, {
       type: 'user_joined',
       user: {
         id: userId,
         handle: anonHandle
       },
-      timestamp: new Date().toISOString(),
+      timestamp,
       instanceId: INSTANCE_ID
     }); // Removed excludeConnectionId so new user sees themselves join
 
+    // Publish to Redis for other instances
+    if (redisService.isEnabled()) {
+      redisService.publish('presence:events', {
+        type: 'user_joined',
+        userId,
+        anonHandle,
+        roomId,
+        timestamp,
+        instanceId: INSTANCE_ID
+      });
+
+      // Add to authoritative presence set in Redis
+      redisService.addToPresence(roomId, userId);
+    }
+
     if (DEBUG_PRESENCE) {
-      logger.info({ instanceId: INSTANCE_ID, userId, anonHandle }, '[DEBUG_PRESENCE] Broadcast user_joined');
+      logger.info({
+        instanceId: INSTANCE_ID,
+        userId,
+        anonHandle,
+        redisEnabled: redisService.isEnabled()
+      }, '[DEBUG_PRESENCE] Broadcast user_joined');
     }
 
     return connectionId;
@@ -187,8 +274,27 @@ export class ConnectionManager {
       sentToUsers: sentCount
     }, 'User leave event broadcasted');
 
+    // Publish to Redis for other instances
+    if (redisService.isEnabled()) {
+      redisService.publish('presence:events', {
+        type: 'user_left',
+        userId: connection.userId,
+        anonHandle: connection.anonHandle,
+        roomId: connection.roomId,
+        timestamp: leaveEvent.timestamp,
+        instanceId: INSTANCE_ID
+      });
+
+      // Remove from authoritative presence set in Redis
+      redisService.removeFromPresence(connection.roomId, connection.userId);
+    }
+
     if (DEBUG_PRESENCE) {
-      logger.info({ instanceId: INSTANCE_ID, userId: connection.userId }, '[DEBUG_PRESENCE] Broadcast user_left');
+      logger.info({
+        instanceId: INSTANCE_ID,
+        userId: connection.userId,
+        redisEnabled: redisService.isEnabled()
+      }, '[DEBUG_PRESENCE] Broadcast user_left');
     }
   }
 
@@ -393,9 +499,9 @@ export class ConnectionManager {
   /**
    * Shutdown the connection manager
    */
-  shutdown(): void {
+  async shutdown(): Promise<void> {
     clearInterval(this.cleanupInterval);
-    
+
     // Close all connections
     for (const connection of this.connections.values()) {
       try {
@@ -408,6 +514,11 @@ export class ConnectionManager {
     this.connections.clear();
     this.roomConnections.clear();
     this.userConnections.clear();
+
+    // Shutdown Redis
+    if (redisService.isEnabled()) {
+      await redisService.shutdown();
+    }
 
     logger.info('Connection manager shutdown complete');
   }
