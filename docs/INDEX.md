@@ -30,9 +30,18 @@ Central index for all Musicr documentation.
 
 - **Schema:** [apps/api/prisma/schema.prisma](../apps/api/prisma/schema.prisma)
 - **Migrations:** `apps/api/prisma/migrations/`
+- **[CATALOG.md](../docs/CATALOG.md)** - Catalog management, validation, and safety guidelines
 
 ## Archived Documentation
 
-- `archive/DEPLOYMENT.md` - Legacy Docker Compose deployment
-- `archive/PRODUCTION_DEPLOYMENT.md` - Multi-platform guide
-- `archive/PHASE1-EXECUTION.md` - Database migration planning
+- **[archive/](../docs/archive/)** - Deprecated/contaminated files (DO NOT USE)
+  - `catalog_contaminated_DO_NOT_USE.csv` - Quarantined placeholder-heavy dataset
+  - `DEPLOYMENT.md` - Legacy Docker Compose deployment
+  - `PRODUCTION_DEPLOYMENT.md` - Multi-platform guide
+  - `PHASE1-EXECUTION.md` - Database migration planning
+
+## Quarantine
+
+- **[quarantine/](../docs/quarantine/)** - Removed data for audit/reference
+  - `catalog_placeholders.csv` - 4,405 placeholder songs with removal reasons
+  - `catalog_clean_ALREADY_IN_SONGS_SEED.csv` - Clean extraction (already in production)

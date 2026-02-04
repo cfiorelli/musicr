@@ -1,7 +1,26 @@
+/**
+ * ⚠️  DEPRECATED: DO NOT USE
+ *
+ * This script generates placeholder/synthetic songs via generateVariations()
+ * which has been DISABLED. Output would be 94.7% placeholders.
+ *
+ * For real songs, manually curate data/songs_seed.csv instead.
+ *
+ * @deprecated This script is kept for historical reference only
+ */
+
 import 'dotenv/config';
 import fs from 'fs';
 import path from 'path';
 import { createObjectCsvWriter } from 'csv-writer';
+
+console.error('\n⚠️  WARNING: This script generates placeholder/contaminated data');
+console.error('⚠️  generateVariations() has been DISABLED');
+console.error('⚠️  Output will be mostly empty arrays');
+console.error('⚠️  Use manual curation of songs_seed.csv instead');
+console.error('⚠️  Press Ctrl+C to abort, or wait 5 seconds to continue...\n');
+
+await new Promise(resolve => setTimeout(resolve, 5000));
 
 interface Song {
   title: string;
@@ -878,8 +897,8 @@ async function main() {
   console.log(`- Electronic & Dance: ${generateElectronic().length} songs`);
   console.log(`- International & World: ${generateInternational().length} songs\n`);
 
-  // Write to CSV
-  const csvPath = path.join(process.cwd(), 'data', '5k_songs.csv');
+  // Write to archive location (NOT production data folder)
+  const csvPath = path.join(process.cwd(), '..', '..', 'docs', 'archive', 'catalog_contaminated_REGENERATED.csv');
   const csvWriter = createObjectCsvWriter({
     path: csvPath,
     header: [
@@ -894,7 +913,8 @@ async function main() {
 
   await csvWriter.writeRecords(songs);
   console.log(`✅ CSV file created at: ${csvPath}`);
-  console.log(`\n🎉 Ready to seed database!\n`);
+  console.log(`\n⚠️  This file is in docs/archive/ - DO NOT use for seeding`);
+  console.log(`⚠️  Use data/songs_seed.csv for production imports\n`);
 }
 
 main().catch(console.error);
