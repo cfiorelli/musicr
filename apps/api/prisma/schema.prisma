@@ -26,6 +26,7 @@ model Song {
   sourceUrl       String?                     @map("source_url")
   embedding       Json?
   embeddingVector Unsupported("vector(384)")? @map("embedding_vector")
+  isPlaceholder   Boolean                     @default(false) @map("is_placeholder")
   createdAt       DateTime                    @default(now())
   updatedAt       DateTime                    @updatedAt
 
@@ -36,6 +37,7 @@ model Song {
   @@index([title, artist], map: "idx_songs_title_artist")
   @@index([popularity], map: "idx_songs_popularity")
   @@index([year], map: "idx_songs_year")
+  @@index([isPlaceholder], map: "idx_songs_is_placeholder")
   // Note: HNSW index on embedding_vector created via raw SQL (idx_songs_embedding_hnsw)
   // Note: Unique index on ISRC created via raw SQL (idx_songs_isrc)
   @@map("songs")
