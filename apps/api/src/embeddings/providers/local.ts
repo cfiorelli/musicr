@@ -81,8 +81,11 @@ export class LocalEmbedder implements Embedder {
           totalBatches: batches.length 
         }, 'Processing local embedding batch');
 
-        // Get embeddings from the pipeline
-        const output = await this.pipeline(batch);
+        // Get embeddings from the pipeline with pooling and normalization
+        const output = await this.pipeline(batch, {
+          pooling: this.config.pooling,
+          normalize: this.config.normalize
+        });
 
         // Convert tensor output to number arrays
         const batchEmbeddings = this.tensorToArrays(output);
