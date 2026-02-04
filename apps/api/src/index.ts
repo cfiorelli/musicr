@@ -13,7 +13,6 @@ import { ConnectionManager } from './services/connection-manager.js';
 import { redisService } from './services/redis-service.js';
 import { RateLimiter } from './utils/rate-limiter.js';
 import { getEmbeddingService } from './embeddings/index.js';
-import { phraseLexicon } from './services/phrase-lexicon-service.js';
 import {
   validateMapRequest,
   validateSearchRequest,
@@ -1645,10 +1644,7 @@ const start = async () => {
   try {
     // Connect to database
     await connectDatabase();
-    
-    // Initialize phrase lexicon
-    await phraseLexicon.initialize();
-    
+
     // Initialize room service (creates default room)
     await roomService.initialize();
     

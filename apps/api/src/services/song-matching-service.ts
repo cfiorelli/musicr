@@ -8,7 +8,6 @@
 
 import { PrismaClient } from '@prisma/client';
 import { logger } from '../config/index.js';
-import { phraseLexicon } from './phrase-lexicon-service.js';
 import { moderationService, ModerationConfig } from './moderation-service.js';
 import { SemanticSearcher } from '../engine/matchers/semantic.js';
 
@@ -34,7 +33,7 @@ interface SongMatch {
     matchedPhrase?: string;
     mood?: string;
     similarity?: number;
-    strategy: 'exact' | 'phrase' | 'embedding' | 'semantic';
+    strategy: 'embedding' | 'semantic';
   };
 }
 
@@ -74,16 +73,6 @@ export class SongMatchingService {
       similarity_threshold: 0.2, // Lowered from 0.5 for semantic-only matching
       use_reranking: true
     });
-    // Initialize phrase lexicon in the background
-    this.initializePhraseService();
-  }
-
-  private async initializePhraseService(): Promise<void> {
-    try {
-      await phraseLexicon.initialize();
-    } catch (error) {
-      logger.warn({ error }, 'Failed to initialize phrase lexicon service');
-    }
   }
 
   /**
