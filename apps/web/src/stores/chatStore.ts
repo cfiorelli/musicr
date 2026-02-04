@@ -25,6 +25,7 @@ export interface Message {
     score?: number;
   }>;
   reasoning?: string;
+  similarity?: number; // 0-1 score indicating match confidence
   timestamp: string;
   userId: string;
   anonHandle: string;
@@ -215,6 +216,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
                 songYear: data.primary?.year,
                 alternates: data.alternates,
                 reasoning: data.why?.reasoning || data.why?.matchedPhrase,
+                similarity: data.why?.similarity,
                 isOptimistic: false
               });
             } else {
@@ -234,6 +236,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
                 songYear: data.primary?.year,
                 alternates: data.alternates,
                 reasoning: data.why?.reasoning || data.why?.matchedPhrase || data.why,
+                similarity: data.why?.similarity,
                 isOptimistic: false
               });
             } else {
@@ -249,6 +252,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
               songYear: data.primary?.year,
               alternates: data.alternates,
               reasoning: data.why?.reasoning || data.why?.matchedPhrase || data.why,
+              similarity: data.why?.similarity,
               timestamp: data.timestamp || new Date().toISOString(),
               userId: data.userId,
               anonHandle: data.anonHandle,

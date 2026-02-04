@@ -84,6 +84,16 @@ const ChatInterface = () => {
     return emojis[Math.abs(hash) % emojis.length];
   };
 
+  const getConfidenceLabel = (similarity?: number): { label: string; color: string; emoji: string } => {
+    if (!similarity) return { label: 'Unknown', color: 'text-gray-400', emoji: '❓' };
+
+    if (similarity >= 0.7) return { label: 'Very Strong', color: 'text-green-400', emoji: '🎯' };
+    if (similarity >= 0.5) return { label: 'Strong', color: 'text-green-300', emoji: '✨' };
+    if (similarity >= 0.35) return { label: 'Moderate', color: 'text-yellow-300', emoji: '🎵' };
+    if (similarity >= 0.2) return { label: 'Weak', color: 'text-orange-300', emoji: '🔍' };
+    return { label: 'Very Weak (Fallback)', color: 'text-red-300', emoji: '⚠️' };
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'ArrowUp' && inputValue === '' && lastMessage) {
       e.preventDefault();
@@ -393,15 +403,27 @@ const ChatInterface = () => {
                               <span className="text-blue-300 font-medium">Reasoning:</span>{' '}
                               <span className="text-white">{message.reasoning}</span>
                             </div>
-                            {message.alternates && message.alternates.length > 0 && (
-                              <div className="bg-white/10 rounded-lg p-2">
-                                <span className="text-blue-300 font-medium">Confidence:</span>{' '}
-                                <span className="text-white">
-                                  {message.alternates.length > 0 ? 'Medium' : 'High'}
-                                  {' '}({message.alternates.length} alternatives)
-                                </span>
-                              </div>
-                            )}
+                            {(() => {
+                              const confidence = getConfidenceLabel(message.similarity);
+                              return (
+                                <div className="bg-white/10 rounded-lg p-2">
+                                  <span className="text-blue-300 font-medium">Match Confidence:</span>{' '}
+                                  <span className={`font-semibold ${confidence.color}`}>
+                                    {confidence.emoji} {confidence.label}
+                                  </span>
+                                  {message.similarity && (
+                                    <span className="text-gray-300 text-xs ml-2">
+                                      (score: {(message.similarity * 100).toFixed(1)}%)
+                                    </span>
+                                  )}
+                                  {message.alternates && message.alternates.length > 0 && (
+                                    <span className="text-gray-300 text-xs block mt-1">
+                                      {message.alternates.length} alternative songs available
+                                    </span>
+                                  )}
+                                </div>
+                              );
+                            })()}
                             <div className="text-xs text-blue-200/60 mt-3 italic border-t border-blue-400/20 pt-2">
                               ✨ Matched using semantic AI search (no lyrics analyzed)
                             </div>
@@ -494,6 +516,32 @@ const ChatInterface = () => {
                 <div>
                   <p className="text-white font-bold text-lg">Listen to songs</p>
                   <p className="text-gray-200">Click any song name to search and play it on YouTube!</p>
+                </div>
+              </div>
+            </div>
+            <div className="bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-xl p-4 text-sm border border-blue-400/30">
+              <p className="text-white font-semibold mb-3 flex items-center gap-2">
+                <span className="text-xl">🔬</span>
+                <span>How it works (technical)</span>
+              </p>
+              <div className="space-y-2 text-gray-200">
+                <div className="flex gap-2">
+                  <span className="text-blue-300 font-bold">1.</span>
+                  <div>
+                    <span className="font-semibold text-white">Embedding Generation:</span> Your message is converted into a 1536-dimensional vector by OpenAI's text-embedding model, capturing semantic meaning and context
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <span className="text-blue-300 font-bold">2.</span>
+                  <div>
+                    <span className="font-semibold text-white">Similarity Search:</span> The system uses pgvector with HNSW indexing to find songs whose embeddings are closest to yours in high-dimensional space
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <span className="text-blue-300 font-bold">3.</span>
+                  <div>
+                    <span className="font-semibold text-white">The Match:</span> Songs are ranked by cosine similarity score (0-1), where higher scores mean better semantic matches. Click "💡 why?" to see confidence scores!
+                  </div>
                 </div>
               </div>
             </div>
