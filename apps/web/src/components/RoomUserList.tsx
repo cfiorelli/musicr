@@ -2,14 +2,25 @@ import { useChatStore } from '../stores/chatStore';
 
 const RoomUserList = () => {
   const { roomUsers, userHandle, currentRoom } = useChatStore();
-  
-  // Get API URL for debug links  
+
+  // Get API URL for debug links
   const getApiUrl = () => {
     const { VITE_API_URL } = (import.meta as any).env || {};
     if (VITE_API_URL) return VITE_API_URL;
     const loc = window.location;
     const host = loc.hostname;
     return `${loc.protocol}//${host}:4000/api`;
+  };
+
+  const getUserEmoji = (handle: string) => {
+    // Generate consistent emoji from username
+    const emojis = ['🦊', '🐼', '🦁', '🐯', '🐸', '🐙', '🦋', '🐝', '🦄', '🐲', '🦖', '🐢', '🦉', '🦅', '🐺', '🐨', '🐻', '🐰', '🐹', '🦔'];
+    let hash = 0;
+    for (let i = 0; i < handle.length; i++) {
+      hash = ((hash << 5) - hash) + handle.charCodeAt(i);
+      hash = hash & hash;
+    }
+    return emojis[Math.abs(hash) % emojis.length];
   };
 
   return (
@@ -77,7 +88,7 @@ const RoomUserList = () => {
                       <span className={`text-sm font-medium ${
                         isCurrentUser ? 'text-blue-300' : 'text-white'
                       }`}>
-                        {user.handle}
+                        {getUserEmoji(user.handle)} {user.handle}
                       </span>
                       {isCurrentUser && (
                         <span className="text-xs bg-blue-500 text-white px-2 py-0.5 rounded">

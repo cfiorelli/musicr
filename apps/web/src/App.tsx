@@ -28,7 +28,19 @@ function HomePage() {
               🎵 Musicr
             </h1>
             <p className="text-sm text-gray-300">
-              Your messages become song titles
+              AI-powered chat where every message finds a song ·{' '}
+              <Link
+                to="/"
+                onClick={(e) => {
+                  e.preventDefault();
+                  // Trigger onboarding modal
+                  const event = new CustomEvent('show-onboarding');
+                  window.dispatchEvent(event);
+                }}
+                className="text-blue-300 hover:text-blue-200 underline cursor-pointer"
+              >
+                what is this?
+              </Link>
             </p>
           </div>
           <div className="flex items-center gap-3">
