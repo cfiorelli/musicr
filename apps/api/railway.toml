@@ -1,5 +1,7 @@
 [deploy]
 restartPolicyType = "on_failure"
+# Run migrations before starting server
+startCommand = "pnpm start:railway"
 # Explicitly disable health check
 healthcheckPath = ""
 healthcheckTimeout = 0
