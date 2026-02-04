@@ -10,7 +10,6 @@ import { RoomService } from './services/room-service.js';
 import { SongMatchingService } from './services/song-matching-service.js';
 import { SongSearchService } from './services/song-search-service.js';
 import { ConnectionManager } from './services/connection-manager.js';
-import { ModerationService } from './services/moderation-service.js';
 import { RateLimiter } from './utils/rate-limiter.js';
 import { getEmbeddingService } from './embeddings/index.js';
 import { phraseLexicon } from './services/phrase-lexicon-service.js';
@@ -67,7 +66,6 @@ const roomService = new RoomService(prisma);
 const songMatchingService = new SongMatchingService(prisma);
 const songSearchService = new SongSearchService(prisma);
 const connectionManager = new ConnectionManager();
-const moderationService = new ModerationService();
 const rateLimiter = new RateLimiter();
 
 // Health check route
@@ -1093,8 +1091,7 @@ fastify.register(async function (fastify) {
         connection,
         userSession.userId,
         userSession.anonHandle,
-        defaultRoom.id,
-        true // default family-friendly to true
+        defaultRoom.id
       );
 
       logger.info({
@@ -1144,8 +1141,7 @@ fastify.register(async function (fastify) {
               timestamp: msg.createdAt.toISOString(),
               isHistorical: true
             };
-          })
-        );
+          });
 
         // Send each historical message
         messagesToSend.forEach(msg => {

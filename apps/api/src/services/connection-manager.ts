@@ -216,7 +216,7 @@ export class ConnectionManager {
   broadcastWithFiltering(
     roomId: string,
     originalMessage: BroadcastMessage,
-    filteredMessage: BroadcastMessage,
+    _filteredMessage: BroadcastMessage,
     excludeConnectionId?: string
   ): { originalSent: number; filteredSent: number } {
     const roomConnections = this.roomConnections.get(roomId);

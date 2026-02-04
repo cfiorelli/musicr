@@ -56,7 +56,6 @@ export class KeywordMatcher {
     // Initialize content filter with default config  
     this.contentFilter = new ContentFilter({
       allowExplicit: true,
-      familyFriendlyMode: false,
       strictFiltering: false,
       logFilteredContent: false
     });
