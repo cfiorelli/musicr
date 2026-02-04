@@ -32,7 +32,7 @@ export class SongSearchService {
   }
 
   /**
-   * Search songs using multiple strategies
+   * Search songs using semantic/embedding similarity
    */
   async search(params: SearchRequest): Promise<{
     results: SearchResult[];
@@ -46,26 +46,13 @@ export class SongSearchService {
     };
   }> {
     const startTime = Date.now();
-    logger.debug({ params }, 'Starting song search');
+    logger.debug({ params }, 'Starting semantic song search');
 
     let results: SearchResult[] = [];
 
     try {
-      switch (params.strategy) {
-        case 'exact':
-          results = await this.exactSearch(params.q, params.limit);
-          break;
-        case 'phrase':
-          results = await this.phraseSearch(params.q, params.limit);
-          break;
-        case 'embedding':
-          results = await this.embeddingSearch(params.q, params.limit);
-          break;
-        case 'all':
-        default:
-          results = await this.combinedSearch(params.q, params.limit);
-          break;
-      }
+      // ONLY use semantic/embedding search
+      results = await this.embeddingSearch(params.q, params.limit);
 
       // Filter explicit content if needed
       if (!params.allowExplicit) {
@@ -73,10 +60,10 @@ export class SongSearchService {
       }
 
       const processingTime = Date.now() - startTime;
-      
+
       logger.info({
         query: params.q,
-        strategy: params.strategy,
+        strategy: 'embedding',
         resultCount: results.length,
         processingTime
       }, 'Song search completed');
@@ -85,7 +72,7 @@ export class SongSearchService {
         results: results.slice(0, params.limit),
         metadata: {
           query: params.q,
-          strategy: params.strategy,
+          strategy: 'embedding',
           total: results.length,
           limit: params.limit,
           processingTime,
@@ -97,63 +84,6 @@ export class SongSearchService {
       logger.error({ error, params }, 'Song search failed');
       throw error;
     }
-  }
-
-  /**
-   * Search by exact title/artist matches
-   */
-  private async exactSearch(query: string, limit: number): Promise<SearchResult[]> {
-    const songs = await this.prisma.song.findMany({
-      where: {
-        OR: [
-          {
-            title: {
-              contains: query,
-              mode: 'insensitive'
-            }
-          },
-          {
-            artist: {
-              contains: query,
-              mode: 'insensitive'
-            }
-          }
-        ]
-      },
-      orderBy: { popularity: 'desc' },
-      take: limit * 2 // Get more to allow for filtering
-    });
-
-        return songs.map((song: Song) => this.songToSearchResult(song, this.getMatchType(song, query), this.calculateExactScore(song, query)));
-  }
-
-  /**
-   * Search by phrase matches
-   */
-  private async phraseSearch(query: string, limit: number): Promise<SearchResult[]> {
-    const phrases = this.extractPhrases(query);
-    
-    const songs = await this.prisma.song.findMany({
-      where: {
-        phrases: {
-          hasSome: phrases
-        }
-      },
-      orderBy: { popularity: 'desc' },
-      take: limit * 2
-    });
-
-    return songs.map((song: Song) => {
-      const matchingPhrases = song.phrases.filter((phrase: string) => 
-        phrases.some(queryPhrase => 
-          phrase.toLowerCase().includes(queryPhrase.toLowerCase()) ||
-          queryPhrase.toLowerCase().includes(phrase.toLowerCase())
-        )
-      );
-      const score = matchingPhrases.length / phrases.length;
-      
-      return this.songToSearchResult(song, 'phrase', score);
-    });
   }
 
   /**
@@ -196,50 +126,6 @@ export class SongSearchService {
   }
 
   /**
-   * Combined search using all strategies
-   */
-  private async combinedSearch(query: string, limit: number): Promise<SearchResult[]> {
-    const [exactResults, phraseResults, embeddingResults] = await Promise.all([
-      this.exactSearch(query, Math.ceil(limit / 3)),
-      this.phraseSearch(query, Math.ceil(limit / 3)),
-      this.embeddingSearch(query, Math.ceil(limit / 3))
-    ]);
-
-    // Combine and deduplicate results
-    const seenIds = new Set<string>();
-    const combinedResults: SearchResult[] = [];
-
-    // Add exact matches first (highest priority)
-    for (const result of exactResults) {
-      if (!seenIds.has(result.id)) {
-        seenIds.add(result.id);
-        combinedResults.push({ ...result, score: (result.score || 0) * 1.2 }); // Boost exact matches
-      }
-    }
-
-    // Add phrase matches
-    for (const result of phraseResults) {
-      if (!seenIds.has(result.id)) {
-        seenIds.add(result.id);
-        combinedResults.push({ ...result, score: (result.score || 0) * 1.1 }); // Boost phrase matches
-      }
-    }
-
-    // Add embedding matches
-    for (const result of embeddingResults) {
-      if (!seenIds.has(result.id)) {
-        seenIds.add(result.id);
-        combinedResults.push(result);
-      }
-    }
-
-    // Sort by score and return top results
-    return combinedResults
-      .sort((a, b) => (b.score || 0) - (a.score || 0))
-      .slice(0, limit);
-  }
-
-  /**
    * Convert Song to SearchResult
    */
   private songToSearchResult(song: Song, matchType: SearchResult['matchType'], score?: number): SearchResult {
@@ -254,67 +140,6 @@ export class SongSearchService {
       matchType,
       score
     };
-  }
-
-  /**
-   * Determine match type for exact search
-   */
-  private getMatchType(song: Song, query: string): SearchResult['matchType'] {
-    const lowerQuery = query.toLowerCase();
-    const lowerTitle = song.title.toLowerCase();
-    const lowerArtist = song.artist.toLowerCase();
-
-    if (lowerTitle.includes(lowerQuery)) return 'title';
-    if (lowerArtist.includes(lowerQuery)) return 'artist';
-    return 'title'; // fallback
-  }
-
-  /**
-   * Calculate score for exact matches
-   */
-  private calculateExactScore(song: Song, query: string): number {
-    const lowerQuery = query.toLowerCase();
-    const lowerTitle = song.title.toLowerCase();
-    const lowerArtist = song.artist.toLowerCase();
-
-    let score = 0;
-
-    // Title match scoring
-    if (lowerTitle === lowerQuery) {
-      score += 1.0; // Perfect title match
-    } else if (lowerTitle.includes(lowerQuery)) {
-      score += 0.8 * (query.length / song.title.length); // Partial title match
-    }
-
-    // Artist match scoring
-    if (lowerArtist === lowerQuery) {
-      score += 0.9; // Perfect artist match
-    } else if (lowerArtist.includes(lowerQuery)) {
-      score += 0.7 * (query.length / song.artist.length); // Partial artist match
-    }
-
-    // Boost by popularity
-    score += (song.popularity / 100) * 0.1;
-
-    return Math.min(score, 1.0);
-  }
-
-  /**
-   * Extract meaningful phrases from query
-   */
-  private extractPhrases(query: string): string[] {
-    const words = query.toLowerCase().split(/\s+/).filter(word => word.length >= 3);
-    const phrases: string[] = [];
-    
-    // Add individual words
-    phrases.push(...words);
-    
-    // Add bigrams
-    for (let i = 0; i < words.length - 1; i++) {
-      phrases.push(`${words[i]} ${words[i + 1]}`);
-    }
-    
-    return phrases;
   }
 
   /**
