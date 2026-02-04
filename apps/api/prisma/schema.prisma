@@ -50,9 +50,10 @@ model Message {
   scores       Json?
   createdAt    DateTime @default(now())
 
-  user User  @relation(fields: [userId], references: [id], onDelete: Cascade)
-  room Room  @relation(fields: [roomId], references: [id], onDelete: Cascade)
-  song Song? @relation(fields: [chosenSongId], references: [id])
+  user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  room      Room              @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  song      Song?             @relation(fields: [chosenSongId], references: [id])
+  reactions MessageReaction[]
 
   @@index([userId], map: "idx_messages_user_id")
   @@index([roomId], map: "idx_messages_room_id")
@@ -67,7 +68,8 @@ model User {
   ipHash     String
   createdAt  DateTime @default(now())
 
-  messages Message[]
+  messages  Message[]
+  reactions MessageReaction[]
 
   @@index([anonHandle], map: "idx_users_anon_handle")
   @@index([ipHash], map: "idx_users_ip_hash")
@@ -86,4 +88,19 @@ model Room {
   @@index([name], map: "idx_rooms_name")
   @@index([createdAt], map: "idx_rooms_created_at")
   @@map("rooms")
+}
+
+model MessageReaction {
+  id        String   @id @default(uuid()) @db.Uuid
+  messageId String   @db.Uuid
+  userId    String   @db.Uuid
+  emoji     String
+  createdAt DateTime @default(now())
+
+  message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([messageId, userId, emoji])
+  @@index([messageId])
+  @@map("message_reactions")
 }

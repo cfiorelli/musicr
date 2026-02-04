@@ -26,6 +26,12 @@ export interface Message {
   }>;
   reasoning?: string;
   similarity?: number; // 0-1 score indicating match confidence
+  reactions?: Array<{
+    emoji: string;
+    count: number;
+    users: Array<{ userId: string; anonHandle: string }>;
+    hasReacted?: boolean; // Current user has reacted
+  }>;
   timestamp: string;
   userId: string;
   anonHandle: string;
@@ -52,6 +58,8 @@ export interface ChatState {
   updateMessage: (id: string, updates: Partial<Message>) => void;
   setFamilyFriendly: (value: boolean) => void;
   selectAlternate: (messageId: string, alternate: NonNullable<Message['alternates']>[0]) => void;
+  addReaction: (messageId: string, emoji: string) => void;
+  removeReaction: (messageId: string, emoji: string) => void;
   getUserSession: () => Promise<void>;
   fetchRoomUsers: () => Promise<void>;
   addRoomUser: (user: RoomUser) => void;
@@ -331,6 +339,77 @@ export const useChatStore = create<ChatState>((set, get) => ({
             const { removeRoomUser } = get();
             removeRoomUser(data.user.id);
             console.log('User left:', data.user.handle);
+          } else if (data.type === 'reaction_added') {
+            // Reaction added to a message
+            set((state) => {
+              const messages = state.messages.map(msg => {
+                if (msg.id === data.messageId) {
+                  const reactions = msg.reactions || [];
+                  const existing = reactions.find(r => r.emoji === data.emoji);
+
+                  if (existing) {
+                    // Increment count
+                    return {
+                      ...msg,
+                      reactions: reactions.map(r =>
+                        r.emoji === data.emoji
+                          ? {
+                              ...r,
+                              count: r.count + 1,
+                              users: [...r.users, { userId: data.userId, anonHandle: data.anonHandle }],
+                              hasReacted: data.userId === state.user?.id || r.hasReacted
+                            }
+                          : r
+                      )
+                    };
+                  } else {
+                    // Add new emoji
+                    return {
+                      ...msg,
+                      reactions: [
+                        ...reactions,
+                        {
+                          emoji: data.emoji,
+                          count: 1,
+                          users: [{ userId: data.userId, anonHandle: data.anonHandle }],
+                          hasReacted: data.userId === state.user?.id
+                        }
+                      ]
+                    };
+                  }
+                }
+                return msg;
+              });
+
+              return { messages };
+            });
+          } else if (data.type === 'reaction_removed') {
+            // Reaction removed from a message
+            set((state) => {
+              const messages = state.messages.map(msg => {
+                if (msg.id === data.messageId) {
+                  const reactions = (msg.reactions || [])
+                    .map(r => {
+                      if (r.emoji === data.emoji) {
+                        const newUsers = r.users.filter(u => u.userId !== data.userId);
+                        return {
+                          ...r,
+                          count: newUsers.length,
+                          users: newUsers,
+                          hasReacted: r.hasReacted && data.userId !== state.user?.id
+                        };
+                      }
+                      return r;
+                    })
+                    .filter(r => r.count > 0); // Remove emoji if count is 0
+
+                  return { ...msg, reactions };
+                }
+                return msg;
+              });
+
+              return { messages };
+            });
           } else if (data.type === 'moderation_notice') {
             // Content was moderated - show notice to sender
             const moderationMessage: Message = {
@@ -464,16 +543,38 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
   selectAlternate: (messageId: string, alternate: NonNullable<Message['alternates']>[0]) => {
     set((state) => ({
-      messages: state.messages.map(message => 
-        message.id === messageId 
-          ? { 
-              ...message, 
-              songTitle: alternate.title, 
+      messages: state.messages.map(message =>
+        message.id === messageId
+          ? {
+              ...message,
+              songTitle: alternate.title,
               songArtist: alternate.artist,
-              songYear: alternate.year 
-            } 
+              songYear: alternate.year
+            }
           : message
       )
+    }));
+  },
+
+  addReaction: (messageId: string, emoji: string) => {
+    const { ws } = get();
+    if (!ws || ws.readyState !== WebSocket.OPEN) return;
+
+    ws.send(JSON.stringify({
+      type: 'reaction_add',
+      messageId,
+      emoji
+    }));
+  },
+
+  removeReaction: (messageId: string, emoji: string) => {
+    const { ws } = get();
+    if (!ws || ws.readyState !== WebSocket.OPEN) return;
+
+    ws.send(JSON.stringify({
+      type: 'reaction_remove',
+      messageId,
+      emoji
     }));
   }
 }));
