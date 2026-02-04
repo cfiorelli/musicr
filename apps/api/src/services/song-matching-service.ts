@@ -412,8 +412,27 @@ export class SongMatchingService {
       });
 
       const matchesWithNulls = await Promise.all(matchPromises);
-      const matches = matchesWithNulls.filter((m) => m !== null) as SongMatch[];
-      return matches.slice(0, 10);
+      const matches = matchesWithNulls
+        .filter((m) => m !== null) as SongMatch[];
+
+      // Filter out placeholder/test songs
+      const placeholderCount = matches.filter(m => this.isPlaceholderSong(m.song)).length;
+      const realMatches = matches.filter(m => !this.isPlaceholderSong(m.song));
+
+      if (placeholderCount > 0) {
+        logger.debug({
+          totalMatches: matches.length,
+          placeholdersFiltered: placeholderCount,
+          realMatches: realMatches.length
+        }, 'Filtered out placeholder songs from results');
+      }
+
+      if (realMatches.length === 0) {
+        logger.warn({ originalMatches: matches.length }, 'All matches were placeholder songs');
+        return [];
+      }
+
+      return realMatches.slice(0, 10);
     } catch (error) {
       logger.warn({ error }, 'Embedding matching failed, falling back');
       return [];
@@ -427,7 +446,7 @@ export class SongMatchingService {
   private async getDefaultMatches(): Promise<SongMatch[]> {
     const songs = await this.prisma.song.findMany({
       orderBy: { popularity: 'desc' },
-      take: 3
+      take: 10 // Fetch more to account for filtering placeholders
     });
 
     logger.info({
@@ -440,7 +459,15 @@ export class SongMatchingService {
       return [];
     }
 
-    return songs.map((song: Song) => ({
+    // Filter out placeholder songs
+    const realSongs = songs.filter((song: Song) => !this.isPlaceholderSong(song));
+
+    if (realSongs.length === 0) {
+      logger.error({ totalSongs: songs.length }, 'All songs in database are placeholders!');
+      return [];
+    }
+
+    return realSongs.slice(0, 3).map((song: Song) => ({
       song,
       score: 0.3,
       reason: {
@@ -481,9 +508,17 @@ export class SongMatchingService {
    * Check if a song contains explicit content
    */
   private isExplicit(song: Song): boolean {
-    return song.tags.some(tag => 
+    return song.tags.some(tag =>
       ['explicit', 'profanity', 'adult'].includes(tag.toLowerCase())
     );
+  }
+
+  /**
+   * Check if a song is a placeholder/test song that should never be matched
+   */
+  private isPlaceholderSong(song: Song): boolean {
+    const placeholderTitles = ['Found Song', 'Found Track', 'True Song'];
+    return placeholderTitles.includes(song.title);
   }
 
   /**
