@@ -367,127 +367,7 @@ export class SongMatchingService {
     };
   }
 
-  /**
-   * Find exact matches in song titles and artists
-   */
-  private async findExactMatches(text: string): Promise<SongMatch[]> {
-    const words = text.toLowerCase().split(/\s+/);
-    const matches: SongMatch[] = [];
 
-    // Search for songs where title or artist contains the text
-    const songs = await this.prisma.song.findMany({
-      where: {
-        OR: [
-          {
-            title: {
-              contains: text,
-              mode: 'insensitive'
-            }
-          },
-          {
-            artist: {
-              contains: text,
-              mode: 'insensitive'
-            }
-          }
-        ]
-      },
-      orderBy: { popularity: 'desc' },
-      take: 20
-    });
-
-    for (const song of songs) {
-      const titleWords = song.title.toLowerCase().split(/\s+/);
-      const artistWords = song.artist.toLowerCase().split(/\s+/);
-      
-      // Calculate match score based on word overlap
-      const titleOverlap = this.calculateWordOverlap(words, titleWords);
-      const artistOverlap = this.calculateWordOverlap(words, artistWords);
-      
-      if (titleOverlap > 0.5 || artistOverlap > 0.5) {
-        matches.push({
-          song,
-          score: Math.max(titleOverlap, artistOverlap),
-          reason: {
-            strategy: 'exact',
-            matchedPhrase: titleOverlap > artistOverlap ? song.title : song.artist
-          }
-        });
-      }
-    }
-
-    return matches;
-  }
-
-  /**
-   * Find matches using phrase analysis
-   */
-  private async findPhraseMatches(text: string): Promise<SongMatch[]> {
-    const matches: SongMatch[] = [];
-
-    // Strategy 1: Use phrase lexicon for fast lookup
-    try {
-      const phraseMatches = phraseLexicon.findPhraseMatches(text);
-      
-      for (const phraseMatch of phraseMatches.slice(0, 5)) { // Top 5 phrase matches
-        const songs = await this.prisma.song.findMany({
-          where: {
-            id: { in: phraseMatch.songIds }
-          }
-        });
-
-        for (const song of songs) {
-          matches.push({
-            song,
-            score: 0.8 + (phraseMatch.confidence * 0.2),
-            reason: {
-              strategy: 'phrase',
-              matchedPhrase: phraseMatch.phrase,
-              mood: this.detectMood(text)
-            }
-          });
-        }
-      }
-      
-      logger.debug({ matches: matches.length }, 'Found phrase lexicon matches');
-    } catch (error) {
-      logger.warn({ error }, 'Failed to use phrase lexicon, falling back to database search');
-    }
-
-    // Strategy 2: Fallback to database phrase search if no lexicon matches
-    if (matches.length === 0) {
-      const songs = await this.prisma.song.findMany({
-        where: {
-          phrases: {
-            hasSome: this.extractPhrases(text)
-          }
-        },
-        orderBy: { popularity: 'desc' },
-        take: 15
-      });
-
-      for (const song of songs) {
-        const matchingPhrases = song.phrases.filter((phrase: string) => 
-          text.toLowerCase().includes(phrase.toLowerCase()) ||
-          phrase.toLowerCase().includes(text.toLowerCase())
-        );
-
-        if (matchingPhrases.length > 0) {
-          matches.push({
-            song,
-            score: 0.7 + (matchingPhrases.length * 0.15),
-            reason: {
-              strategy: 'phrase',
-              matchedPhrase: matchingPhrases[0],
-              mood: this.detectMood(text)
-            }
-          });
-        }
-      }
-    }
-
-    return matches;
-  }
 
   /**
    * Find matches using embedding similarity (uses SemanticSearcher with native pgvector)
@@ -535,32 +415,6 @@ export class SongMatchingService {
     }
   }
 
-  /**
-   * Fallback matches using popularity and basic text analysis
-   */
-  private async findFallbackMatches(text: string): Promise<SongMatch[]> {
-    const mood = this.detectMood(text);
-    const moodTags = this.getMoodTags(mood);
-
-    const songs = await this.prisma.song.findMany({
-      where: moodTags.length > 0 ? {
-        tags: {
-          hasSome: moodTags
-        }
-      } : {},
-      orderBy: { popularity: 'desc' },
-      take: 5
-    });
-
-    return songs.map((song: Song) => ({
-      song,
-      score: 0.5,
-      reason: {
-        strategy: 'semantic',
-        mood: mood
-      }
-    }));
-  }
 
   /**
    * Get default popular songs as last resort
@@ -603,34 +457,6 @@ export class SongMatchingService {
   }
 
   /**
-   * Calculate word overlap between two word arrays
-   */
-  private calculateWordOverlap(words1: string[], words2: string[]): number {
-    const set1 = new Set(words1);
-    const set2 = new Set(words2);
-    const intersection = new Set([...set1].filter(x => set2.has(x)));
-    return intersection.size / Math.max(set1.size, set2.size);
-  }
-
-  /**
-   * Extract meaningful phrases from text
-   */
-  private extractPhrases(text: string): string[] {
-    const words = this.cleanText(text).split(' ');
-    const phrases: string[] = [];
-    
-    // Add individual meaningful words (3+ chars)
-    phrases.push(...words.filter(word => word.length >= 3));
-    
-    // Add bigrams
-    for (let i = 0; i < words.length - 1; i++) {
-      phrases.push(`${words[i]} ${words[i + 1]}`);
-    }
-    
-    return phrases;
-  }
-
-  /**
    * Detect mood from text
    */
   private detectMood(text: string): string {
@@ -644,23 +470,6 @@ export class SongMatchingService {
     if (/energy|pump|workout|intense|power/i.test(lowerText)) return 'energetic';
     
     return 'neutral';
-  }
-
-  /**
-   * Get tags associated with a mood
-   */
-  private getMoodTags(mood: string): string[] {
-    const moodTagMap: Record<string, string[]> = {
-      happy: ['upbeat', 'positive', 'dance', 'pop'],
-      sad: ['melancholy', 'emotional', 'ballad', 'slow'],
-      angry: ['aggressive', 'rock', 'metal', 'intense'],
-      romantic: ['love', 'romantic', 'ballad', 'sweet'],
-      chill: ['chill', 'ambient', 'relaxed', 'mellow'],
-      energetic: ['energetic', 'upbeat', 'dance', 'electronic'],
-      neutral: ['popular', 'mainstream']
-    };
-    
-    return moodTagMap[mood] || moodTagMap.neutral;
   }
 
   /**
