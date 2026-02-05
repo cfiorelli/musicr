@@ -821,14 +821,33 @@ fastify.get<{
   Params: { roomId: string };
   Querystring: { limit?: string; before?: string };
 }>('/api/rooms/:roomId/messages', async (request, reply) => {
-  const { roomId } = request.params;
+  const { roomId: roomNameOrId } = request.params;
   const limit = Math.min(parseInt(request.query.limit || '50'), 100); // Max 100 messages
   const before = request.query.before; // For pagination
+  const requestId = `req_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
 
   try {
+    // Lookup room by name first (e.g., "main"), fallback to UUID lookup
+    const room = await prisma.room.findFirst({
+      where: {
+        OR: [
+          { name: roomNameOrId },
+          { id: roomNameOrId }
+        ]
+      }
+    });
+
+    if (!room) {
+      logger.error({ requestId, roomNameOrId }, 'Room not found');
+      return reply.status(404).send({ error: 'Room not found', requestId });
+    }
+
+    // Fetch one extra message to determine hasMore
+    const fetchLimit = limit + 1;
+
     const messages = await prisma.message.findMany({
       where: {
-        roomId: roomId
+        roomId: room.id
       },
       include: {
         user: {
@@ -847,7 +866,7 @@ fastify.get<{
       orderBy: {
         createdAt: 'desc'
       },
-      take: limit,
+      take: fetchLimit,
       ...(before && {
         cursor: {
           id: before
@@ -856,8 +875,12 @@ fastify.get<{
       })
     });
 
+    // Determine if there are more messages
+    const hasMore = messages.length > limit;
+    const messagesToReturn = hasMore ? messages.slice(0, limit) : messages;
+
     // Reverse to get chronological order (oldest first)
-    const messagesWithDisplay = messages.reverse().map(msg => ({
+    const messagesWithDisplay = messagesToReturn.reverse().map(msg => ({
       id: msg.id,
       type: 'display',
       originalText: msg.text,
@@ -874,15 +897,31 @@ fastify.get<{
       } : null
     }));
 
+    logger.info({
+      requestId,
+      roomName: room.name,
+      roomId: room.id,
+      cursor: before || 'none',
+      returned: messagesWithDisplay.length,
+      hasMore
+    }, 'Fetched room messages');
+
     return {
       messages: messagesWithDisplay,
-      hasMore: messages.length === limit,
-      oldestId: messages.length > 0 ? messages[0].id : null
+      hasMore,
+      oldestId: messagesWithDisplay.length > 0 ? messagesWithDisplay[0].id : null
     };
 
   } catch (error) {
-    logger.error({ error, roomId }, 'Failed to fetch room messages');
-    reply.status(500).send({ error: 'Failed to fetch messages' });
+    logger.error({
+      error,
+      requestId,
+      roomNameOrId,
+      before,
+      limit,
+      stack: (error as Error).stack
+    }, 'Failed to fetch room messages');
+    reply.status(500).send({ error: 'Failed to fetch messages', requestId });
   }
 });
 
