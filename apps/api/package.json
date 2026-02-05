@@ -20,7 +20,12 @@
     "seed": "tsx scripts/validate-catalog.ts && tsx scripts/seed.ts",
     "seed:simple": "tsx scripts/seed-simple.ts",
     "catalog:validate": "tsx scripts/validate-catalog.ts",
-    "catalog:clean": "tsx scripts/clean-catalog.ts"
+    "catalog:clean": "tsx scripts/clean-catalog.ts",
+    "catalog:mb:fetch": "tsx scripts/ingestion/musicbrainz-genre-fetcher.ts",
+    "catalog:mb:import": "tsx scripts/ingestion/musicbrainz-bulk-importer.ts",
+    "catalog:embed": "tsx scripts/ingestion/embedding-backfill.ts",
+    "catalog:safety": "tsx scripts/catalog-safety-check.ts",
+    "catalog:stats": "tsx scripts/catalog-stats.ts"
   },
   "dependencies": {
     "@fastify/cookie": "^9.4.0",
