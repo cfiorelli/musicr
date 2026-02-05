@@ -27,18 +27,17 @@ function HomePage() {
             <h1 className="text-2xl font-bold text-white tracking-tight">
               🎵 Musicr
             </h1>
-            <Link
-              to="/"
+            <button
               onClick={(e) => {
                 e.preventDefault();
-                // Trigger onboarding modal
-                const event = new CustomEvent('show-onboarding');
+                // Trigger info modal (not onboarding)
+                const event = new CustomEvent('show-info');
                 window.dispatchEvent(event);
               }}
-              className="text-sm text-gray-400 hover:text-gray-300 transition-colors"
+              className="text-sm text-gray-400 hover:text-gray-300 transition-colors cursor-pointer"
             >
               what is this?
-            </Link>
+            </button>
           </div>
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2">

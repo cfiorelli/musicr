@@ -13,9 +13,10 @@ const ChatInterface = () => {
   const [expandedWhyPanel, setExpandedWhyPanel] = useState<string | null>(null);
   const [emojiPickerOpen, setEmojiPickerOpen] = useState<string | null>(null);
   const [quickReactions] = useState(['❤️', '😂', '🎵', '🔥', '👍', '🎉']);
-  const [showOnboarding, setShowOnboarding] = useState(() => {
-    return localStorage.getItem('musicr-onboarding-dismissed') !== 'true';
-  });
+  // Modal state: only one modal can be open at a time
+  const [activeModal, setActiveModal] = useState<'onboarding' | 'info' | null>(null);
+  const [onboardingInput, setOnboardingInput] = useState('');
+  const [onboardingSendError, setOnboardingSendError] = useState('');
   const [historyLoadError, setHistoryLoadError] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const messagesRef = useRef<HTMLDivElement>(null);
@@ -63,20 +64,48 @@ const ChatInterface = () => {
     if (connectionStatus === 'connected') {
       setLastMessage(example);
       sendMessage(example);
-      if (showOnboarding) {
-        dismissOnboarding();
-      }
     }
   };
 
-  const dismissOnboarding = () => {
-    setShowOnboarding(false);
-    localStorage.setItem('musicr-onboarding-dismissed', 'true');
+  // Onboarding quick reply handler
+  const handleOnboardingQuickReply = (text: string) => {
+    setOnboardingInput(text);
   };
 
-  const resetOnboarding = () => {
-    setShowOnboarding(true);
-    localStorage.setItem('musicr-onboarding-dismissed', 'false');
+  // Send onboarding message
+  const handleOnboardingSend = () => {
+    const message = onboardingInput.trim();
+    if (!message) return;
+
+    if (connectionStatus !== 'connected') {
+      setOnboardingSendError('Not connected. Please wait...');
+      return;
+    }
+
+    try {
+      sendMessage(message);
+      // Success - close modal and mark as seen
+      localStorage.setItem('musicr_onboarding_seen', '1');
+      localStorage.setItem('musicr_onboarding_seen_at', new Date().toISOString());
+      setActiveModal(null);
+      setOnboardingInput('');
+      setOnboardingSendError('');
+      // Focus chat input after closing
+      setTimeout(() => inputRef.current?.focus(), 100);
+    } catch (error) {
+      setOnboardingSendError('Failed to send message. Please try again.');
+    }
+  };
+
+  // Skip onboarding
+  const handleOnboardingSkip = () => {
+    localStorage.setItem('musicr_onboarding_seen', '1');
+    localStorage.setItem('musicr_onboarding_seen_at', new Date().toISOString());
+    setActiveModal(null);
+    setOnboardingInput('');
+    setOnboardingSendError('');
+    // Focus chat input after closing
+    setTimeout(() => inputRef.current?.focus(), 100);
   };
 
   const getYouTubeSearchUrl = (title: string, artist: string) => {
@@ -135,16 +164,47 @@ const ChatInterface = () => {
       inputRef.current.focus();
     }
 
-    // Listen for show-onboarding event from header link
-    const handleShowOnboarding = () => {
-      resetOnboarding();
+    // Listen for show-info event from header "what is this?" link
+    const handleShowInfo = () => {
+      setActiveModal('info');
     };
-    window.addEventListener('show-onboarding', handleShowOnboarding);
+    window.addEventListener('show-info', handleShowInfo);
 
     return () => {
-      window.removeEventListener('show-onboarding', handleShowOnboarding);
+      window.removeEventListener('show-info', handleShowInfo);
     };
   }, []);
+
+  // Show onboarding on first visit (after connection is ready)
+  useEffect(() => {
+    // Check if already seen
+    const hasSeenOnboarding = localStorage.getItem('musicr_onboarding_seen') === '1';
+    if (hasSeenOnboarding) return;
+
+    // Check if ready: connection is established AND we have a username
+    const isReady = connectionStatus === 'connected' && userHandle;
+
+    // Only show if ready and no other modal is open
+    if (isReady && activeModal === null) {
+      setActiveModal('onboarding');
+    }
+  }, [connectionStatus, userHandle, activeModal]);
+
+  // Esc key handler for modals
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && activeModal) {
+        if (activeModal === 'onboarding') {
+          handleOnboardingSkip();
+        } else if (activeModal === 'info') {
+          setActiveModal(null);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, [activeModal]);
 
   // Auto-scroll to bottom when new messages arrive (if auto-scroll is enabled)
   useEffect(() => {
@@ -747,20 +807,138 @@ const ChatInterface = () => {
         />
       )}
 
-      {/* Onboarding Modal - Shows over messages when toggled */}
-      {showOnboarding && messages.length > 0 && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto">
+      {/* First-Run Onboarding Modal */}
+      {activeModal === 'onboarding' && (
+        <div
+          className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+          onClick={(e) => {
+            // Close on backdrop click (same as Skip)
+            if (e.target === e.currentTarget) {
+              handleOnboardingSkip();
+            }
+          }}
+        >
+          <div className="max-w-md w-full bg-gradient-to-br from-gray-900 via-slate-900 to-gray-800 border border-blue-500/30 rounded-2xl p-6 shadow-2xl relative">
+            {/* Close button */}
+            <button
+              onClick={handleOnboardingSkip}
+              className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white transition-colors rounded-lg hover:bg-white/10"
+              aria-label="Close"
+            >
+              ✕
+            </button>
+
+            {/* Header */}
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold text-white mb-2 flex items-center gap-2">
+                <span>🎵</span>
+                <span>Welcome to Musicr</span>
+              </h2>
+              <p className="text-blue-300 text-lg">
+                Hello <span className="font-semibold">{userHandle}</span>!
+              </p>
+            </div>
+
+            {/* Explanation */}
+            <p className="text-gray-300 mb-4">
+              Type a thought and we'll match it to a song.
+            </p>
+
+            {/* Prompt */}
+            <p className="text-white font-semibold mb-3">
+              How's your day going?
+            </p>
+
+            {/* Quick Replies */}
+            <div className="space-y-2 mb-4">
+              <button
+                onClick={() => handleOnboardingQuickReply("Pretty good — feeling optimistic")}
+                className="w-full text-left px-4 py-3 bg-blue-500/20 hover:bg-blue-500/30 border border-blue-400/30 rounded-lg text-white transition-colors"
+              >
+                Pretty good — feeling optimistic
+              </button>
+              <button
+                onClick={() => handleOnboardingQuickReply("Stressed and overloaded")}
+                className="w-full text-left px-4 py-3 bg-blue-500/20 hover:bg-blue-500/30 border border-blue-400/30 rounded-lg text-white transition-colors"
+              >
+                Stressed and overloaded
+              </button>
+              <button
+                onClick={() => handleOnboardingQuickReply("Chilling and vibing")}
+                className="w-full text-left px-4 py-3 bg-blue-500/20 hover:bg-blue-500/30 border border-blue-400/30 rounded-lg text-white transition-colors"
+              >
+                Chilling and vibing
+              </button>
+            </div>
+
+            {/* Free Text Input */}
+            <div className="mb-4">
+              <input
+                type="text"
+                value={onboardingInput}
+                onChange={(e) => {
+                  setOnboardingInput(e.target.value);
+                  setOnboardingSendError('');
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && onboardingInput.trim()) {
+                    handleOnboardingSend();
+                  }
+                }}
+                placeholder="Or type your own message..."
+                className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-400 transition-colors"
+                autoFocus
+              />
+            </div>
+
+            {/* Error Message */}
+            {onboardingSendError && (
+              <div className="mb-4 p-3 bg-red-500/20 border border-red-400/30 rounded-lg text-red-300 text-sm">
+                {onboardingSendError}
+              </div>
+            )}
+
+            {/* Action Buttons */}
+            <div className="flex gap-3">
+              <button
+                onClick={handleOnboardingSend}
+                disabled={!onboardingInput.trim() || connectionStatus !== 'connected'}
+                className="flex-1 px-4 py-3 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors"
+              >
+                Send
+              </button>
+              <button
+                onClick={handleOnboardingSkip}
+                className="px-4 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+              >
+                Skip
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Info Modal - "What is this?" */}
+      {activeModal === 'info' && (
+        <div
+          className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setActiveModal(null);
+            }
+          }}
+        >
           <div className="max-w-2xl w-full bg-gray-900/95 backdrop-blur-md border border-gray-700 rounded-xl p-6 shadow-2xl relative my-8 max-h-[90vh] overflow-y-auto">
             <button
-              onClick={dismissOnboarding}
+              onClick={() => setActiveModal(null)}
               className="sticky top-0 right-0 ml-auto mb-3 w-10 h-10 flex items-center justify-center text-gray-500 hover:text-gray-300 transition-colors rounded-lg bg-gray-800 hover:bg-gray-700 text-xl z-10"
-              aria-label="Close welcome modal"
+              aria-label="Close info modal"
             >
               ✕
             </button>
             <h2 className="text-2xl font-bold text-white mb-5 flex items-center gap-2">
               <span>👋</span>
-              <span>Welcome to Musicr</span>
+              <span>About Musicr</span>
             </h2>
             <div className="space-y-3 mb-5">
               <div className="flex gap-3 items-start bg-gray-800/50 rounded-lg p-3 border border-gray-700/50">
