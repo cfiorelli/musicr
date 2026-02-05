@@ -628,7 +628,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
   fetchMessageHistory: async (roomId: string, limit: number = 50) => {
     try {
-      const response = await fetch(`${API_URL}/api/rooms/${roomId}/messages?limit=${limit}`);
+      const response = await fetch(`${API_URL}/rooms/${roomId}/messages?limit=${limit}`);
       if (!response.ok) {
         console.error('Failed to fetch message history:', response.statusText);
         return;
@@ -673,12 +673,22 @@ export const useChatStore = create<ChatState>((set, get) => ({
     try {
       const oldestMessage = messages[0];
       const oldCount = messages.length;
+      const fetchUrl = `${API_URL}/rooms/${currentRoom}/messages?limit=50&before=${oldestMessage.id}`;
 
-      const response = await fetch(
-        `${API_URL}/api/rooms/${currentRoom}/messages?limit=50&before=${oldestMessage.id}`
-      );
+      if (window.location.search.includes('debug=1')) {
+        console.log('[STORE] Fetching older messages from:', fetchUrl);
+      }
+
+      const response = await fetch(fetchUrl);
 
       if (!response.ok) {
+        const errorBody = await response.text().catch(() => 'Unable to read response body');
+        console.error('[STORE] Failed to load older messages:', {
+          status: response.status,
+          statusText: response.statusText,
+          url: fetchUrl,
+          body: errorBody
+        });
         set({ isLoadingHistory: false });
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
