@@ -16,8 +16,11 @@ const ChatInterface = () => {
   const [showOnboarding, setShowOnboarding] = useState(() => {
     return localStorage.getItem('musicr-onboarding-dismissed') !== 'true';
   });
+  const [historyLoadError, setHistoryLoadError] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const messagesRef = useRef<HTMLDivElement>(null);
+  const lastLoadTimeRef = useRef<number>(0);
+  const isLoadingRef = useRef<boolean>(false);
 
   const examplePrompts = [
     "I need a song for late-night coding",
@@ -173,7 +176,7 @@ const ChatInterface = () => {
     if (messagesRef.current) {
       const { scrollTop, scrollHeight, clientHeight } = messagesRef.current;
       const isNearBottom = scrollHeight - scrollTop - clientHeight < 50; // 50px threshold
-      const isNearTop = scrollTop < 100; // 100px threshold from top
+      const isNearTop = scrollTop <= 150; // 150px threshold from top
 
       // Enable auto-scroll if user scrolled back to bottom
       if (isNearBottom && !autoScroll) {
@@ -185,7 +188,21 @@ const ChatInterface = () => {
       }
 
       // Infinite scroll: Load older messages when near top
-      if (isNearTop && hasMoreHistory && !isLoadingHistory) {
+      // Debounce: wait 500ms between loads
+      const now = Date.now();
+      const timeSinceLastLoad = now - lastLoadTimeRef.current;
+
+      if (
+        isNearTop &&
+        hasMoreHistory &&
+        !isLoadingHistory &&
+        !isLoadingRef.current &&
+        timeSinceLastLoad > 500
+      ) {
+        if (debugMode) {
+          console.log('[INFINITE SCROLL] Triggered at scrollTop:', scrollTop);
+        }
+        lastLoadTimeRef.current = now;
         handleLoadOlder();
       }
     }
@@ -193,21 +210,58 @@ const ChatInterface = () => {
 
   // Load older messages and preserve scroll position
   const handleLoadOlder = async () => {
-    if (!messagesRef.current || isLoadingHistory || !hasMoreHistory) return;
+    if (!messagesRef.current || isLoadingHistory || !hasMoreHistory || isLoadingRef.current) {
+      return;
+    }
 
     const scrollContainer = messagesRef.current;
     const oldScrollHeight = scrollContainer.scrollHeight;
     const oldScrollTop = scrollContainer.scrollTop;
+    const oldestMessageId = messages.length > 0 ? messages[0].id : null;
+    const oldMessageCount = messages.length;
 
-    await loadOlderMessages();
+    if (debugMode) {
+      console.log('[LOAD OLDER] Starting:', {
+        cursor: oldestMessageId,
+        currentTotal: oldMessageCount,
+        hasMore: hasMoreHistory,
+        scrollTop: oldScrollTop,
+        scrollHeight: oldScrollHeight
+      });
+    }
 
-    // Preserve scroll position after new messages are prepended
-    setTimeout(() => {
-      if (scrollContainer) {
-        const newScrollHeight = scrollContainer.scrollHeight;
-        scrollContainer.scrollTop = oldScrollTop + (newScrollHeight - oldScrollHeight);
-      }
-    }, 0);
+    isLoadingRef.current = true;
+    setHistoryLoadError(false);
+
+    try {
+      await loadOlderMessages();
+
+      // Preserve scroll position after new messages are prepended
+      requestAnimationFrame(() => {
+        if (scrollContainer) {
+          const newScrollHeight = scrollContainer.scrollHeight;
+          const heightDiff = newScrollHeight - oldScrollHeight;
+          scrollContainer.scrollTop = oldScrollTop + heightDiff;
+
+          if (debugMode) {
+            const newMessageCount = messages.length;
+            console.log('[LOAD OLDER] Complete:', {
+              loaded: newMessageCount - oldMessageCount,
+              newTotal: newMessageCount,
+              hasMore: hasMoreHistory,
+              heightDiff,
+              newScrollTop: scrollContainer.scrollTop,
+              scrollPreserved: Math.abs(scrollContainer.scrollTop - (oldScrollTop + heightDiff)) < 5
+            });
+          }
+        }
+      });
+    } catch (error) {
+      console.error('[LOAD OLDER] Error:', error);
+      setHistoryLoadError(true);
+    } finally {
+      isLoadingRef.current = false;
+    }
   };
 
   const formatSongDisplay = (message: Message) => {
@@ -341,8 +395,8 @@ const ChatInterface = () => {
         onScroll={handleScroll}
         className="flex-1 bg-gray-800/30 backdrop-blur-sm rounded-xl p-4 mb-3 overflow-y-auto min-h-0 border border-gray-700/30"
       >
-        {/* Load Older Messages Button */}
-        {hasMoreHistory && messages.length > 0 && (
+        {/* Load Older Messages Button - Only show on error as fallback */}
+        {historyLoadError && hasMoreHistory && messages.length > 0 && (
           <div className="flex justify-center mb-4">
             <button
               onClick={handleLoadOlder}
@@ -351,19 +405,32 @@ const ChatInterface = () => {
                 px-4 py-2 rounded-lg text-sm font-medium transition-all
                 ${isLoadingHistory
                   ? 'bg-gray-700/50 text-gray-400 cursor-not-allowed'
-                  : 'bg-blue-500/20 text-blue-300 hover:bg-blue-500/30 border border-blue-500/30'
+                  : 'bg-orange-500/20 text-orange-300 hover:bg-orange-500/30 border border-orange-500/30'
                 }
               `}
             >
               {isLoadingHistory ? (
                 <span className="flex items-center gap-2">
                   <span className="inline-block w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></span>
-                  Loading...
+                  Retrying...
                 </span>
               ) : (
-                '↑ Load 50 older messages'
+                <span className="flex items-center gap-2">
+                  <span>⚠️</span>
+                  <span>Load failed - Click to retry</span>
+                </span>
               )}
             </button>
+          </div>
+        )}
+
+        {/* Auto-loading indicator */}
+        {isLoadingHistory && !historyLoadError && hasMoreHistory && (
+          <div className="flex justify-center mb-4">
+            <div className="flex items-center gap-2 px-4 py-2 bg-gray-700/30 rounded-lg text-sm text-gray-400">
+              <span className="inline-block w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></span>
+              <span>Loading older messages...</span>
+            </div>
           </div>
         )}
 

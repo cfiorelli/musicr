@@ -672,14 +672,15 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
     try {
       const oldestMessage = messages[0];
+      const oldCount = messages.length;
+
       const response = await fetch(
         `${API_URL}/api/rooms/${currentRoom}/messages?limit=50&before=${oldestMessage.id}`
       );
 
       if (!response.ok) {
-        console.error('Failed to load older messages:', response.statusText);
         set({ isLoadingHistory: false });
-        return;
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
       const data = await response.json();
@@ -700,16 +701,25 @@ export const useChatStore = create<ChatState>((set, get) => ({
         isOptimistic: false
       }));
 
-      console.log(`Loaded ${olderMessages.length} older messages`);
+      const newHasMore = data.hasMore !== undefined ? data.hasMore : olderMessages.length >= 50;
+
+      console.log(`[STORE] Loaded ${olderMessages.length} older messages:`, {
+        cursor: oldestMessage.id,
+        loaded: olderMessages.length,
+        oldTotal: oldCount,
+        newTotal: oldCount + olderMessages.length,
+        hasMore: newHasMore
+      });
 
       set({
         messages: [...olderMessages, ...messages],
         isLoadingHistory: false,
-        hasMoreHistory: data.hasMore !== undefined ? data.hasMore : olderMessages.length >= 50
+        hasMoreHistory: newHasMore
       });
     } catch (error) {
-      console.error('Error loading older messages:', error);
+      console.error('[STORE] Error loading older messages:', error);
       set({ isLoadingHistory: false });
+      throw error; // Re-throw so UI can handle it
     }
   }
 }));
