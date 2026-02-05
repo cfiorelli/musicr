@@ -635,16 +635,18 @@ export const useChatStore = create<ChatState>((set, get) => ({
       }
 
       const data = await response.json();
-      const messages: Message[] = data.map((msg: any) => ({
+      // API returns { messages: [...], hasMore, oldestId }
+      const messageList = data.messages || data; // Support both wrapped and unwrapped
+      const messages: Message[] = messageList.map((msg: any) => ({
         id: msg.id,
         content: msg.originalText,
-        songTitle: msg.primary?.title,
-        songArtist: msg.primary?.artist,
-        songYear: msg.primary?.year,
+        songTitle: msg.chosenSong?.title || msg.primary?.title,
+        songArtist: msg.chosenSong?.artist || msg.primary?.artist,
+        songYear: msg.chosenSong?.year || msg.primary?.year,
         alternates: msg.alternates || [],
         reasoning: msg.why,
         similarity: msg.primary?.score,
-        timestamp: new Date().toISOString(),
+        timestamp: msg.timestamp || new Date().toISOString(),
         userId: msg.userId,
         anonHandle: msg.anonHandle,
         isOptimistic: false
@@ -652,7 +654,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
       set({
         messages,
-        hasMoreHistory: messages.length >= limit
+        hasMoreHistory: data.hasMore !== undefined ? data.hasMore : messages.length >= limit
       });
     } catch (error) {
       console.error('Error fetching message history:', error);
@@ -681,25 +683,29 @@ export const useChatStore = create<ChatState>((set, get) => ({
       }
 
       const data = await response.json();
-      const olderMessages: Message[] = data.map((msg: any) => ({
+      // API returns { messages: [...], hasMore, oldestId }
+      const messageList = data.messages || data; // Support both wrapped and unwrapped
+      const olderMessages: Message[] = messageList.map((msg: any) => ({
         id: msg.id,
         content: msg.originalText,
-        songTitle: msg.primary?.title,
-        songArtist: msg.primary?.artist,
-        songYear: msg.primary?.year,
+        songTitle: msg.chosenSong?.title || msg.primary?.title,
+        songArtist: msg.chosenSong?.artist || msg.primary?.artist,
+        songYear: msg.chosenSong?.year || msg.primary?.year,
         alternates: msg.alternates || [],
         reasoning: msg.why,
         similarity: msg.primary?.score,
-        timestamp: new Date().toISOString(),
+        timestamp: msg.timestamp || new Date().toISOString(),
         userId: msg.userId,
         anonHandle: msg.anonHandle,
         isOptimistic: false
       }));
 
+      console.log(`Loaded ${olderMessages.length} older messages`);
+
       set({
         messages: [...olderMessages, ...messages],
         isLoadingHistory: false,
-        hasMoreHistory: olderMessages.length >= 50
+        hasMoreHistory: data.hasMore !== undefined ? data.hasMore : olderMessages.length >= 50
       });
     } catch (error) {
       console.error('Error loading older messages:', error);
