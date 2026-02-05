@@ -161,7 +161,9 @@ const ChatInterface = () => {
   useEffect(() => {
     async function fetchSongCount() {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/admin/analytics`);
+        // Note: VITE_API_URL includes /api prefix, so don't add it again
+        const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
+        const response = await fetch(`${apiBase}/admin/analytics`);
         const data = await response.json();
         setSongCount(data.songs || null);
       } catch (error) {
