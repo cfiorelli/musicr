@@ -837,6 +837,12 @@ fastify.get<{
   }
   const limit = limitParam;
 
+  // Validate before cursor if present
+  if (before && !isUuid(before)) {
+    logger.warn({ requestId, before }, 'Invalid cursor UUID format');
+    return reply.status(400).send({ error: 'Invalid cursor format. Must be a valid UUID', requestId });
+  }
+
   try {
     // Lookup room by UUID or name (but never pass non-UUID to id field)
     let room;
@@ -855,6 +861,26 @@ fastify.get<{
     if (!room) {
       logger.warn({ requestId, roomParam, isUuid: isUuid(roomParam) }, 'Room not found');
       return reply.status(404).send({ error: 'Room not found' });
+    }
+
+    // If cursor provided, verify it exists in this room
+    if (before) {
+      const cursorMessage = await prisma.message.findFirst({
+        where: {
+          id: before,
+          roomId: room.id
+        }
+      });
+
+      if (!cursorMessage) {
+        logger.warn({ requestId, before, roomId: room.id }, 'Cursor message not found in room');
+        // Return empty result instead of error - cursor may be stale
+        return {
+          messages: [],
+          hasMore: false,
+          oldestId: null
+        };
+      }
     }
 
     // Fetch one extra message to determine hasMore
