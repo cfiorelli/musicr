@@ -61,3 +61,5 @@ Thumbs.db
 # Temporary folders
 tmp/
 temp/
+# Data files (MusicBrainz fetch, etc.)
+data/
