@@ -33,6 +33,9 @@ const ChatInterface = () => {
     selectAlternate,
     addReaction,
     removeReaction,
+    loadOlderMessages,
+    isLoadingHistory,
+    hasMoreHistory,
     debugInfo
   } = useChatStore();
 
@@ -170,7 +173,8 @@ const ChatInterface = () => {
     if (messagesRef.current) {
       const { scrollTop, scrollHeight, clientHeight } = messagesRef.current;
       const isNearBottom = scrollHeight - scrollTop - clientHeight < 50; // 50px threshold
-      
+      const isNearTop = scrollTop < 100; // 100px threshold from top
+
       // Enable auto-scroll if user scrolled back to bottom
       if (isNearBottom && !autoScroll) {
         setAutoScroll(true);
@@ -179,7 +183,31 @@ const ChatInterface = () => {
       else if (!isNearBottom && autoScroll) {
         setAutoScroll(false);
       }
+
+      // Infinite scroll: Load older messages when near top
+      if (isNearTop && hasMoreHistory && !isLoadingHistory) {
+        handleLoadOlder();
+      }
     }
+  };
+
+  // Load older messages and preserve scroll position
+  const handleLoadOlder = async () => {
+    if (!messagesRef.current || isLoadingHistory || !hasMoreHistory) return;
+
+    const scrollContainer = messagesRef.current;
+    const oldScrollHeight = scrollContainer.scrollHeight;
+    const oldScrollTop = scrollContainer.scrollTop;
+
+    await loadOlderMessages();
+
+    // Preserve scroll position after new messages are prepended
+    setTimeout(() => {
+      if (scrollContainer) {
+        const newScrollHeight = scrollContainer.scrollHeight;
+        scrollContainer.scrollTop = oldScrollTop + (newScrollHeight - oldScrollHeight);
+      }
+    }, 0);
   };
 
   const formatSongDisplay = (message: Message) => {
@@ -313,6 +341,32 @@ const ChatInterface = () => {
         onScroll={handleScroll}
         className="flex-1 bg-gray-800/30 backdrop-blur-sm rounded-xl p-4 mb-3 overflow-y-auto min-h-0 border border-gray-700/30"
       >
+        {/* Load Older Messages Button */}
+        {hasMoreHistory && messages.length > 0 && (
+          <div className="flex justify-center mb-4">
+            <button
+              onClick={handleLoadOlder}
+              disabled={isLoadingHistory}
+              className={`
+                px-4 py-2 rounded-lg text-sm font-medium transition-all
+                ${isLoadingHistory
+                  ? 'bg-gray-700/50 text-gray-400 cursor-not-allowed'
+                  : 'bg-blue-500/20 text-blue-300 hover:bg-blue-500/30 border border-blue-500/30'
+                }
+              `}
+            >
+              {isLoadingHistory ? (
+                <span className="flex items-center gap-2">
+                  <span className="inline-block w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></span>
+                  Loading...
+                </span>
+              ) : (
+                '↑ Load 50 older messages'
+              )}
+            </button>
+          </div>
+        )}
+
         <div className="space-y-3">
           {messages.map((message) => {
               const songDisplay = formatSongDisplay(message);
