@@ -119,11 +119,6 @@ if (redisService.isEnabled()) {
   logger.info('Redis reaction subscriptions active');
 }
 
-// Health check route
-fastify.get('/health', async () => {
-  return { status: 'ok', timestamp: new Date().toISOString() };
-});
-
 // Test page for WebSocket functionality
 fastify.get('/test', async (_, reply) => {
   reply.type('text/html');
@@ -435,7 +430,7 @@ fastify.get('/', async (_,reply) => {
 // Health check endpoint - Railway uses this to verify service is up
 // Must be fast and simple - no database queries or external dependencies
 fastify.get('/health', async (_, reply) => {
-  reply.code(200).send('OK');
+  reply.code(200).send({ ok: true, service: 'api' });
 });
 
 // User session endpoint - establishes anonymous user with cookie
@@ -1701,15 +1696,15 @@ const start = async () => {
     logger.info('Room service initialized');
 
     // Start server FIRST (so Railway health checks pass)
-    logger.info(`Attempting to start server on ${config.server.host}:${config.server.port}...`);
     const address = await fastify.listen({
       port: config.server.port,
       host: config.server.host
     });
-    logger.info(`✅ Server listening on ${address}`);
-    console.log(`✅ SERVER READY - Listening on ${address}`);
-    console.log(`✅ Health check: ${address}/health`);
-    logger.info('Server is healthy and accepting connections');
+
+    // Clear startup logging for Railway
+    console.log(`✅ SERVER READY - listening host=${config.server.host} port=${config.server.port}`);
+    console.log(`✅ Health check available at: ${address}/health`);
+    logger.info(`Server listening on ${address}`);
 
     // Initialize embedding service in background (can take several minutes to download model)
     logger.info('Starting embedding service initialization (background)...');
