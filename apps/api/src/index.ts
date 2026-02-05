@@ -816,30 +816,45 @@ fastify.post('/api/admin/seed', async (request, reply) => {
   }
 });
 
+// Helper: Check if string is valid UUID format
+const isUuid = (value: string): boolean => {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
+};
+
 // GET /api/rooms/:roomId/messages - Fetch recent messages for a room
 fastify.get<{
   Params: { roomId: string };
   Querystring: { limit?: string; before?: string };
 }>('/api/rooms/:roomId/messages', async (request, reply) => {
-  const { roomId: roomNameOrId } = request.params;
-  const limit = Math.min(parseInt(request.query.limit || '50'), 100); // Max 100 messages
+  const { roomId: roomParam } = request.params;
+  const limitParam = parseInt(request.query.limit || '50');
   const before = request.query.before; // For pagination
   const requestId = `req_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
 
+  // Validate limit
+  if (isNaN(limitParam) || limitParam < 1 || limitParam > 100) {
+    return reply.status(400).send({ error: 'Invalid limit. Must be between 1 and 100', requestId });
+  }
+  const limit = limitParam;
+
   try {
-    // Lookup room by name first (e.g., "main"), fallback to UUID lookup
-    const room = await prisma.room.findFirst({
-      where: {
-        OR: [
-          { name: roomNameOrId },
-          { id: roomNameOrId }
-        ]
-      }
-    });
+    // Lookup room by UUID or name (but never pass non-UUID to id field)
+    let room;
+    if (isUuid(roomParam)) {
+      // If it's a UUID, look up by id only
+      room = await prisma.room.findUnique({
+        where: { id: roomParam }
+      });
+    } else {
+      // If it's not a UUID, look up by name only
+      room = await prisma.room.findUnique({
+        where: { name: roomParam }
+      });
+    }
 
     if (!room) {
-      logger.error({ requestId, roomNameOrId }, 'Room not found');
-      return reply.status(404).send({ error: 'Room not found', requestId });
+      logger.warn({ requestId, roomParam, isUuid: isUuid(roomParam) }, 'Room not found');
+      return reply.status(404).send({ error: 'Room not found' });
     }
 
     // Fetch one extra message to determine hasMore
@@ -916,7 +931,7 @@ fastify.get<{
     logger.error({
       error,
       requestId,
-      roomNameOrId,
+      roomParam,
       before,
       limit,
       stack: (error as Error).stack
