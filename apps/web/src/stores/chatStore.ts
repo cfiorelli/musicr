@@ -49,6 +49,8 @@ export interface ChatState {
   selectedMessage: string | null;
   alternates: Message['alternates'];
   roomUsers: RoomUser[];
+  isLoadingHistory: boolean;
+  hasMoreHistory: boolean;
   debugInfo: {
     connectionInstanceId?: string;
     lastUserJoinedInstanceId?: string;
@@ -69,6 +71,8 @@ export interface ChatState {
   fetchRoomUsers: () => Promise<void>;
   addRoomUser: (user: RoomUser) => void;
   removeRoomUser: (userId: string) => void;
+  fetchMessageHistory: (roomId: string, limit?: number) => Promise<void>;
+  loadOlderMessages: () => Promise<void>;
 }
 
 // Derive URLs dynamically so the app works from localhost or LAN IPs
@@ -112,6 +116,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
   selectedMessage: null,
   alternates: [],
   roomUsers: [],
+  isLoadingHistory: false,
+  hasMoreHistory: true,
   debugInfo: {
     eventLog: []
   },
@@ -618,5 +624,86 @@ export const useChatStore = create<ChatState>((set, get) => ({
       messageId,
       emoji
     }));
+  },
+
+  fetchMessageHistory: async (roomId: string, limit: number = 50) => {
+    try {
+      const response = await fetch(`${API_URL}/api/rooms/${roomId}/messages?limit=${limit}`);
+      if (!response.ok) {
+        console.error('Failed to fetch message history:', response.statusText);
+        return;
+      }
+
+      const data = await response.json();
+      const messages: Message[] = data.map((msg: any) => ({
+        id: msg.id,
+        content: msg.originalText,
+        songTitle: msg.primary?.title,
+        songArtist: msg.primary?.artist,
+        songYear: msg.primary?.year,
+        alternates: msg.alternates || [],
+        reasoning: msg.why,
+        similarity: msg.primary?.score,
+        timestamp: new Date().toISOString(),
+        userId: msg.userId,
+        anonHandle: msg.anonHandle,
+        isOptimistic: false
+      }));
+
+      set({
+        messages,
+        hasMoreHistory: messages.length >= limit
+      });
+    } catch (error) {
+      console.error('Error fetching message history:', error);
+    }
+  },
+
+  loadOlderMessages: async () => {
+    const { messages, currentRoom, isLoadingHistory, hasMoreHistory } = get();
+
+    if (isLoadingHistory || !hasMoreHistory || messages.length === 0) {
+      return;
+    }
+
+    set({ isLoadingHistory: true });
+
+    try {
+      const oldestMessage = messages[0];
+      const response = await fetch(
+        `${API_URL}/api/rooms/${currentRoom}/messages?limit=50&before=${oldestMessage.id}`
+      );
+
+      if (!response.ok) {
+        console.error('Failed to load older messages:', response.statusText);
+        set({ isLoadingHistory: false });
+        return;
+      }
+
+      const data = await response.json();
+      const olderMessages: Message[] = data.map((msg: any) => ({
+        id: msg.id,
+        content: msg.originalText,
+        songTitle: msg.primary?.title,
+        songArtist: msg.primary?.artist,
+        songYear: msg.primary?.year,
+        alternates: msg.alternates || [],
+        reasoning: msg.why,
+        similarity: msg.primary?.score,
+        timestamp: new Date().toISOString(),
+        userId: msg.userId,
+        anonHandle: msg.anonHandle,
+        isOptimistic: false
+      }));
+
+      set({
+        messages: [...olderMessages, ...messages],
+        isLoadingHistory: false,
+        hasMoreHistory: olderMessages.length >= 50
+      });
+    } catch (error) {
+      console.error('Error loading older messages:', error);
+      set({ isLoadingHistory: false });
+    }
   }
 }));
