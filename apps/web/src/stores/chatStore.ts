@@ -1022,7 +1022,10 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
   addReaction: (messageId: string, emoji: string) => {
     const { ws } = get();
-    if (!ws || ws.readyState !== WebSocket.OPEN) return;
+    if (!ws || ws.readyState !== WebSocket.OPEN) {
+      console.warn('addReaction: WebSocket not connected, reaction not sent');
+      return;
+    }
 
     ws.send(JSON.stringify({
       type: 'reaction_add',
@@ -1033,7 +1036,10 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
   removeReaction: (messageId: string, emoji: string) => {
     const { ws } = get();
-    if (!ws || ws.readyState !== WebSocket.OPEN) return;
+    if (!ws || ws.readyState !== WebSocket.OPEN) {
+      console.warn('removeReaction: WebSocket not connected, reaction not sent');
+      return;
+    }
 
     ws.send(JSON.stringify({
       type: 'reaction_remove',
