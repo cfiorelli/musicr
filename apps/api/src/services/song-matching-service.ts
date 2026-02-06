@@ -8,7 +8,6 @@
 
 import { PrismaClient } from '@prisma/client';
 import { logger } from '../config/index.js';
-import { moderationService, ModerationConfig } from './moderation-service.js';
 import { SemanticSearcher } from '../engine/matchers/semantic.js';
 
 // Define Song type based on schema
@@ -51,13 +50,6 @@ export interface SongMatchResult {
     mood?: string;
     tags?: string[];
     fallbackReason?: string;
-  };
-  moderated?: {
-    wasFiltered: boolean;
-    category?: string;
-    reason?: string;
-    originalText: string;
-    replacementText: string;
   };
 }
 
@@ -200,51 +192,14 @@ export class SongMatchingService {
    * Process a text message and find matching songs
    */
   async matchSongs(
-    text: string, 
-    allowExplicit: boolean = false, 
+    text: string,
+    allowExplicit: boolean = false,
     userId?: string,
-    roomAllowsExplicit: boolean = false
+    _roomAllowsExplicit: boolean = false
   ): Promise<SongMatchResult> {
     logger.debug({ text, allowExplicit, userId }, 'Starting song matching process');
 
-    // Step 1: Content moderation
-    const moderationConfig: ModerationConfig = {
-      strictMode: false,
-      allowNSFW: roomAllowsExplicit,
-      logViolations: true
-    };
-
-    const moderationResult = await moderationService.moderateContent(text, moderationConfig);
-    
-    if (!moderationResult.allowed) {
-      // For slurs, decline completely
-      if (moderationResult.category === 'slur') {
-        throw new Error(moderationService.getPolicyDeclineMessage('slur'));
-      }
-      
-      // For other violations, use replacement text or neutral mapping
-      const replacementText = moderationResult.replacementText || 'neutral song';
-      logger.info({
-        originalText: text,
-        replacementText,
-        reason: moderationResult.reason
-      }, 'Content moderated, using neutral mapping');
-      
-      // Return moderation info so caller can provide user feedback
-      const result = await this.processMatchingStrategies(replacementText, allowExplicit, userId);
-      return {
-        ...result,
-        moderated: {
-          wasFiltered: true,
-          category: moderationResult.category || 'unknown',
-          reason: moderationResult.reason || 'Content filtered',
-          originalText: text,
-          replacementText: replacementText
-        }
-      };
-    }
-
-    // Process with clean/original text
+    // Process text directly without moderation
     return await this.processMatchingStrategies(text, allowExplicit, userId);
   }
 

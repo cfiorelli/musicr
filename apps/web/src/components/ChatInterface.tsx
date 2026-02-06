@@ -34,7 +34,6 @@ const ChatInterface = () => {
     connectionStatus,
     userHandle,
     currentRoom,
-    selectAlternate,
     addReaction,
     removeReaction,
     loadOlderMessages,
@@ -148,14 +147,10 @@ const ChatInterface = () => {
       e.preventDefault();
       setInputValue(lastMessage);
     }
-    
+
     if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
       e.preventDefault();
       setShowQuickPalette(true);
-    }
-    
-    if (e.key === 'Escape') {
-      setShowQuickPalette(false);
     }
   };
 
@@ -190,21 +185,33 @@ const ChatInterface = () => {
     }
   }, [connectionStatus, userHandle, activeModal]);
 
-  // Esc key handler for modals
+  // Centralized Escape key handler for all popups/modals
+  // Priority order: emoji picker > why panel > alternatives menu > modals
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && activeModal) {
-        if (activeModal === 'onboarding') {
-          handleOnboardingSkip();
-        } else if (activeModal === 'info') {
-          setActiveModal(null);
+      if (e.key === 'Escape') {
+        // Close in priority order (most specific to least specific)
+        if (emojiPickerOpen) {
+          setEmojiPickerOpen(null);
+        } else if (expandedWhyPanel) {
+          setExpandedWhyPanel(null);
+        } else if (showQuickPalette) {
+          setShowQuickPalette(false);
+          setCurrentSelectedMessage(null);
+          setCurrentAlternates([]);
+        } else if (activeModal) {
+          if (activeModal === 'onboarding') {
+            handleOnboardingSkip();
+          } else if (activeModal === 'info') {
+            setActiveModal(null);
+          }
         }
       }
     };
 
     window.addEventListener('keydown', handleEsc);
     return () => window.removeEventListener('keydown', handleEsc);
-  }, [activeModal]);
+  }, [emojiPickerOpen, expandedWhyPanel, showQuickPalette, activeModal]);
 
   // Auto-scroll to bottom when new messages arrive (if auto-scroll is enabled)
   useEffect(() => {
@@ -499,17 +506,14 @@ const ChatInterface = () => {
         <div className="space-y-3">
           {messages.map((message) => {
               const songDisplay = formatSongDisplay(message);
-              const isModeration = message.isModeration;
-              
+
               return (
                 <div key={message.id} className="group">
                   <div className="flex items-start gap-3">
                     <div className="flex-1">
                       {/* Message content */}
                       <div className="flex items-center gap-2 mb-1.5">
-                        <span className={`font-medium text-sm ${
-                          isModeration ? 'text-orange-400' : 'text-gray-300'
-                        }`}>
+                        <span className="font-medium text-sm text-gray-300">
                           {getUserEmoji(message.anonHandle)} {message.anonHandle}
                         </span>
                         <span className="text-gray-600 text-xs">
@@ -518,18 +522,9 @@ const ChatInterface = () => {
                         {message.isOptimistic && (
                           <span className="text-amber-500 text-xs animate-pulse">sending...</span>
                         )}
-                        {isModeration && (
-                          <span className="text-orange-400 text-xs font-medium bg-orange-500/20 px-2 py-0.5 rounded">
-                            Filtered
-                          </span>
-                        )}
                       </div>
 
-                      <div className={`rounded-lg p-3 text-white transition-all ${
-                        isModeration
-                          ? 'bg-orange-600/20 border border-orange-500/40'
-                          : 'bg-gray-800/60 backdrop-blur-sm border border-gray-700/50 hover:border-gray-600/50'
-                      }`}>
+                      <div className="rounded-lg p-3 text-white transition-all bg-gray-800/60 backdrop-blur-sm border border-gray-700/50 hover:border-gray-600/50">
                         <div className="flex items-center gap-2 flex-wrap text-sm">
                           <span>{message.content}</span>
                           {songDisplay && (
@@ -549,9 +544,10 @@ const ChatInterface = () => {
                                   onClick={() => setExpandedWhyPanel(
                                     expandedWhyPanel === message.id ? null : message.id
                                   )}
-                                  className="text-xs bg-gray-700 hover:bg-gray-600 px-2.5 py-1 rounded-md text-gray-300 font-medium transition-colors"
+                                  className="text-xs px-2 py-1 rounded-md text-gray-500 hover:text-gray-300 hover:bg-gray-700/50 transition-all opacity-0 group-hover:opacity-100 border border-gray-600/30 hover:border-gray-500/50"
+                                  aria-label={expandedWhyPanel === message.id ? 'Hide match explanation' : 'Show why this song matched'}
                                 >
-                                  {expandedWhyPanel === message.id ? '✕ hide' : '💡 why?'}
+                                  {expandedWhyPanel === message.id ? '✕' : '?'}
                                 </button>
                               )}
                               {message.alternates && message.alternates.length > 0 && (
@@ -608,56 +604,49 @@ const ChatInterface = () => {
                       )}
 
                       {/* Emoji Reactions */}
-                      {message.reactions && message.reactions.length > 0 && (
-                        <div className="flex flex-wrap gap-1 mt-2">
-                          {message.reactions.map((reaction) => (
-                            <button
-                              key={reaction.emoji}
-                              onClick={() => {
-                                if (reaction.hasReacted) {
-                                  removeReaction(message.id, reaction.emoji);
-                                } else {
-                                  addReaction(message.id, reaction.emoji);
-                                }
-                              }}
-                              className={`
-                                flex items-center gap-1 px-2 py-1 rounded-full text-sm
-                                transition-all duration-200 hover:scale-110
-                                ${reaction.hasReacted
-                                  ? 'bg-blue-500/30 border-2 border-blue-400'
-                                  : 'bg-white/10 border border-white/20 hover:bg-white/20'
-                                }
-                              `}
-                              title={reaction.users.map(u => u.anonHandle).join(', ')}
-                            >
-                              <span>{reaction.emoji}</span>
-                              <span className="text-xs font-semibold text-white">{reaction.count}</span>
-                            </button>
-                          ))}
-                        </div>
-                      )}
-
-                      {/* Quick Reactions Bar */}
-                      <div className="flex items-center gap-1 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        {quickReactions.map((emoji) => (
+                      <div className="flex flex-wrap items-center gap-1 mt-2">
+                        {message.reactions && message.reactions.length > 0 && message.reactions.map((reaction) => (
                           <button
-                            key={emoji}
-                            onClick={() => addReaction(message.id, emoji)}
-                            className="w-8 h-8 flex items-center justify-center rounded-full
-                                       bg-white/5 hover:bg-white/20 transition-all hover:scale-110"
-                            title={`React with ${emoji}`}
+                            key={reaction.emoji}
+                            onClick={() => {
+                              if (reaction.hasReacted) {
+                                removeReaction(message.id, reaction.emoji);
+                              } else {
+                                addReaction(message.id, reaction.emoji);
+                              }
+                            }}
+                            className={`
+                              flex items-center gap-1 px-2 py-1 rounded-full text-sm
+                              transition-all duration-200 hover:scale-110
+                              ${reaction.hasReacted
+                                ? 'bg-blue-500/30 border-2 border-blue-400'
+                                : 'bg-white/10 border border-white/20 hover:bg-white/20'
+                              }
+                            `}
+                            title={reaction.users.map(u => u.anonHandle).join(', ')}
                           >
-                            {emoji}
+                            <span>{reaction.emoji}</span>
+                            <span className="text-xs font-semibold text-white">{reaction.count}</span>
                           </button>
                         ))}
-                        <button
-                          onClick={() => setEmojiPickerOpen(message.id)}
-                          className="w-8 h-8 flex items-center justify-center rounded-full
-                                     bg-white/5 hover:bg-white/20 transition-all text-sm"
-                          title="More reactions"
-                        >
-                          ➕
-                        </button>
+
+                        {/* Add Reaction Button - Hidden for system messages */}
+                        {message.userId !== 'system' && (
+                          <button
+                            onClick={() => setEmojiPickerOpen(message.id)}
+                            className="
+                              flex items-center gap-1 px-2 py-1 rounded-full text-xs
+                              bg-white/5 hover:bg-white/15 border border-white/10 hover:border-white/30
+                              text-gray-400 hover:text-gray-200
+                              transition-all duration-200
+                              opacity-0 group-hover:opacity-100
+                            "
+                            title="Add reaction"
+                          >
+                            <span>😊</span>
+                            <span className="text-[10px]">+</span>
+                          </button>
+                        )}
                       </div>
 
                       {/* Full Emoji Picker Modal */}
@@ -798,7 +787,11 @@ const ChatInterface = () => {
         <QuickPalette
           messageId={currentSelectedMessage}
           alternates={currentAlternates}
-          onSelect={(alternate) => selectAlternate(currentSelectedMessage, alternate)}
+          onSelect={(alternate) => {
+            // Open YouTube in new tab instead of replacing the song
+            const youtubeUrl = getYouTubeSearchUrl(alternate.title, alternate.artist);
+            window.open(youtubeUrl, '_blank', 'noopener,noreferrer');
+          }}
           onClose={() => {
             setShowQuickPalette(false);
             setCurrentSelectedMessage(null);
@@ -886,7 +879,7 @@ const ChatInterface = () => {
                   }
                 }}
                 placeholder="Or type your own message..."
-                className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-400 transition-colors"
+                className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-400 transition-colors text-base"
                 autoFocus
               />
             </div>

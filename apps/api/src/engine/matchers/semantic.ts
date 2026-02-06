@@ -256,26 +256,27 @@ export class SemanticSearcher {
     embeddingCoverage: number;
   }> {
     const totalSongs = await this.prisma.song.count();
-    
-    // Use raw SQL to count songs with embeddings
+
+    // Use raw SQL to count songs with vector embeddings (vector-only, NOT JSONB)
     const embeddingStats = await this.prisma.$queryRaw<Array<{
       count: bigint;
-      avg_dimension: number;
+      dimensions: number;
     }>>`
-      SELECT 
+      SELECT
         COUNT(*) as count,
-        AVG(array_length(embedding::float[], 1)) as avg_dimension
-      FROM songs 
-      WHERE embedding IS NOT NULL
+        vector_dims(embedding_vector) as dimensions
+      FROM songs
+      WHERE embedding_vector IS NOT NULL
+      LIMIT 1
     `;
 
     const songsWithEmbeddings = Number(embeddingStats[0]?.count || 0);
-    const avgDimensions = embeddingStats[0]?.avg_dimension || 0;
+    const dimensions = embeddingStats[0]?.dimensions || 0;
 
     return {
       totalSongs,
       songsWithEmbeddings,
-      averageEmbeddingDimensions: Math.round(avgDimensions),
+      averageEmbeddingDimensions: dimensions,
       embeddingCoverage: totalSongs > 0 ? songsWithEmbeddings / totalSongs : 0
     };
   }

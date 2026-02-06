@@ -46,19 +46,48 @@ export class UserService {
   /**
    * Get or create user session from request
    * For WebSocket connections, pass null for reply to skip cookie setting
+   * Supports userId from:
+   * 1. X-Musicr-User-Id header (preferred, localStorage-based)
+   * 2. Cookie (backward compatibility)
    */
   async getUserSession(request: FastifyRequest, reply: FastifyReply | null): Promise<UserSession> {
-    // Try to get existing user from cookie
-    const existingUserId = request.cookies?.[this.COOKIE_NAME];
-    
-    if (existingUserId) {
-      const user = await this.getUserById(existingUserId);
+    // Priority 1: Check for X-Musicr-User-Id header (from localStorage)
+    const headerUserId = request.headers['x-musicr-user-id'] as string | undefined;
+
+    if (headerUserId && this.isValidUserSession(headerUserId)) {
+      const user = await this.getUserById(headerUserId);
       if (user) {
         logger.debug({
           userId: user.id,
-          anonHandle: user.anonHandle
-        }, 'Existing user session found');
-        
+          anonHandle: user.anonHandle,
+          source: 'header'
+        }, 'Existing user session found from header');
+
+        return {
+          userId: user.id,
+          anonHandle: user.anonHandle,
+          createdAt: user.createdAt,
+          isNew: false
+        };
+      } else {
+        logger.warn({
+          userId: headerUserId
+        }, 'User ID in header not found in database, will create new user');
+      }
+    }
+
+    // Priority 2: Check for existing user from cookie (backward compatibility)
+    const cookieUserId = request.cookies?.[this.COOKIE_NAME];
+
+    if (cookieUserId) {
+      const user = await this.getUserById(cookieUserId);
+      if (user) {
+        logger.debug({
+          userId: user.id,
+          anonHandle: user.anonHandle,
+          source: 'cookie'
+        }, 'Existing user session found from cookie');
+
         return {
           userId: user.id,
           anonHandle: user.anonHandle,
@@ -71,7 +100,7 @@ export class UserService {
           reply.clearCookie(this.COOKIE_NAME);
         }
         logger.warn({
-          userId: existingUserId
+          userId: cookieUserId
         }, 'User not found for existing cookie, creating new user');
       }
     }

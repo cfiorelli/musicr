@@ -6,17 +6,21 @@ import RoomUserList from './components/RoomUserList';
 import AdminDashboard from './components/AdminDashboard';
 
 function HomePage() {
-  const { connect, disconnect, connectionStatus } = useChatStore();
+  const { connect, disconnect, connectionStatus, setupLifecycleListeners } = useChatStore();
 
   useEffect(() => {
     // Connect to WebSocket on component mount
     connect();
-    
+
+    // Set up lifecycle listeners (visibilitychange, focus, health checks)
+    const cleanupLifecycle = setupLifecycleListeners();
+
     // Cleanup on unmount
     return () => {
+      cleanupLifecycle(); // Remove lifecycle listeners
       disconnect();
     };
-  }, [connect, disconnect]);
+  }, [connect, disconnect, setupLifecycleListeners]);
 
   return (
     <div className="flex flex-col h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-gray-800">

@@ -144,8 +144,8 @@ async function seedDatabase(songs: SeedSong[]) {
         phrases: song.phrases.join(',')
       });
 
-      // Insert song using Prisma client
-      await prisma.song.create({
+      // Insert song using Prisma client (NO JSONB embedding)
+      const createdSong = await prisma.song.create({
         data: {
           title: song.title,
           artist: song.artist,
@@ -153,10 +153,20 @@ async function seedDatabase(songs: SeedSong[]) {
           popularity: song.popularity,
           tags: song.tags,
           phrases: song.phrases,
-          embedding: embedding || null,
           isPlaceholder: isPlaceholder
         }
       });
+
+      // Write vector-only embedding via raw SQL
+      if (embedding && embedding.length > 0) {
+        const embeddingString = `[${embedding.join(',')}]`;
+        await prisma.$executeRawUnsafe(`
+          UPDATE songs
+          SET embedding_vector = $1::vector,
+              updated_at = NOW()
+          WHERE id = $2::uuid
+        `, embeddingString, createdSong.id);
+      }
 
       processed++;
 

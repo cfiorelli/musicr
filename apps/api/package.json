@@ -25,7 +25,8 @@
     "catalog:mb:import": "tsx scripts/ingestion/musicbrainz-bulk-importer.ts",
     "catalog:embed": "tsx scripts/ingestion/embedding-backfill.ts",
     "catalog:safety": "tsx scripts/catalog-safety-check.ts",
-    "catalog:stats": "tsx scripts/catalog-stats.ts"
+    "catalog:stats": "tsx scripts/catalog-stats.ts",
+    "db:jsonb:null": "tsx scripts/db-jsonb-null.ts"
   },
   "dependencies": {
     "@fastify/cookie": "^9.4.0",
