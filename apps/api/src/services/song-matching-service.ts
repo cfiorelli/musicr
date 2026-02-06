@@ -233,7 +233,12 @@ export class SongMatchingService {
     if (matches.length === 0) {
       didFallback = true;
       fallbackReason = 'embedding_search_returned_empty';
-      logger.info({ text: cleanText }, 'Semantic search returned no results, using fallback');
+      logger.warn({
+        text: cleanText,
+        textLength: cleanText.length,
+        originalText: text,
+        message: 'Semantic search returned 0 results - possible connection or query issue'
+      }, 'Semantic search returned no results, using fallback');
       matches = await this.getDefaultMatches();
 
       if (process.env.DEBUG_MATCHING === '1') {
