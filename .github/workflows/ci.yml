@@ -15,17 +15,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'pnpm'
-
-      - name: Enable Corepack
-        run: corepack enable
-
-      - name: Install pnpm via Corepack
-        run: corepack prepare pnpm@8.15.5 --activate
 
       - name: Print versions
         run: |
@@ -47,6 +44,8 @@ jobs:
         env:
           # Run in file-only mode (no database required)
           CI: true
+          # Dummy URL to satisfy env validation; CI mode never connects to DB
+          DATABASE_URL: "postgresql://ci:ci@localhost:5432/ci"
 
       - name: Lint (if configured)
         run: pnpm -r lint || echo "Lint not configured, skipping"
