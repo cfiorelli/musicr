@@ -243,7 +243,7 @@ export class SongMatchingService {
 
       if (process.env.DEBUG_MATCHING === '1') {
         logger.info({
-          did_fallback: true,
+          did_fallback: didFallback,
           fallback_reason: fallbackReason,
           fallback_matches: matches.map(m => ({
             title: m.song.title,
