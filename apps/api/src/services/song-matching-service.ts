@@ -223,16 +223,13 @@ export class SongMatchingService {
 
     // ONLY use semantic/embedding-based matching
     let matches: SongMatch[] = [];
-    let didFallback = false;
-    let fallbackReason = '';
 
     // Embedding-based semantic search
     matches = await this.findEmbeddingMatches(cleanText);
 
     // If semantic search fails, use popular songs as fallback
     if (matches.length === 0) {
-      didFallback = true;
-      fallbackReason = 'embedding_search_returned_empty';
+      const fallbackReason = 'embedding_search_returned_empty';
       logger.warn({
         text: cleanText,
         textLength: cleanText.length,
@@ -243,7 +240,7 @@ export class SongMatchingService {
 
       if (process.env.DEBUG_MATCHING === '1') {
         logger.info({
-          did_fallback: didFallback,
+          did_fallback: true,
           fallback_reason: fallbackReason,
           fallback_matches: matches.map(m => ({
             title: m.song.title,
