@@ -1636,8 +1636,9 @@ fastify.register(async function (fastify) {
               }
             });
 
-            // Send song response to sender
-            connection.send(JSON.stringify(songMatchResult));
+            // Send song response to sender (include DB message ID so client
+            // can replace its optimistic ID and reactions will resolve)
+            connection.send(JSON.stringify({ ...songMatchResult, messageId: savedMessage.id }));
 
           } catch (error) {
             // Handle song matching errors

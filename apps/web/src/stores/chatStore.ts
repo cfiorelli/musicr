@@ -42,6 +42,7 @@ export interface ChatState {
   messages: Message[];
   connectionStatus: 'disconnected' | 'connecting' | 'connected';
   ws: WebSocket | null;
+  userId: string;
   userHandle: string;
   currentRoom: string;
   selectedMessage: string | null;
@@ -151,6 +152,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
   messages: [],
   connectionStatus: 'disconnected',
   ws: null,
+  userId: '',
   userHandle: '',
   currentRoom: 'main',
   selectedMessage: null,
@@ -335,6 +337,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
             if (lastUserMessage && lastUserMessage.isOptimistic) {
               console.log('Updating optimistic message with song result:', data);
               updateMessage(lastUserMessage.id, {
+                ...(data.messageId && { id: data.messageId }),
                 songTitle: data.primary?.title,
                 songArtist: data.primary?.artist,
                 songYear: data.primary?.year,
@@ -355,6 +358,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
             if (lastUserMessage && lastUserMessage.isOptimistic) {
               console.log('Updating optimistic message with song mapping:', data);
               updateMessage(lastUserMessage.id, {
+                ...(data.messageId && { id: data.messageId }),
                 songTitle: data.primary?.title,
                 songArtist: data.primary?.artist,
                 songYear: data.primary?.year,
@@ -403,8 +407,9 @@ export const useChatStore = create<ChatState>((set, get) => ({
               get().addMessage(message);
             }
           } else if (data.type === 'connected') {
-            // Connection confirmation - update user handle
+            // Connection confirmation - update user handle and ID
             set((state) => ({
+              userId: data.userId,
               userHandle: data.anonHandle,
               debugInfo: {
                 ...state.debugInfo,
@@ -509,7 +514,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
                               ...r,
                               count: r.count + 1,
                               users: [...r.users, { userId: data.userId, anonHandle: data.anonHandle }],
-                              hasReacted: data.userId === state.user?.id || r.hasReacted
+                              hasReacted: data.userId === state.userId || r.hasReacted
                             }
                           : r
                       )
@@ -524,7 +529,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
                           emoji: data.emoji,
                           count: 1,
                           users: [{ userId: data.userId, anonHandle: data.anonHandle }],
-                          hasReacted: data.userId === state.user?.id
+                          hasReacted: data.userId === state.userId
                         }
                       ]
                     };
@@ -558,7 +563,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
                           ...r,
                           count: newUsers.length,
                           users: newUsers,
-                          hasReacted: r.hasReacted && data.userId !== state.user?.id
+                          hasReacted: r.hasReacted && data.userId !== state.userId
                         };
                       }
                       return r;
