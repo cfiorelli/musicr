@@ -73,7 +73,8 @@ class EmbeddingBackfill {
       const response = await openai.embeddings.create({
         model: 'text-embedding-3-small',
         input: text,
-        encoding_format: 'float'
+        encoding_format: 'float',
+        dimensions: 384 // Match database vector(384) schema
       });
 
       return response.data[0].embedding;
@@ -110,12 +111,11 @@ class EmbeddingBackfill {
         const embedding = await this.generateEmbedding(text);
         const embeddingString = `[${embedding.join(',')}]`;
 
-        // Update song with native vector
+        // Update song with native vector ONLY (do not write JSONB embedding)
         await prisma.$executeRaw`
           UPDATE songs
           SET embedding_vector = ${embeddingString}::vector,
-              embedding = ${JSON.stringify(embedding)}::jsonb,
-              updated_at = NOW()
+              "updatedAt" = NOW()
           WHERE id = ${song.id}::uuid
         `;
 
@@ -124,8 +124,8 @@ class EmbeddingBackfill {
         this.stats.processed++;
         this.stats.cost += 0.00002; // $0.00002 per embedding (text-embedding-3-small pricing)
 
-        // Rate limit: ~50 requests per minute
-        await this.sleep(1200);
+        // Rate limit: ~250 requests per minute (OpenAI tier 1 allows 500/min)
+        await this.sleep(200);
 
       } catch (error: any) {
         logger.error({ error: error.message, song }, 'Failed to process song');
@@ -168,25 +168,24 @@ class EmbeddingBackfill {
       }
 
       // Process in batches
-      let offset = 0;
-      while (offset < this.stats.total) {
-        const currentLimit = Math.min(this.batchSize, this.stats.total - offset);
-
-        // Fetch batch of songs
-        const songs = await prisma.song.findMany({
-          where: {
-            embeddingVector: null
-          },
-          select: {
-            id: true,
-            title: true,
-            artist: true,
-            album: true,
-            tags: true
-          },
-          take: currentLimit,
-          skip: offset
-        });
+      // Note: No OFFSET needed! As songs get embeddings, they disappear from results automatically
+      let processed = 0;
+      while (processed < this.stats.total) {
+        // Always fetch first N songs without embeddings (no OFFSET)
+        // This works because processed songs get embeddings and are excluded by WHERE clause
+        const songs = await prisma.$queryRaw<Array<{
+          id: string;
+          title: string;
+          artist: string;
+          album: string | null;
+          tags: string[];
+        }>>`
+          SELECT id, title, artist, album, tags
+          FROM songs
+          WHERE embedding_vector IS NULL
+          ORDER BY "createdAt" ASC
+          LIMIT ${this.batchSize}
+        `;
 
         if (songs.length === 0) {
           break;
@@ -194,7 +193,7 @@ class EmbeddingBackfill {
 
         await this.processBatch(songs);
 
-        offset += songs.length;
+        processed += songs.length;
 
         // Log progress
         const percentComplete = ((this.stats.processed + this.stats.skipped + this.stats.errors) / this.stats.total * 100).toFixed(1);

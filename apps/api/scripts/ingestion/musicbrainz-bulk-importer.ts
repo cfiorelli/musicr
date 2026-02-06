@@ -68,7 +68,9 @@ class BulkImporter {
     const reason = getPlaceholderReason({
       title: song.title,
       artist: song.artist,
-      phrases: song.tags.join(',') // Check tags as phrases too
+      phrases: song.tags.join(','), // Check tags as phrases too
+      source: song.source,
+      mbid: song.mbid
     });
     return reason;
   }
@@ -130,7 +132,10 @@ class BulkImporter {
   async importFromJsonl(filePath: string): Promise<void> {
     logger.info({ filePath, dryRun: this.dryRun }, 'Starting bulk import');
 
-    await prisma.$connect();
+    // Only connect to database if not in dry-run mode
+    if (!this.dryRun) {
+      await prisma.$connect();
+    }
 
     try {
       const fileStream = createReadStream(filePath);
@@ -194,7 +199,10 @@ class BulkImporter {
       }
 
     } finally {
-      await prisma.$disconnect();
+      // Only disconnect if we connected
+      if (!this.dryRun) {
+        await prisma.$disconnect();
+      }
     }
   }
 
@@ -210,11 +218,50 @@ class BulkImporter {
  * Main execution
  */
 async function main() {
-  const args = process.argv.slice(2);
+  // Verify DATABASE_URL is set (required for Prisma)
+  if (!process.env.DATABASE_URL) {
+    logger.error('DATABASE_URL environment variable is not set');
+    logger.error('');
+    logger.error('To run the importer, set DATABASE_URL:');
+    logger.error('  export DATABASE_URL="postgresql://user:pass@host:5432/dbname"');
+    logger.error('  pnpm catalog:mb:import -- --dry-run --in=./data/musicbrainz/musicbrainz_50k.jsonl');
+    logger.error('');
+    logger.error('Or inline:');
+    logger.error('  DATABASE_URL="postgresql://..." pnpm catalog:mb:import -- --dry-run --in=./path.jsonl');
+    logger.error('');
+    process.exit(1);
+  }
+
+  // Parse CLI args, filtering out pnpm's "--" delimiter
+  const args = process.argv.slice(2).filter(arg => arg !== '--');
   const dryRun = args.includes('--dry-run');
-  const fileArg = args.find(arg => !arg.startsWith('--'));
-  const inputFile = fileArg || path.join(__dirname, 'musicbrainz-50k.jsonl');
+
+  // Support both --in=PATH and --in PATH
+  let inputFile: string;
+  const inArgIdx = args.findIndex(arg => arg === '--in' || arg.startsWith('--in='));
+  if (inArgIdx !== -1) {
+    const inArg = args[inArgIdx];
+    if (inArg.startsWith('--in=')) {
+      inputFile = inArg.split('=')[1];
+    } else if (inArgIdx + 1 < args.length) {
+      inputFile = args[inArgIdx + 1];
+    } else {
+      inputFile = path.join(__dirname, 'musicbrainz-50k.jsonl');
+    }
+  } else {
+    // Fallback: look for non-flag arg
+    const fileArg = args.find(arg => !arg.startsWith('--'));
+    inputFile = fileArg || path.join(__dirname, 'musicbrainz-50k.jsonl');
+  }
+
+  // Resolve relative paths
+  if (!path.isAbsolute(inputFile)) {
+    inputFile = path.resolve(process.cwd(), inputFile);
+  }
+
   const quarantineFile = inputFile.replace(/\.jsonl$/, '.quarantine.txt');
+
+  logger.info({ inputFile, dryRun, quarantineFile }, 'MusicBrainz Bulk Importer - Starting');
 
   const importer = new BulkImporter(dryRun, quarantineFile);
   await importer.importFromJsonl(inputFile);

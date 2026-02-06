@@ -312,30 +312,62 @@ class MusicBrainzGenreFetcher {
  */
 async function main() {
   const args = process.argv.slice(2);
+
+  // Parse CLI arguments
   const targetArg = args.find(arg => arg.startsWith('--target='));
   const target = targetArg ? parseInt(targetArg.split('=')[1], 10) : 50000;
 
-  const outputPath = path.join(__dirname, 'musicbrainz-50k.jsonl');
+  const outArg = args.find(arg => arg.startsWith('--out='));
+  const defaultOutput = path.join(__dirname, 'musicbrainz-50k.jsonl');
+  let outputPath = outArg ? outArg.split('=')[1] : defaultOutput;
+
+  // Resolve relative paths
+  if (!path.isAbsolute(outputPath)) {
+    outputPath = path.resolve(process.cwd(), outputPath);
+  }
+
+  const checkpointArg = args.find(arg => arg.startsWith('--checkpoint='));
+  let checkpointPath: string | undefined;
+  if (checkpointArg) {
+    checkpointPath = checkpointArg.split('=')[1];
+    if (!path.isAbsolute(checkpointPath)) {
+      checkpointPath = path.resolve(process.cwd(), checkpointPath);
+    }
+  }
 
   logger.info({
     target,
     outputPath,
+    checkpointPath: checkpointPath || `${outputPath.replace(/\.(jsonl|json)$/, '.checkpoint.json')}`,
     genres: BROAD_GENRES
   }, 'MusicBrainz Genre Fetcher');
 
   const fetcher = new MusicBrainzGenreFetcher(outputPath, target);
+
+  // Override checkpoint path if provided
+  if (checkpointPath) {
+    (fetcher as any).checkpointFile = checkpointPath;
+  }
+
   await fetcher.fetch();
 
   logger.info('='.repeat(60));
   logger.info('FETCH COMPLETE');
   logger.info('='.repeat(60));
   logger.info(`Output: ${outputPath}`);
-  logger.info(`Checkpoint: ${outputPath.replace('.jsonl', '.checkpoint.json')}`);
+  logger.info(`Checkpoint: ${(fetcher as any).checkpointFile}`);
   logger.info('='.repeat(60));
   logger.info('Next steps:');
   logger.info('  1. Run: pnpm catalog:mb:import');
   logger.info('  2. Run: pnpm catalog:embed');
   logger.info('='.repeat(60));
+  logger.info('');
+  logger.info('Usage examples:');
+  logger.info('  pnpm catalog:mb:fetch');
+  logger.info('  pnpm catalog:mb:fetch --target=10000');
+  logger.info('  pnpm catalog:mb:fetch --out=./custom.jsonl');
+  logger.info('  pnpm catalog:mb:fetch --out=./foo.jsonl --checkpoint=./foo.checkpoint.json');
+  logger.info('');
 
   process.exit(0);
 }

@@ -36,8 +36,6 @@ export interface Message {
   userId: string;
   anonHandle: string;
   isOptimistic?: boolean;
-  isModeration?: boolean;
-  moderationCategory?: string;
 }
 
 export interface ChatState {
@@ -57,10 +55,19 @@ export interface ChatState {
     lastUserLeftInstanceId?: string;
     lastReactionInstanceId?: string;
     eventLog: Array<{ type: string; instanceId?: string; timestamp: string }>;
+    lastMessageTime?: number;
+    lastHeartbeatTime?: number;
+    reconnectAttempts?: number;
+    isReconnecting?: boolean;
   };
 
   connect: () => void;
   disconnect: () => void;
+  reconnect: () => void;
+  checkConnectionHealth: () => void;
+  handleVisibilityChange: () => void;
+  setupLifecycleListeners: () => () => void;
+  resyncAfterReconnect: () => Promise<void>;
   sendMessage: (content: string) => void;
   addMessage: (message: Message) => void;
   updateMessage: (id: string, updates: Partial<Message>) => void;
@@ -107,6 +114,39 @@ const derived = deriveBaseUrls();
 const API_URL = VITE_API_URL || derived.apiUrl;
 const WS_URL = VITE_WS_URL || derived.wsUrl;
 
+// Generate UUID v4
+function generateUUID(): string {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    const r = Math.random() * 16 | 0;
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+
+// Get or create user ID from localStorage
+function getUserId(): string {
+  const STORAGE_KEY = 'musicr_user_id';
+
+  try {
+    let userId = localStorage.getItem(STORAGE_KEY);
+
+    if (!userId) {
+      // Generate new UUID and store it
+      userId = generateUUID();
+      localStorage.setItem(STORAGE_KEY, userId);
+      console.log('[USER_ID] Generated new user ID:', userId);
+    } else {
+      console.log('[USER_ID] Using existing user ID from localStorage');
+    }
+
+    return userId;
+  } catch (error) {
+    // Fallback if localStorage is not available
+    console.error('[USER_ID] localStorage not available, using session-only ID:', error);
+    return generateUUID();
+  }
+}
+
 export const useChatStore = create<ChatState>((set, get) => ({
   messages: [],
   connectionStatus: 'disconnected',
@@ -124,8 +164,12 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
   getUserSession: async () => {
     try {
+      const userId = getUserId();
       const response = await fetch(`${API_URL}/user/session`, {
-        credentials: 'include'
+        credentials: 'include', // Keep for backward compatibility
+        headers: {
+          'X-Musicr-User-Id': userId
+        }
       });
       const data = await response.json();
       set({ userHandle: data.user.handle });
@@ -138,9 +182,13 @@ export const useChatStore = create<ChatState>((set, get) => ({
   fetchRoomUsers: async () => {
     try {
       const { currentRoom, userHandle } = get();
+      const userId = getUserId();
       console.log('Fetching room users for room:', currentRoom);
       const response = await fetch(`${API_URL}/rooms/${currentRoom}/users`, {
-        credentials: 'include'
+        credentials: 'include', // Keep for backward compatibility
+        headers: {
+          'X-Musicr-User-Id': userId
+        }
       });
       const data = await response.json();
       console.log('API returned room users:', data);
@@ -200,22 +248,84 @@ export const useChatStore = create<ChatState>((set, get) => ({
     getUserSession();
 
     set({ connectionStatus: 'connecting' });
-    
+
     try {
-      const websocket = new WebSocket(WS_URL);
+      // Include userId as query parameter for WebSocket connection
+      const userId = getUserId();
+      const wsUrlWithUserId = `${WS_URL}?userId=${encodeURIComponent(userId)}`;
+      const websocket = new WebSocket(wsUrlWithUserId);
       
-      websocket.onopen = () => {
+      websocket.onopen = async () => {
         console.log('WebSocket connected');
-        set({ connectionStatus: 'connected', ws: websocket });
+        const wasReconnecting = get().debugInfo.isReconnecting;
+
+        set((state) => ({
+          connectionStatus: 'connected',
+          ws: websocket,
+          debugInfo: {
+            ...state.debugInfo,
+            reconnectAttempts: 0, // Reset on successful connection
+            isReconnecting: false,
+            lastMessageTime: Date.now(),
+            eventLog: [
+              ...state.debugInfo.eventLog,
+              { type: 'websocket_open', timestamp: new Date().toISOString() }
+            ].slice(-50)
+          }
+        }));
+
+        // If this was a reconnection, resync state
+        if (wasReconnecting) {
+          const isDebug = window.location.search.includes('debug=1');
+          if (isDebug) console.log('[RECONNECT] Successful reconnection, resyncing state');
+          await get().resyncAfterReconnect();
+        }
 
         // Room joining happens automatically on the server side
+
+        // Start heartbeat mechanism (ping every 30 seconds)
+        const heartbeatInterval = setInterval(() => {
+          const { ws: currentWs, connectionStatus } = get();
+          if (currentWs && currentWs.readyState === WebSocket.OPEN && connectionStatus === 'connected') {
+            try {
+              currentWs.send(JSON.stringify({ type: 'ping' }));
+              const isDebug = window.location.search.includes('debug=1');
+              if (isDebug) console.log('[HEARTBEAT] Sent ping');
+            } catch (error) {
+              console.error('[HEARTBEAT] Failed to send ping:', error);
+            }
+          } else {
+            clearInterval(heartbeatInterval);
+          }
+        }, 30000);
       };
       
       websocket.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
           console.log('WebSocket received data:', data);
-          
+
+          // Track message receipt time for stale connection detection
+          set((state) => ({
+            debugInfo: {
+              ...state.debugInfo,
+              lastMessageTime: Date.now()
+            }
+          }));
+
+          // Handle heartbeat pong responses
+          if (data.type === 'pong') {
+            const isDebug = window.location.search.includes('debug=1');
+            if (isDebug) console.log('[HEARTBEAT] Received pong');
+            set((state) => ({
+              debugInfo: {
+                ...state.debugInfo,
+                lastHeartbeatTime: Date.now()
+              }
+            }));
+            return; // Don't process further
+          }
+
           if (data.type === 'song') {
             // Update optimistic message with song result
             const { messages, updateMessage } = get();
@@ -472,18 +582,6 @@ export const useChatStore = create<ChatState>((set, get) => ({
                 }
               };
             });
-          } else if (data.type === 'moderation_notice') {
-            // Content was moderated - show notice to sender
-            const moderationMessage: Message = {
-              id: generateId(),
-              content: data.message,
-              timestamp: new Date().toISOString(),
-              userId: 'system',
-              anonHandle: 'System',
-              isModeration: true,
-              moderationCategory: data.category
-            };
-            get().addMessage(moderationMessage);
           } else if (data.type === 'error') {
             // Server error - remove optimistic message and show error
             console.error('Server error:', data.message);
@@ -515,13 +613,57 @@ export const useChatStore = create<ChatState>((set, get) => ({
       };
       
       websocket.onerror = (error) => {
-        console.error('WebSocket error:', error);
-        set({ connectionStatus: 'disconnected' });
+        const isDebug = window.location.search.includes('debug=1');
+        if (isDebug) {
+          console.error('[ERROR] WebSocket error:', error);
+        } else {
+          console.error('WebSocket error:', error);
+        }
+
+        set((state) => ({
+          connectionStatus: 'disconnected',
+          debugInfo: {
+            ...state.debugInfo,
+            eventLog: [
+              ...state.debugInfo.eventLog,
+              { type: 'websocket_error', timestamp: new Date().toISOString() }
+            ].slice(-50)
+          }
+        }));
+        // Note: onclose will be called after onerror, which will trigger reconnect
       };
       
-      websocket.onclose = () => {
-        console.log('WebSocket disconnected');
-        set({ connectionStatus: 'disconnected', ws: null });
+      websocket.onclose = (event) => {
+        const isDebug = window.location.search.includes('debug=1');
+        if (isDebug) {
+          console.log('[DISCONNECT] WebSocket closed:', {
+            code: event.code,
+            reason: event.reason,
+            wasClean: event.wasClean
+          });
+        } else {
+          console.log('WebSocket disconnected');
+        }
+
+        set((state) => ({
+          connectionStatus: 'disconnected',
+          ws: null,
+          debugInfo: {
+            ...state.debugInfo,
+            eventLog: [
+              ...state.debugInfo.eventLog,
+              {
+                type: 'websocket_close',
+                timestamp: new Date().toISOString(),
+                code: event.code,
+                wasClean: event.wasClean
+              }
+            ].slice(-50)
+          }
+        }));
+
+        // Trigger reconnection with exponential backoff
+        get().reconnect();
       };
       
     } catch (error) {
@@ -535,6 +677,275 @@ export const useChatStore = create<ChatState>((set, get) => ({
     if (ws) {
       ws.close();
       set({ ws: null, connectionStatus: 'disconnected' });
+    }
+  },
+
+  reconnect: () => {
+    const { debugInfo, connectionStatus } = get();
+    const isDebug = window.location.search.includes('debug=1');
+
+    if (isDebug) {
+      console.log('[RECONNECT] Attempting reconnect, current status:', connectionStatus);
+    }
+
+    // Don't reconnect if already connecting or connected
+    if (connectionStatus === 'connecting' || connectionStatus === 'connected') {
+      if (isDebug) {
+        console.log('[RECONNECT] Skipping - already', connectionStatus);
+      }
+      return;
+    }
+
+    // Calculate exponential backoff delay
+    const attempts = debugInfo.reconnectAttempts || 0;
+    const baseDelay = 1000; // 1 second
+    const maxDelay = 30000; // 30 seconds
+    const delay = Math.min(baseDelay * Math.pow(2, attempts), maxDelay);
+
+    if (isDebug) {
+      console.log(`[RECONNECT] Scheduling reconnect in ${delay}ms (attempt ${attempts + 1})`);
+    }
+
+    set((state) => ({
+      debugInfo: {
+        ...state.debugInfo,
+        reconnectAttempts: attempts + 1,
+        isReconnecting: true,
+        eventLog: [
+          ...state.debugInfo.eventLog,
+          { type: 'reconnect_scheduled', timestamp: new Date().toISOString() }
+        ].slice(-50)
+      }
+    }));
+
+    setTimeout(() => {
+      const currentState = get();
+      if (currentState.connectionStatus === 'disconnected') {
+        if (isDebug) {
+          console.log('[RECONNECT] Executing scheduled reconnect');
+        }
+        currentState.connect();
+      }
+    }, delay);
+  },
+
+  checkConnectionHealth: () => {
+    const { ws, debugInfo, connectionStatus } = get();
+    const isDebug = window.location.search.includes('debug=1');
+    const now = Date.now();
+    const staleThreshold = 45000; // 45 seconds without activity = stale
+
+    const lastActivity = Math.max(
+      debugInfo.lastMessageTime || 0,
+      debugInfo.lastHeartbeatTime || 0
+    );
+
+    const timeSinceActivity = now - lastActivity;
+
+    if (isDebug) {
+      console.log('[HEALTH] Checking connection health:', {
+        status: connectionStatus,
+        wsReadyState: ws?.readyState,
+        timeSinceActivity: Math.round(timeSinceActivity / 1000) + 's',
+        isStale: timeSinceActivity > staleThreshold
+      });
+    }
+
+    // If connected but stale, treat as disconnected and reconnect
+    if (connectionStatus === 'connected' && timeSinceActivity > staleThreshold) {
+      if (isDebug) {
+        console.log('[HEALTH] Connection is stale, forcing reconnect');
+      }
+
+      set((state) => ({
+        debugInfo: {
+          ...state.debugInfo,
+          eventLog: [
+            ...state.debugInfo.eventLog,
+            { type: 'stale_connection_detected', timestamp: new Date().toISOString() }
+          ].slice(-50)
+        }
+      }));
+
+      get().disconnect();
+      get().reconnect();
+    }
+
+    // If WebSocket exists but is not OPEN, reconnect
+    if (ws && ws.readyState !== WebSocket.OPEN && connectionStatus === 'connected') {
+      if (isDebug) {
+        console.log('[HEALTH] WebSocket not OPEN but status is connected, reconnecting');
+      }
+      get().disconnect();
+      get().reconnect();
+    }
+  },
+
+  handleVisibilityChange: () => {
+    const { connectionStatus, debugInfo } = get();
+    const isDebug = window.location.search.includes('debug=1');
+
+    if (isDebug) {
+      console.log('[VISIBILITY] Page visibility changed:', {
+        hidden: document.hidden,
+        status: connectionStatus
+      });
+    }
+
+    set((state) => ({
+      debugInfo: {
+        ...state.debugInfo,
+        eventLog: [
+          ...state.debugInfo.eventLog,
+          {
+            type: document.hidden ? 'page_hidden' : 'page_visible',
+            timestamp: new Date().toISOString()
+          }
+        ].slice(-50)
+      }
+    }));
+
+    // When page becomes visible again
+    if (!document.hidden) {
+      if (isDebug) {
+        console.log('[VISIBILITY] Page visible, checking connection health');
+      }
+
+      // Check connection health immediately
+      get().checkConnectionHealth();
+
+      // If disconnected, reconnect
+      if (connectionStatus === 'disconnected') {
+        if (isDebug) {
+          console.log('[VISIBILITY] Disconnected, triggering reconnect');
+        }
+        get().reconnect();
+      }
+    }
+  },
+
+  setupLifecycleListeners: () => {
+    const isDebug = window.location.search.includes('debug=1');
+
+    if (isDebug) {
+      console.log('[LIFECYCLE] Setting up visibility and focus listeners');
+    }
+
+    // Handle page visibility changes (tab switching, app backgrounding)
+    const handleVisibility = () => get().handleVisibilityChange();
+
+    // Handle page focus (additional safety net)
+    const handleFocus = () => {
+      const { connectionStatus } = get();
+      if (isDebug) {
+        console.log('[FOCUS] Page focused, status:', connectionStatus);
+      }
+
+      // Check health when page gains focus
+      get().checkConnectionHealth();
+
+      if (connectionStatus === 'disconnected') {
+        if (isDebug) {
+          console.log('[FOCUS] Disconnected on focus, reconnecting');
+        }
+        get().reconnect();
+      }
+    };
+
+    // Setup listeners
+    document.addEventListener('visibilitychange', handleVisibility);
+    window.addEventListener('focus', handleFocus);
+
+    // Set up periodic health checks (every 30 seconds)
+    const healthCheckInterval = setInterval(() => {
+      get().checkConnectionHealth();
+    }, 30000);
+
+    // Return cleanup function
+    return () => {
+      if (isDebug) {
+        console.log('[LIFECYCLE] Cleaning up listeners');
+      }
+      document.removeEventListener('visibilitychange', handleVisibility);
+      window.removeEventListener('focus', handleFocus);
+      clearInterval(healthCheckInterval);
+    };
+  },
+
+  resyncAfterReconnect: async () => {
+    const { currentRoom, messages } = get();
+    const userId = getUserId();
+    const isDebug = window.location.search.includes('debug=1');
+
+    if (isDebug) {
+      console.log('[RESYNC] Starting post-reconnect sync');
+    }
+
+    try {
+      // Fetch recent messages (last 20) to catch anything missed
+      const response = await fetch(`${API_URL}/rooms/${currentRoom}/messages?limit=20`, {
+        headers: {
+          'X-Musicr-User-Id': userId
+        }
+      });
+
+      if (!response.ok) {
+        console.error('[RESYNC] Failed to fetch recent messages:', response.statusText);
+        return;
+      }
+
+      const data = await response.json();
+      const recentMessages: Message[] = (data.messages || data).map((msg: any) => ({
+        id: msg.id,
+        content: msg.originalText,
+        songTitle: msg.chosenSong?.title || msg.primary?.title,
+        songArtist: msg.chosenSong?.artist || msg.primary?.artist,
+        songYear: msg.chosenSong?.year || msg.primary?.year,
+        alternates: msg.alternates || [],
+        reasoning: msg.why,
+        similarity: msg.primary?.score,
+        timestamp: msg.timestamp || new Date().toISOString(),
+        userId: msg.userId,
+        anonHandle: msg.anonHandle,
+        isOptimistic: false,
+        reactions: msg.reactions || []
+      }));
+
+      // Merge with existing messages, avoiding duplicates
+      const existingIds = new Set(messages.map(m => m.id));
+      const newMessages = recentMessages.filter(m => !existingIds.has(m.id));
+
+      if (newMessages.length > 0) {
+        if (isDebug) {
+          console.log(`[RESYNC] Adding ${newMessages.length} missed messages`);
+        }
+
+        set((state) => ({
+          messages: [...state.messages, ...newMessages].sort(
+            (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+          ),
+          debugInfo: {
+            ...state.debugInfo,
+            eventLog: [
+              ...state.debugInfo.eventLog,
+              {
+                type: 'resync_complete',
+                timestamp: new Date().toISOString()
+              }
+            ].slice(-50)
+          }
+        }));
+      } else {
+        if (isDebug) {
+          console.log('[RESYNC] No new messages to add');
+        }
+      }
+
+      // Re-fetch room users to ensure presence is correct
+      await get().fetchRoomUsers();
+
+    } catch (error) {
+      console.error('[RESYNC] Error during resync:', error);
     }
   },
 
@@ -671,6 +1082,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
     set({ isLoadingHistory: true });
 
     try {
+      const userId = getUserId();
       const oldestMessage = messages[0];
       const oldCount = messages.length;
       const fetchUrl = `${API_URL}/rooms/${currentRoom}/messages?limit=50&before=${oldestMessage.id}`;
@@ -679,7 +1091,11 @@ export const useChatStore = create<ChatState>((set, get) => ({
         console.log('[STORE] Fetching older messages from:', fetchUrl);
       }
 
-      const response = await fetch(fetchUrl);
+      const response = await fetch(fetchUrl, {
+        headers: {
+          'X-Musicr-User-Id': userId
+        }
+      });
 
       if (!response.ok) {
         const errorBody = await response.text().catch(() => 'Unable to read response body');
@@ -708,7 +1124,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
         timestamp: msg.timestamp || new Date().toISOString(),
         userId: msg.userId,
         anonHandle: msg.anonHandle,
-        isOptimistic: false
+        isOptimistic: false,
+        reactions: msg.reactions || []
       }));
 
       const newHasMore = data.hasMore !== undefined ? data.hasMore : olderMessages.length >= 50;

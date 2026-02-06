@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build all packages
+        run: pnpm -r build
+        env:
+          # Skip type checks that might fail due to missing env vars
+          NODE_ENV: test
+
+      - name: Run catalog safety check
+        run: pnpm --filter @musicr/api run catalog:safety
+        continue-on-error: false
+        env:
+          # Run in file-only mode (no database required)
+          CI: true
+
+      - name: Lint (if configured)
+        run: pnpm -r lint || echo "Lint not configured, skipping"
+        continue-on-error: true

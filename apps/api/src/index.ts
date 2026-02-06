@@ -572,10 +572,6 @@ fastify.post('/api/map', async (request, reply) => {
     if (error instanceof Error && error.name === 'ZodError') {
       const errorResponse = createErrorResponse('validation_error', error.message, 400);
       reply.code(400).send(errorResponse);
-    } else if (error instanceof Error && error.message.includes('inappropriate language')) {
-      // Handle moderation errors
-      const errorResponse = createErrorResponse('content_policy', error.message, 400);
-      reply.code(400).send(errorResponse);
     } else {
       const errorResponse = createErrorResponse('internal_error', 'Internal server error', 500);
       reply.code(500).send(errorResponse);
@@ -844,6 +840,10 @@ fastify.get<{
   }
 
   try {
+    // Get current user session
+    const userSession = await userService.getUserSession(request, reply);
+    const currentUserId = userSession.userId;
+
     // Lookup room by UUID or name (but never pass non-UUID to id field)
     let room;
     if (isUuid(roomParam)) {
@@ -902,6 +902,18 @@ fastify.get<{
             artist: true,
             year: true
           }
+        },
+        reactions: {
+          include: {
+            user: {
+              select: {
+                anonHandle: true
+              }
+            }
+          },
+          orderBy: {
+            createdAt: 'asc'
+          }
         }
       },
       orderBy: {
@@ -921,22 +933,53 @@ fastify.get<{
     const messagesToReturn = hasMore ? messages.slice(0, limit) : messages;
 
     // Reverse to get chronological order (oldest first)
-    const messagesWithDisplay = messagesToReturn.reverse().map(msg => ({
-      id: msg.id,
-      type: 'display',
-      originalText: msg.text,
-      userId: msg.userId,
-      anonHandle: msg.user.anonHandle,
-      primary: msg.scores ? (msg.scores as any).primary : null,
-      alternates: msg.scores ? (msg.scores as any).alternates : [],
-      why: msg.scores ? `Matched using ${(msg.scores as any).strategy}` : '',
-      timestamp: msg.createdAt.toISOString(),
-      chosenSong: msg.song ? {
-        title: msg.song.title,
-        artist: msg.song.artist,
-        year: msg.song.year
-      } : null
-    }));
+    const messagesWithDisplay = messagesToReturn.reverse().map(msg => {
+      // Group reactions by emoji
+      const reactionsMap = new Map<string, {
+        emoji: string;
+        count: number;
+        users: Array<{ userId: string; anonHandle: string }>;
+        hasReacted: boolean;
+      }>();
+
+      for (const reaction of msg.reactions) {
+        const existing = reactionsMap.get(reaction.emoji);
+        const reactionUser = { userId: reaction.userId, anonHandle: reaction.user.anonHandle };
+
+        if (existing) {
+          existing.count++;
+          existing.users.push(reactionUser);
+          if (reaction.userId === currentUserId) {
+            existing.hasReacted = true;
+          }
+        } else {
+          reactionsMap.set(reaction.emoji, {
+            emoji: reaction.emoji,
+            count: 1,
+            users: [reactionUser],
+            hasReacted: reaction.userId === currentUserId
+          });
+        }
+      }
+
+      return {
+        id: msg.id,
+        type: 'display',
+        originalText: msg.text,
+        userId: msg.userId,
+        anonHandle: msg.user.anonHandle,
+        primary: msg.scores ? (msg.scores as any).primary : null,
+        alternates: msg.scores ? (msg.scores as any).alternates : [],
+        why: msg.scores ? `Matched using ${(msg.scores as any).strategy}` : '',
+        timestamp: msg.createdAt.toISOString(),
+        chosenSong: msg.song ? {
+          title: msg.song.title,
+          artist: msg.song.artist,
+          year: msg.song.year
+        } : null,
+        reactions: Array.from(reactionsMap.values())
+      };
+    });
 
     logger.info({
       requestId,
@@ -1217,6 +1260,12 @@ fastify.post('/api/admin/migrate', async (request, reply) => {
 fastify.register(async function (fastify) {
   fastify.get('/ws', { websocket: true }, async (connection, req) => {
     try {
+      // Extract userId from query parameter and add to headers for getUserSession
+      const queryUserId = (req.query as any)?.userId;
+      if (queryUserId && !req.headers['x-musicr-user-id']) {
+        req.headers['x-musicr-user-id'] = queryUserId;
+      }
+
       // Get or create user session
       const userSession = await userService.getUserSession(req, null);
       
@@ -1338,6 +1387,12 @@ fastify.register(async function (fastify) {
               type: 'error',
               message: 'Invalid message format. Expected: {type:"msg"|"pref", ...}'
             }));
+            return;
+          }
+
+          // Handle heartbeat ping
+          if (messageData.type === 'ping') {
+            connection.send(JSON.stringify({ type: 'pong' }));
             return;
           }
 
@@ -1584,103 +1639,34 @@ fastify.register(async function (fastify) {
             // Send song response to sender
             connection.send(JSON.stringify(songMatchResult));
 
-          } catch (moderationError) {
-            // Handle moderation errors in WebSocket
-            if (moderationError instanceof Error && moderationError.message.includes('inappropriate language')) {
-              connection.send(JSON.stringify({
-                type: 'moderation_error',
-                message: moderationError.message,
-                timestamp: Date.now()
-              }));
-              return;
-            }
-            throw moderationError; // Re-throw other errors
+          } catch (error) {
+            // Handle song matching errors
+            logger.error({ error, userId: userSession.userId }, 'Error in song matching');
+            connection.send(JSON.stringify({
+              type: 'error',
+              message: 'Failed to match song',
+              timestamp: Date.now()
+            }));
+            return;
           }
 
           // Only broadcast if we have a valid result
           if (songMatchResult) {
-            // Check if content was moderated and provide feedback to sender
-            if (songMatchResult.moderated?.wasFiltered) {
-              // Send moderation notice to sender only
-              connection.send(JSON.stringify({
-                type: 'moderation_notice',
-                category: songMatchResult.moderated.category,
-                originalText: songMatchResult.moderated.originalText,
-                message: `Your message was filtered (${songMatchResult.moderated.category}): ${songMatchResult.moderated.reason}. Showing results for: "${songMatchResult.moderated.replacementText}"`,
-                timestamp: Date.now()
-              }));
-            }
+            // Broadcast song match to all users in the room
+            const displayMessage = {
+              type: 'display',
+              id: savedMessage.id,
+              originalText: messageData.text,
+              userId: userSession.userId,
+              anonHandle: userSession.anonHandle,
+              primary: songMatchResult.primary,
+              alternates: songMatchResult.alternates,
+              why: songMatchResult.why,
+              similarity: songMatchResult.scores.confidence,
+              timestamp: new Date().toISOString(),
+            };
 
-            // Handle per-user content filtering
-            if (songMatchResult.moderated?.wasFiltered) {
-              // Content was filtered - we need to get both original and filtered results
-              // Get unfiltered result for users who allow NSFW
-              const unfilteredResult = await songMatchingService.matchSongs(
-                songMatchResult.moderated.originalText,
-                true, // allowExplicit = true for unfiltered version
-                userSession.userId,
-                true  // roomAllowsExplicit = true to bypass room filtering
-              );
-
-              // Create display messages for both versions
-              const originalDisplayMessage = {
-                type: 'display',
-                id: savedMessage.id,
-                originalText: songMatchResult.moderated.originalText, // Original NSFW text
-                userId: userSession.userId,
-                anonHandle: userSession.anonHandle,
-                primary: unfilteredResult.primary,
-                alternates: unfilteredResult.alternates,
-                why: unfilteredResult.why,
-                similarity: unfilteredResult.scores.confidence,
-                timestamp: new Date().toISOString(),
-              };
-
-              const filteredDisplayMessage = {
-                type: 'display',
-                id: savedMessage.id,
-                originalText: songMatchResult.moderated.replacementText, // Show the filtered replacement text
-                userId: userSession.userId,
-                anonHandle: userSession.anonHandle,
-                primary: songMatchResult.primary,
-                alternates: songMatchResult.alternates,
-                why: songMatchResult.why,
-                similarity: songMatchResult.scores.confidence,
-                timestamp: new Date().toISOString(),
-              };
-
-              // Broadcast different versions based on user preferences
-              const broadcastResult = connectionManager.broadcastWithFiltering(
-                defaultRoom.id, 
-                originalDisplayMessage,  // Users with NSFW allowed get original
-                filteredDisplayMessage,  // Users with family-friendly get filtered
-                connectionId
-              );
-
-              logger.info({
-                originalSent: broadcastResult.originalSent,
-                filteredSent: broadcastResult.filteredSent,
-                originalText: songMatchResult.moderated.originalText,
-                filteredText: songMatchResult.moderated.replacementText
-              }, 'Broadcast completed with per-user filtering');
-
-            } else {
-              // Content was not filtered - broadcast normally to everyone
-              const displayMessage = {
-                type: 'display',
-                id: savedMessage.id,
-                originalText: messageData.text,
-                userId: userSession.userId,
-                anonHandle: userSession.anonHandle,
-                primary: songMatchResult.primary,
-                alternates: songMatchResult.alternates,
-                why: songMatchResult.why,
-                similarity: songMatchResult.scores.confidence,
-                timestamp: new Date().toISOString(),
-              };
-
-              connectionManager.broadcastToRoom(defaultRoom.id, displayMessage, connectionId);
-            }
+            connectionManager.broadcastToRoom(defaultRoom.id, displayMessage, connectionId);
             
             logger.info({
               userId: userSession.userId,

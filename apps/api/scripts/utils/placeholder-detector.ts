@@ -9,6 +9,8 @@ export interface SongRow {
   title: string;
   artist: string;
   phrases?: string;
+  source?: string;  // e.g., "musicbrainz"
+  mbid?: string;    // MusicBrainz ID
 }
 
 /**
@@ -54,22 +56,42 @@ export function isPlaceholderSong(row: SongRow): boolean {
 
   // Rule 3: Title is ONLY "Song" or "Track" with single word prefix
   // Examples: "Blue Song", "Red Track", "Happy Song"
-  const tokens = title.split(/\s+/);
-  if (tokens.length === 2) {
-    const lastToken = tokens[1];
-    if (typeWords.includes(lastToken)) {
-      // This catches any "X Song" or "X Track" pattern
+  // SKIP this rule for verified MusicBrainz records (they may have legitimate titles like "Ghost Song")
+  const isMusicBrainzRecord = row.source === 'musicbrainz' && row.mbid;
+  if (!isMusicBrainzRecord) {
+    const tokens = title.split(/\s+/);
+    if (tokens.length === 2) {
+      const lastToken = tokens[1];
+      if (typeWords.includes(lastToken)) {
+        // This catches any "X Song" or "X Track" pattern
+        return true;
+      }
+    }
+  }
+
+  // Rule 4: Numbered placeholder patterns (e.g., "Test Song 123", "My Track 1")
+  // Only match if it's clearly a placeholder format with test/demo prefixes
+  // SKIP very generic patterns like "Song 1" or "Track 2" for verified MusicBrainz records
+  // (they may be legitimate songs with generic titles)
+  const placeholderPrefixes = ['Test', 'Demo', 'My', 'Sample', 'Fake', 'Example', 'Placeholder'];
+  const genericNumberedPattern = new RegExp(
+    `^(${placeholderPrefixes.join('|')})\\s+(${typeWords.join('|')})\\s+\\d+$`,
+    'i'
+  );
+
+  // Only match very generic "Song 1" / "Track 2" patterns for non-MusicBrainz records
+  if (!isMusicBrainzRecord) {
+    const veryGenericPattern = new RegExp(
+      `^(${typeWords.join('|')})\\s+\\d+$`,
+      'i'
+    );
+
+    if (veryGenericPattern.test(title)) {
       return true;
     }
   }
 
-  // Rule 4: Title with numbered suffix (e.g., "Blue Song 2", "Red Track 3")
-  const numberedPattern = new RegExp(
-    `^.+\\s+(${typeWords.join('|')})\\s+\\d+$`,
-    'i'
-  );
-
-  if (numberedPattern.test(title)) {
+  if (genericNumberedPattern.test(title)) {
     return true;
   }
 
@@ -116,14 +138,28 @@ export function getPlaceholderReason(row: SongRow): string | null {
     return `Adjective+Type pattern: "${title}"`;
   }
 
-  const tokens = title.split(/\s+/);
-  if (tokens.length === 2 && typeWords.includes(tokens[1])) {
-    return `Simple type suffix: "${title}"`;
+  // Skip "Simple type suffix" rule for verified MusicBrainz records
+  const isMusicBrainzRecord = row.source === 'musicbrainz' && row.mbid;
+  if (!isMusicBrainzRecord) {
+    const tokens = title.split(/\s+/);
+    if (tokens.length === 2 && typeWords.includes(tokens[1])) {
+      return `Simple type suffix: "${title}"`;
+    }
   }
 
-  const numberedPattern = new RegExp(`^.+\\s+(${typeWords.join('|')})\\s+\\d+$`, 'i');
-  if (numberedPattern.test(title)) {
+  const placeholderPrefixes = ['Test', 'Demo', 'My', 'Sample', 'Fake', 'Example', 'Placeholder'];
+  const genericNumberedPattern = new RegExp(`^(${placeholderPrefixes.join('|')})\\s+(${typeWords.join('|')})\\s+\\d+$`, 'i');
+
+  if (genericNumberedPattern.test(title)) {
     return `Numbered placeholder: "${title}"`;
+  }
+
+  // Only check very generic pattern for non-MusicBrainz records
+  if (!isMusicBrainzRecord) {
+    const veryGenericPattern = new RegExp(`^(${typeWords.join('|')})\\s+\\d+$`, 'i');
+    if (veryGenericPattern.test(title)) {
+      return `Numbered placeholder: "${title}"`;
+    }
   }
 
   if (row.phrases) {
