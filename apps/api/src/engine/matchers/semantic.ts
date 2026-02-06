@@ -63,13 +63,33 @@ export class SemanticSearcher {
       const embeddingService = await getEmbeddingService();
       const messageEmbedding = await embeddingService.embedSingle(message);
 
+      // CRITICAL: Validate embedding dimensions immediately
+      const expectedDims = 384;
+      if (messageEmbedding.length !== expectedDims) {
+        const error = new Error(`Embedding dimension mismatch: got ${messageEmbedding.length}, expected ${expectedDims}`);
+        logger.error({
+          got: messageEmbedding.length,
+          expected: expectedDims,
+          message: message.substring(0, 100)
+        }, 'FATAL: Embedding dimension mismatch');
+        throw error;
+      }
+
       // Debug logging if DEBUG_MATCHING is enabled
       if (process.env.DEBUG_MATCHING === '1') {
         const norm = Math.sqrt(messageEmbedding.reduce((sum, val) => sum + val * val, 0));
         const sumAbs = messageEmbedding.reduce((sum, val) => sum + Math.abs(val), 0);
         const isZero = messageEmbedding.every(val => val === 0);
 
+        // Log database connection info (redact password)
+        const dbUrl = process.env.DATABASE_URL || 'NOT_SET';
+        const dbUrlRedacted = dbUrl.replace(/:\/\/([^:]+):([^@]+)@/, '://$1:***@');
+
         logger.info({
+          database: {
+            url: dbUrlRedacted,
+            schema: 'public' // explicit schema we're querying
+          },
           receivedMessage: {
             length: message.length,
             preview: message.substring(0, 80)
@@ -80,6 +100,7 @@ export class SemanticSearcher {
           },
           embedding: {
             dimensions: messageEmbedding.length,
+            expectedDimensions: expectedDims,
             first5: messageEmbedding.slice(0, 5),
             l2Norm: norm.toFixed(6),
             sumAbs: sumAbs.toFixed(6),
@@ -89,17 +110,50 @@ export class SemanticSearcher {
         }, '[DEBUG_MATCHING] Embedding generated');
       }
 
+      // DIAGNOSTIC: Check how many eligible songs exist BEFORE running KNN query
+      const eligibleCount = await this.prisma.$queryRaw<Array<{ count: bigint }>>`
+        SELECT COUNT(*) as count
+        FROM songs
+        WHERE embedding_vector IS NOT NULL
+          AND is_placeholder = false
+      `;
+      const eligibleSongsCount = Number(eligibleCount[0]?.count || 0);
+
+      if (process.env.DEBUG_MATCHING === '1') {
+        logger.info({
+          eligibleSongsCount,
+          message: message.substring(0, 80)
+        }, '[DEBUG_MATCHING] Eligible songs count before KNN query');
+      }
+
+      if (eligibleSongsCount === 0) {
+        logger.warn('No eligible songs in database (embedding_vector IS NOT NULL AND is_placeholder = false)');
+        return [];
+      }
+
       // Use raw SQL to query songs with embeddings and calculate cosine similarity
       logger.debug('Performing vector similarity search');
 
-      const embeddingString = `[${messageEmbedding.join(',')}]`;
       const limit = k * 2;
 
       // Set HNSW ef_search parameter for sufficient candidate examination
       await this.prisma.$executeRawUnsafe(`SET LOCAL hnsw.ef_search = ${Math.max(limit, 100)}`);
 
       // Use native vector column for fast HNSW index search
-      const results = await this.prisma.$queryRawUnsafe<Array<{
+      // Build vector literal - use $queryRawUnsafe to avoid Prisma escaping issues
+      const embeddingString = `[${messageEmbedding.join(',')}]`;
+
+      if (process.env.DEBUG_MATCHING === '1') {
+        logger.info({
+          message: message.substring(0, 80),
+          embeddingString: embeddingString.substring(0, 200) + '...',
+          embeddingStringLength: embeddingString.length,
+          limit,
+          approach: 'Using $queryRawUnsafe to avoid parameter escaping issues'
+        }, '[DEBUG_MATCHING] About to execute KNN query');
+      }
+
+      let results: Array<{
         id: string;
         title: string;
         artist: string;
@@ -107,24 +161,81 @@ export class SemanticSearcher {
         year: number | null;
         popularity: number;
         similarity: number;
-      }>>(`
-        SELECT
-          id,
-          title,
-          artist,
-          tags,
-          year,
-          popularity,
-          (embedding_vector <=> '${embeddingString}'::vector) * -1 + 1 as similarity
-        FROM songs
-        WHERE embedding_vector IS NOT NULL
-          AND is_placeholder = false
-        ORDER BY embedding_vector <=> '${embeddingString}'::vector
-        LIMIT ${limit}
-      `);
+      }> = [];
 
+      try {
+        // CRITICAL FIX: Use temp table to materialize the query vector
+        // CTEs and direct embedding in ORDER BY return 0 rows due to PostgreSQL/pgvector query planner issue
+        // Temp tables force materialization and fix the problem
+
+        // Create temp table if it doesn't exist (session-scoped, safe for concurrent queries)
+        await this.prisma.$executeRawUnsafe(`
+          CREATE TEMP TABLE IF NOT EXISTS query_vec_temp (vec vector(384))
+        `);
+
+        // Clear and insert query vector
+        await this.prisma.$executeRawUnsafe(`DELETE FROM query_vec_temp`);
+        await this.prisma.$executeRawUnsafe(`
+          INSERT INTO query_vec_temp (vec) VALUES ('${embeddingString}'::vector(384))
+        `);
+
+        // Query using temp table
+        results = await this.prisma.$queryRawUnsafe<Array<{
+          id: string;
+          title: string;
+          artist: string;
+          tags: string[];
+          year: number | null;
+          popularity: number;
+          similarity: number;
+        }>>(`
+          SELECT
+            s.id,
+            s.title,
+            s.artist,
+            s.tags,
+            s.year,
+            s.popularity,
+            (s.embedding_vector <=> q.vec) * -1 + 1 as similarity
+          FROM public.songs s
+          CROSS JOIN query_vec_temp q
+          WHERE s.embedding_vector IS NOT NULL
+            AND s.is_placeholder = false
+          ORDER BY s.embedding_vector <=> q.vec
+          LIMIT ${limit}
+        `);
+
+        if (process.env.DEBUG_MATCHING === '1') {
+          logger.info({
+            message: message.substring(0, 80),
+            resultsCount: results.length,
+            firstResult: results[0] ? {
+              title: results[0].title,
+              artist: results[0].artist,
+              similarity: results[0].similarity
+            } : null
+          }, '[DEBUG_MATCHING] KNN query executed successfully');
+        }
+      } catch (queryError: any) {
+        logger.error({
+          error: queryError.message,
+          stack: queryError.stack,
+          message: message.substring(0, 100),
+          embeddingDims: messageEmbedding.length,
+          limit,
+          eligibleSongsCount
+        }, 'KNN query FAILED - this should not happen');
+        throw queryError;
+      }
+
+      // This should NEVER happen if eligibleSongsCount > 0
       if (results.length === 0) {
-        logger.warn('No songs with embeddings found in database');
+        logger.error({
+          message: message.substring(0, 100),
+          embeddingDims: messageEmbedding.length,
+          eligibleSongsCount,
+          limit
+        }, 'KNN_QUERY_RETURNED_ZERO_UNEXPECTED: eligible songs exist but query returned 0 rows');
         return [];
       }
 
