@@ -62,7 +62,7 @@ export class SongMatchingService {
     this.prisma = prisma;
     this.semanticSearcher = new SemanticSearcher(prisma, {
       knn_size: 50,
-      similarity_threshold: 0.2, // Lowered from 0.5 for semantic-only matching
+      similarity_threshold: 0.0, // Allow any similarity - let confidence scoring reflect quality
       use_reranking: true
     });
   }
@@ -213,21 +213,55 @@ export class SongMatchingService {
   ): Promise<SongMatchResult> {
     const cleanText = this.cleanText(text);
 
+    if (process.env.DEBUG_MATCHING === '1') {
+      logger.info({
+        original_text: text,
+        normalized_text: cleanText,
+        text_length: cleanText.length
+      }, '[DEBUG_MATCHING] Text normalization');
+    }
+
     // ONLY use semantic/embedding-based matching
     let matches: SongMatch[] = [];
+    let didFallback = false;
+    let fallbackReason = '';
 
     // Embedding-based semantic search
     matches = await this.findEmbeddingMatches(cleanText);
 
     // If semantic search fails, use popular songs as fallback
     if (matches.length === 0) {
+      didFallback = true;
+      fallbackReason = 'embedding_search_returned_empty';
       logger.info({ text: cleanText }, 'Semantic search returned no results, using fallback');
       matches = await this.getDefaultMatches();
+
+      if (process.env.DEBUG_MATCHING === '1') {
+        logger.info({
+          did_fallback: true,
+          fallback_reason: fallbackReason,
+          fallback_matches: matches.map(m => ({
+            title: m.song.title,
+            artist: m.song.artist,
+            score: m.score
+          }))
+        }, '[DEBUG_MATCHING] Fallback triggered');
+      }
 
       // If still no matches (empty database), throw error
       if (matches.length === 0) {
         throw new Error('Database is empty - no songs available');
       }
+    } else if (process.env.DEBUG_MATCHING === '1') {
+      logger.info({
+        did_fallback: false,
+        match_count: matches.length,
+        top_match: {
+          title: matches[0].song.title,
+          artist: matches[0].song.artist,
+          score: matches[0].score
+        }
+      }, '[DEBUG_MATCHING] Embedding search succeeded');
     }
 
     // Filter out recently shown songs to avoid repetition
@@ -326,6 +360,19 @@ export class SongMatchingService {
       // Use SemanticSearcher which properly uses native embedding_vector column with HNSW index
       const semanticMatches = await this.semanticSearcher.findSimilar(text, 50);
 
+      if (process.env.DEBUG_MATCHING === '1') {
+        logger.info({
+          query_text: text,
+          raw_results_count: semanticMatches.length,
+          top_10_raw: semanticMatches.slice(0, 10).map(m => ({
+            title: m.title,
+            artist: m.artist,
+            similarity: m.similarity.toFixed(4),
+            tags: m.tags.slice(0, 3)
+          }))
+        }, '[DEBUG_MATCHING] Raw semantic search results');
+      }
+
       if (semanticMatches.length === 0) {
         logger.debug('No semantic matches found');
         return [];
@@ -362,6 +409,14 @@ export class SongMatchingService {
       const matches = matchesWithNulls
         .filter((m) => m !== null) as SongMatch[];
 
+      if (process.env.DEBUG_MATCHING === '1') {
+        logger.info({
+          before_placeholder_filter: semanticMatches.length,
+          after_placeholder_filter: matches.length,
+          filtered_out: semanticMatches.length - matches.length
+        }, '[DEBUG_MATCHING] Placeholder filtering results');
+      }
+
       if (matches.length === 0) {
         logger.warn('All semantic matches were placeholder songs or not found');
         return [];
@@ -370,6 +425,11 @@ export class SongMatchingService {
       return matches.slice(0, 10);
     } catch (error) {
       logger.warn({ error }, 'Embedding matching failed, falling back');
+      if (process.env.DEBUG_MATCHING === '1') {
+        logger.info({
+          error: error instanceof Error ? error.message : String(error)
+        }, '[DEBUG_MATCHING] Exception in findEmbeddingMatches');
+      }
       return [];
     }
   }

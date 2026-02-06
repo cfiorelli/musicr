@@ -1767,30 +1767,33 @@ const start = async () => {
       host: config.server.host
     });
 
+    // Initialize embedding service BEFORE declaring server ready
+    // This prevents requests from arriving before embeddings are available
+    logger.info('Initializing embedding service (may take 30-60s for model download)...');
+    try {
+      await getEmbeddingService({
+        primaryProvider: 'local',
+        fallbackProvider: 'openai',
+        local: {
+          model: 'Xenova/all-MiniLM-L6-v2',
+          dimensions: 384
+        },
+        openai: process.env.OPENAI_API_KEY ? {
+          apiKey: process.env.OPENAI_API_KEY,
+          model: 'text-embedding-3-small',
+          dimensions: 384  // CRITICAL: Must match song embedding dimensions
+        } : undefined
+      });
+      logger.info('✅ Embedding service initialized - full semantic search available');
+    } catch (error) {
+      logger.error({ error }, '❌ Embedding service initialization FAILED - semantic search will not work');
+      // Don't exit - let server start anyway for health checks, but matching will fail
+    }
+
     // Clear startup logging for Railway
     console.log(`✅ SERVER READY - listening host=${config.server.host} port=${config.server.port}`);
     console.log(`✅ Health check available at: ${address}/health`);
     logger.info(`Server listening on ${address}`);
-
-    // Initialize embedding service in background (can take several minutes to download model)
-    logger.info('Starting embedding service initialization (background)...');
-    getEmbeddingService({
-      primaryProvider: 'local',
-      fallbackProvider: 'openai',
-      local: {
-        model: 'Xenova/all-MiniLM-L6-v2',
-        dimensions: 384
-      },
-      openai: process.env.OPENAI_API_KEY ? {
-        apiKey: process.env.OPENAI_API_KEY,
-        model: 'text-embedding-3-small',
-        dimensions: 384  // CRITICAL: Must match song embedding dimensions
-      } : undefined
-    }).then(() => {
-      logger.info('✅ Embedding service initialized - full semantic search available');
-    }).catch(error => {
-      logger.warn({ error }, '⚠️  Embedding service initialization failed - semantic search may be limited');
-    });
   } catch (err) {
     fastify.log.error(err);
     await disconnectDatabase();
