@@ -147,26 +147,39 @@ export class SemanticSearcher {
       }
 
       // Convert results to SemanticMatch format
-      const matches: SemanticMatch[] = results
-        .filter((result: RawSimilarityResult) => result.similarity >= (this.config.similarity_threshold || 0.5))
-        .map((result: RawSimilarityResult) => ({
-          songId: result.id,
-          title: result.title,
-          artist: result.artist,
-          similarity: result.similarity,
-          distance: 1 - result.similarity,
-          tags: result.tags || [],
-          year: result.year || undefined,
-          decade: result.year ? Math.floor(result.year / 10) * 10 : undefined,
-          popularity: result.popularity
-        }))
-        .slice(0, k);
+      const threshold = this.config.similarity_threshold || 0.2;
+      const allMatches = results.map((result: RawSimilarityResult) => ({
+        songId: result.id,
+        title: result.title,
+        artist: result.artist,
+        similarity: result.similarity,
+        distance: 1 - result.similarity,
+        tags: result.tags || [],
+        year: result.year || undefined,
+        decade: result.year ? Math.floor(result.year / 10) * 10 : undefined,
+        popularity: result.popularity
+      }));
+
+      // Filter by threshold and log what was filtered
+      const matches = allMatches.filter((result) => {
+        const passesThreshold = result.similarity >= threshold;
+        if (!passesThreshold && process.env.DEBUG_MATCHING === '1') {
+          logger.debug({
+            title: result.title,
+            artist: result.artist,
+            similarity: result.similarity,
+            threshold
+          }, '[DEBUG_MATCHING] Filtered out by threshold');
+        }
+        return passesThreshold;
+      }).slice(0, k);
 
       const duration = Date.now() - startTime;
       logger.debug({
         totalResults: results.length,
         filteredMatches: matches.length,
         topSimilarity: matches[0]?.similarity || 0,
+        threshold,
         duration
       }, 'Semantic search completed');
 

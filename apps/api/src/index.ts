@@ -1784,7 +1784,7 @@ const start = async () => {
       openai: process.env.OPENAI_API_KEY ? {
         apiKey: process.env.OPENAI_API_KEY,
         model: 'text-embedding-3-small',
-        dimensions: 1536
+        dimensions: 384  // CRITICAL: Must match song embedding dimensions
       } : undefined
     }).then(() => {
       logger.info('✅ Embedding service initialized - full semantic search available');

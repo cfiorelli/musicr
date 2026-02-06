@@ -30,6 +30,7 @@ interface UserSession {
 interface CreateUserOptions {
   ipAddress: string;
   userAgent?: string;
+  userId?: string;  // Optional explicit UUID from localStorage
   retryCount?: number;
 }
 
@@ -108,14 +109,19 @@ export class UserService {
     // Create new anonymous user
     const ipAddress = this.getClientIP(request);
     const userAgent = request.headers['user-agent'] || undefined;
-    
+
+    // If userId was provided in header, use it (localStorage-based identity)
+    const explicitUserId = headerUserId && this.isValidUserSession(headerUserId) ? headerUserId : undefined;
+
     const user = await this.createAnonymousUser({
       ipAddress,
-      userAgent
+      userAgent,
+      userId: explicitUserId
     });
 
-    // Set HttpOnly cookie with 1 year expiration (only if reply is available)
-    if (reply) {
+    // Only set cookie if user did NOT come from explicit header (backward compatibility for non-localStorage clients)
+    const cameFromHeader = !!headerUserId;
+    if (reply && !cameFromHeader) {
       reply.setCookie(this.COOKIE_NAME, user.id, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
@@ -123,6 +129,11 @@ export class UserService {
         maxAge: this.COOKIE_MAX_AGE,
         path: '/'
       });
+    } else if (cameFromHeader) {
+      logger.debug({
+        userId: user.id,
+        anonHandle: user.anonHandle
+      }, 'User created from localStorage header - cookie not set');
     } else {
       logger.info({
         userId: user.id,
@@ -148,8 +159,8 @@ export class UserService {
    * Create a new anonymous user
    */
   async createAnonymousUser(options: CreateUserOptions): Promise<User> {
-    const { ipAddress, userAgent, retryCount = 0 } = options;
-    
+    const { ipAddress, userAgent, userId, retryCount = 0 } = options;
+
     if (retryCount >= this.MAX_RETRY_ATTEMPTS) {
       throw new Error('Max retry attempts reached for user creation');
     }
@@ -160,6 +171,7 @@ export class UserService {
     try {
       const user = await this.prisma.user.create({
         data: {
+          ...(userId && { id: userId }),  // Use provided UUID if available
           anonHandle,
           ipHash,
           createdAt: new Date()

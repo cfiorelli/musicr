@@ -378,7 +378,7 @@ const ChatInterface = () => {
   );
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full" style={{ WebkitTextSizeAdjust: '100%' }}>
       {/* Header with Room and Handle */}
       <div className="flex-none bg-gray-800/50 backdrop-blur-md rounded-xl p-3 mb-3 flex justify-between items-center border border-gray-700/50">
         <div className="flex items-center gap-4">
@@ -639,7 +639,7 @@ const ChatInterface = () => {
                               bg-white/5 hover:bg-white/15 border border-white/10 hover:border-white/30
                               text-gray-400 hover:text-gray-200
                               transition-all duration-200
-                              opacity-0 group-hover:opacity-100
+                              opacity-80 md:opacity-0 md:group-hover:opacity-100
                             "
                             title="Add reaction"
                           >
@@ -770,13 +770,15 @@ const ChatInterface = () => {
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={connectionStatus === 'connected' ? "Type anything to find a song..." : "Connecting..."}
-          className="flex-1 px-4 py-3 rounded-lg bg-gray-800/50 backdrop-blur-sm text-white placeholder-gray-500 border border-gray-700 focus:border-gray-600 focus:bg-gray-800/70 focus:outline-none transition-all text-base"
+          className="flex-1 px-4 py-3 rounded-lg bg-gray-800/50 backdrop-blur-sm text-white placeholder-gray-500 border border-gray-700 focus:border-gray-600 focus:bg-gray-800/70 focus:outline-none transition-all"
+          style={{ fontSize: '16px' }}
           disabled={connectionStatus !== 'connected'}
         />
         <button
           type="submit"
           disabled={!inputValue.trim() || connectionStatus !== 'connected'}
-          className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 disabled:bg-gray-700 disabled:cursor-not-allowed text-white rounded-lg font-medium transition-colors text-sm"
+          className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 disabled:bg-gray-700 disabled:cursor-not-allowed text-white rounded-lg font-medium transition-colors flex-shrink-0"
+          style={{ fontSize: '14px' }}
         >
           Send 🎵
         </button>
