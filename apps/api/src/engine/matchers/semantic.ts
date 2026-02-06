@@ -118,6 +118,7 @@ export class SemanticSearcher {
           (embedding_vector <=> '${embeddingString}'::vector) * -1 + 1 as similarity
         FROM songs
         WHERE embedding_vector IS NOT NULL
+          AND is_placeholder = false
         ORDER BY embedding_vector <=> '${embeddingString}'::vector
         LIMIT ${limit}
       `);
@@ -147,7 +148,7 @@ export class SemanticSearcher {
       }
 
       // Convert results to SemanticMatch format
-      const threshold = this.config.similarity_threshold || 0.2;
+      const threshold = this.config.similarity_threshold ?? 0.2;
       const allMatches = results.map((result: RawSimilarityResult) => ({
         songId: result.id,
         title: result.title,
