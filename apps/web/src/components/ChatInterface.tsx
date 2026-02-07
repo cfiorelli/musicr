@@ -15,8 +15,6 @@ const ChatInterface = () => {
   const [quickReactions] = useState(['❤️', '😂', '🎵', '🔥', '👍', '🎉']);
   // Modal state: only one modal can be open at a time
   const [activeModal, setActiveModal] = useState<'onboarding' | 'info' | null>(null);
-  const [onboardingInput, setOnboardingInput] = useState('');
-  const [onboardingSendError, setOnboardingSendError] = useState('');
   const [historyLoadError, setHistoryLoadError] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const messagesRef = useRef<HTMLDivElement>(null);
@@ -66,43 +64,11 @@ const ChatInterface = () => {
     }
   };
 
-  // Onboarding quick reply handler
-  const handleOnboardingQuickReply = (text: string) => {
-    setOnboardingInput(text);
-  };
-
-  // Send onboarding message
-  const handleOnboardingSend = () => {
-    const message = onboardingInput.trim();
-    if (!message) return;
-
-    if (connectionStatus !== 'connected') {
-      setOnboardingSendError('Not connected. Please wait...');
-      return;
-    }
-
-    try {
-      sendMessage(message);
-      // Success - close modal and mark as seen
-      localStorage.setItem('musicr_onboarding_seen', '1');
-      localStorage.setItem('musicr_onboarding_seen_at', new Date().toISOString());
-      setActiveModal(null);
-      setOnboardingInput('');
-      setOnboardingSendError('');
-      // Focus chat input after closing
-      setTimeout(() => inputRef.current?.focus(), 100);
-    } catch (error) {
-      setOnboardingSendError('Failed to send message. Please try again.');
-    }
-  };
-
-  // Skip onboarding
-  const handleOnboardingSkip = () => {
+  // Dismiss onboarding
+  const handleOnboardingDismiss = () => {
     localStorage.setItem('musicr_onboarding_seen', '1');
     localStorage.setItem('musicr_onboarding_seen_at', new Date().toISOString());
     setActiveModal(null);
-    setOnboardingInput('');
-    setOnboardingSendError('');
     // Focus chat input after closing
     setTimeout(() => inputRef.current?.focus(), 100);
   };
@@ -229,7 +195,7 @@ const ChatInterface = () => {
           setCurrentAlternates([]);
         } else if (activeModal) {
           if (activeModal === 'onboarding') {
-            handleOnboardingSkip();
+            handleOnboardingDismiss();
           } else if (activeModal === 'info') {
             setActiveModal(null);
           }
@@ -837,16 +803,15 @@ const ChatInterface = () => {
         <div
           className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4"
           onClick={(e) => {
-            // Close on backdrop click (same as Skip)
             if (e.target === e.currentTarget) {
-              handleOnboardingSkip();
+              handleOnboardingDismiss();
             }
           }}
         >
           <div className="max-w-md w-full bg-gradient-to-br from-gray-900 via-slate-900 to-gray-800 border border-blue-500/30 rounded-2xl p-6 shadow-2xl relative">
             {/* Close button */}
             <button
-              onClick={handleOnboardingSkip}
+              onClick={handleOnboardingDismiss}
               className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white transition-colors rounded-lg hover:bg-white/10"
               aria-label="Close"
             >
@@ -854,7 +819,7 @@ const ChatInterface = () => {
             </button>
 
             {/* Header */}
-            <div className="mb-6">
+            <div className="mb-5">
               <h2 className="text-2xl font-bold text-white mb-2 flex items-center gap-2">
                 <span>🎵</span>
                 <span>Welcome to Musicr</span>
@@ -864,81 +829,38 @@ const ChatInterface = () => {
               </p>
             </div>
 
-            {/* Explanation */}
-            <p className="text-gray-300 mb-4">
-              Type a thought and we'll match it to a song.
-            </p>
-
-            {/* Prompt */}
-            <p className="text-white font-semibold mb-3">
-              How's your day going?
-            </p>
-
-            {/* Quick Replies */}
-            <div className="space-y-2 mb-4">
-              <button
-                onClick={() => handleOnboardingQuickReply("Pretty good — feeling optimistic")}
-                className="w-full text-left px-4 py-3 bg-blue-500/20 hover:bg-blue-500/30 border border-blue-400/30 rounded-lg text-white transition-colors"
-              >
-                Pretty good — feeling optimistic
-              </button>
-              <button
-                onClick={() => handleOnboardingQuickReply("Stressed and overloaded")}
-                className="w-full text-left px-4 py-3 bg-blue-500/20 hover:bg-blue-500/30 border border-blue-400/30 rounded-lg text-white transition-colors"
-              >
-                Stressed and overloaded
-              </button>
-              <button
-                onClick={() => handleOnboardingQuickReply("Chilling and vibing")}
-                className="w-full text-left px-4 py-3 bg-blue-500/20 hover:bg-blue-500/30 border border-blue-400/30 rounded-lg text-white transition-colors"
-              >
-                Chilling and vibing
-              </button>
-            </div>
-
-            {/* Free Text Input */}
-            <div className="mb-4">
-              <input
-                type="text"
-                value={onboardingInput}
-                onChange={(e) => {
-                  setOnboardingInput(e.target.value);
-                  setOnboardingSendError('');
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && onboardingInput.trim()) {
-                    handleOnboardingSend();
-                  }
-                }}
-                placeholder="Or type your own message..."
-                className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-400 transition-colors text-base"
-                autoFocus
-              />
-            </div>
-
-            {/* Error Message */}
-            {onboardingSendError && (
-              <div className="mb-4 p-3 bg-red-500/20 border border-red-400/30 rounded-lg text-red-300 text-sm">
-                {onboardingSendError}
+            {/* Explainer cards */}
+            <div className="space-y-3 mb-5">
+              <div className="flex gap-3 items-start bg-gray-800/50 rounded-lg p-3 border border-gray-700/50">
+                <span className="text-2xl">💬</span>
+                <div>
+                  <p className="text-white font-semibold text-sm">This is a music chat</p>
+                  <p className="text-gray-400 text-sm">Type like you're chatting normally — moods, thoughts, anything.</p>
+                </div>
               </div>
-            )}
-
-            {/* Action Buttons */}
-            <div className="flex gap-3">
-              <button
-                onClick={handleOnboardingSend}
-                disabled={!onboardingInput.trim() || connectionStatus !== 'connected'}
-                className="flex-1 px-4 py-3 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors"
-              >
-                Send
-              </button>
-              <button
-                onClick={handleOnboardingSkip}
-                className="px-4 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
-              >
-                Skip
-              </button>
+              <div className="flex gap-3 items-start bg-gray-800/50 rounded-lg p-3 border border-gray-700/50">
+                <span className="text-2xl">🎵</span>
+                <div>
+                  <p className="text-white font-semibold text-sm">Every message gets a song</p>
+                  <p className="text-gray-400 text-sm">AI matches your message to a song. Click the song name to listen on YouTube.</p>
+                </div>
+              </div>
+              <div className="flex gap-3 items-start bg-gray-800/50 rounded-lg p-3 border border-gray-700/50">
+                <span className="text-2xl">✨</span>
+                <div>
+                  <p className="text-white font-semibold text-sm">Chat with others</p>
+                  <p className="text-gray-400 text-sm">Everyone in the room sees messages and songs in real time. React with emoji!</p>
+                </div>
+              </div>
             </div>
+
+            {/* CTA */}
+            <button
+              onClick={handleOnboardingDismiss}
+              className="w-full px-4 py-3 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg transition-colors"
+            >
+              Got it!
+            </button>
           </div>
         </div>
       )}
