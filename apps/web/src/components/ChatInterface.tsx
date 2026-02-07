@@ -170,6 +170,34 @@ const ChatInterface = () => {
     };
   }, []);
 
+  // DEV-ONLY: iOS auto-zoom regression guard.
+  // Warns if any input/textarea/select has computed font-size < 16px,
+  // which triggers iOS Safari auto-zoom on focus.
+  useEffect(() => {
+    if (!import.meta.env.DEV) return;
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    // Run check on all platforms in dev (iOS issues are invisible on desktop otherwise)
+    const checkInputFontSizes = () => {
+      const selectors = 'input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]), textarea, select';
+      document.querySelectorAll<HTMLElement>(selectors).forEach((el) => {
+        const computed = parseFloat(getComputedStyle(el).fontSize);
+        if (computed < 16) {
+          console.warn(
+            `[iOS-ZOOM-GUARD] Input has font-size ${computed}px (<16px) — will trigger auto-zoom on iOS.`,
+            { element: el, selector: el.tagName + (el.className ? '.' + el.className.split(' ').join('.') : ''), isIOS }
+          );
+        }
+      });
+    };
+    // Check after initial render and after modals open
+    const timer = setTimeout(checkInputFontSizes, 500);
+    // Re-check when modals change
+    const observer = new MutationObserver(() => setTimeout(checkInputFontSizes, 100));
+    observer.observe(document.body, { childList: true, subtree: true });
+    return () => { clearTimeout(timer); observer.disconnect(); };
+  }, []);
+
   // Show onboarding on first visit (after connection is ready)
   useEffect(() => {
     // Check if already seen
@@ -773,7 +801,7 @@ const ChatInterface = () => {
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={connectionStatus === 'connected' ? "Type anything to find a song..." : "Connecting..."}
-          className="flex-1 px-4 py-3 rounded-lg bg-gray-800/50 backdrop-blur-sm text-white placeholder-gray-500 border border-gray-700 focus:border-gray-600 focus:bg-gray-800/70 focus:outline-none transition-all text-base"
+          className="flex-1 px-4 py-3 rounded-lg bg-gray-800/50 text-white placeholder-gray-500 border border-gray-700 focus:border-gray-600 focus:bg-gray-800/70 focus:outline-none transition-all text-base"
           disabled={connectionStatus !== 'connected'}
         />
         <button

@@ -2,22 +2,33 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Prevent iOS Safari auto-zoom on input focus */
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;
-  }
-
-  /* iOS Safari auto-zooms on focus when computed font-size < 16px.
-     Cover all text-entry input types, including bare <input> without a type attr. */
-  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([type="hidden"]):not([type="submit"]):not([type="reset"]):not([type="button"]):not([type="image"]):not([type="color"]),
-  textarea,
-  select {
-    font-size: 16px !important;
   }
 
   /* iOS safe area support for notched devices */
   body {
     padding-bottom: env(safe-area-inset-bottom);
   }
+}
+
+/*
+ * iOS auto-zoom prevention — INTENTIONALLY outside @layer.
+ *
+ * iOS Safari auto-zooms the viewport when a focused input/textarea/select
+ * has a computed font-size < 16px.  This rule forces 16px on ALL text-entry
+ * controls.  It lives outside @layer so it has maximum cascade priority and
+ * cannot be accidentally overridden by Tailwind utilities or component styles.
+ *
+ * DO NOT move this into @layer base — layered styles lose to unlayered ones
+ * in the cascade, making the fix fragile.
+ *
+ * If you need an input to *look* smaller than 16px, adjust padding/line-height
+ * instead of reducing font-size.
+ */
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([type="hidden"]):not([type="submit"]):not([type="reset"]):not([type="button"]):not([type="image"]):not([type="color"]),
+textarea,
+select {
+  font-size: 16px !important;
 }
