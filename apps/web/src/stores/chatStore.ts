@@ -330,14 +330,16 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
           if (data.type === 'song') {
             // Update optimistic message with song result
-            const { messages, updateMessage } = get();
-            const lastUserMessage = messages.filter(m => m.userId === 'user').pop();
+            const { messages, updateMessage, userId: storeUserId } = get();
+            const lastUserMessage = messages.filter(m => m.userId === 'user' || m.userId === storeUserId).pop();
             console.log('Looking for optimistic message to update:', lastUserMessage);
-            
+
             if (lastUserMessage && lastUserMessage.isOptimistic) {
               console.log('Updating optimistic message with song result:', data);
               updateMessage(lastUserMessage.id, {
                 ...(data.messageId && { id: data.messageId }),
+                ...(data.createdAt && { timestamp: data.createdAt }),
+                ...(storeUserId && { userId: storeUserId }),
                 songTitle: data.primary?.title,
                 songArtist: data.primary?.artist,
                 songYear: data.primary?.year,
@@ -351,14 +353,16 @@ export const useChatStore = create<ChatState>((set, get) => ({
             }
           } else if (data.primary && !data.type) {
             // Direct song mapping response (for user's own message)
-            const { messages, updateMessage } = get();
-            const lastUserMessage = messages.filter(m => m.userId === 'user').pop();
+            const { messages, updateMessage, userId: storeUserId } = get();
+            const lastUserMessage = messages.filter(m => m.userId === 'user' || m.userId === storeUserId).pop();
             console.log('Received song mapping response for user message:', lastUserMessage);
-            
+
             if (lastUserMessage && lastUserMessage.isOptimistic) {
               console.log('Updating optimistic message with song mapping:', data);
               updateMessage(lastUserMessage.id, {
                 ...(data.messageId && { id: data.messageId }),
+                ...(data.createdAt && { timestamp: data.createdAt }),
+                ...(storeUserId && { userId: storeUserId }),
                 songTitle: data.primary?.title,
                 songArtist: data.primary?.artist,
                 songYear: data.primary?.year,
@@ -384,24 +388,27 @@ export const useChatStore = create<ChatState>((set, get) => ({
               timestamp: data.timestamp || new Date().toISOString(),
               userId: data.userId,
               anonHandle: data.anonHandle,
+              reactions: data.reactions || [],
             };
-            
-            // For historical messages, add them in order without duplicating
-            if (data.isHistorical) {
-              // Check if we already have this message to avoid duplicates
-              const { messages } = get();
-              const exists = messages.find(m => m.timestamp === message.timestamp && m.content === message.content);
-              if (!exists) {
-                // Insert historical messages in chronological order
-                set((state) => {
-                  const newMessages = [...state.messages, message];
-                  return {
-                    messages: newMessages.sort((a, b) => 
-                      new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
-                    )
-                  };
-                });
+
+            const { messages } = get();
+            // ID-based dedup: skip if we already have this server ID
+            const existingById = data.id ? messages.find(m => m.id === data.id) : null;
+            if (existingById) {
+              if (window.location.search.includes('debug=1')) {
+                console.log(`[DEDUP] Skipping duplicate display message id=${data.id}`,
+                  data.isHistorical ? '(historical)' : '(live)');
               }
+            } else if (data.isHistorical) {
+              // Insert historical messages in chronological order
+              set((state) => {
+                const newMessages = [...state.messages, message];
+                return {
+                  messages: newMessages.sort((a, b) =>
+                    new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+                  )
+                };
+              });
             } else {
               // Live message - add normally
               get().addMessage(message);
@@ -1149,8 +1156,16 @@ export const useChatStore = create<ChatState>((set, get) => ({
         hasMore: newHasMore
       });
 
+      // Dedup: older messages from REST may overlap with existing messages
+      const existingIds = new Set(messages.map(m => m.id));
+      const uniqueOlder = olderMessages.filter(m => !existingIds.has(m.id));
+
+      if (window.location.search.includes('debug=1') && uniqueOlder.length !== olderMessages.length) {
+        console.log(`[DEDUP] loadOlderMessages: dropped ${olderMessages.length - uniqueOlder.length} duplicates`);
+      }
+
       set({
-        messages: [...olderMessages, ...messages],
+        messages: [...uniqueOlder, ...messages],
         isLoadingHistory: false,
         hasMoreHistory: newHasMore
       });

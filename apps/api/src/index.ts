@@ -67,6 +67,11 @@ await fastify.register(cookie, {
 // Register websocket plugin
 await fastify.register(websocket);
 
+// Add instance ID to all responses for debugging multi-instance routing
+fastify.addHook('onSend', async (_request, reply) => {
+  reply.header('X-Instance-Id', INSTANCE_ID);
+});
+
 // Initialize services
 const userService = new UserService(prisma);
 const roomService = new RoomService(prisma);
@@ -117,6 +122,41 @@ if (redisService.isEnabled()) {
   });
 
   logger.info('Redis reaction subscriptions active');
+
+  // Cross-instance message broadcast: re-send display messages created on other instances
+  await redisService.subscribe('messages:events', (event) => {
+    if (event.type !== 'message_created') {
+      return;
+    }
+
+    // Ignore events from this instance (already handled locally)
+    if (event.instanceId === INSTANCE_ID) {
+      return;
+    }
+
+    logger.debug({
+      eventType: event.type,
+      fromInstance: event.instanceId,
+      messageId: event.id,
+      roomId: event.roomId
+    }, 'Received message event from another instance');
+
+    // Rebuild as a display message and broadcast to local connections
+    connectionManager.broadcastToRoom(event.roomId, {
+      type: 'display',
+      id: event.id,
+      originalText: event.originalText,
+      userId: event.userId,
+      anonHandle: event.anonHandle,
+      primary: event.primary,
+      alternates: event.alternates,
+      why: event.why,
+      similarity: event.similarity,
+      timestamp: event.timestamp
+    });
+  });
+
+  logger.info('Redis message subscriptions active');
 }
 
 // Test page for WebSocket functionality
@@ -1306,6 +1346,18 @@ fastify.register(async function (fastify) {
                 artist: true,
                 year: true
               }
+            },
+            reactions: {
+              include: {
+                user: {
+                  select: {
+                    anonHandle: true
+                  }
+                }
+              },
+              orderBy: {
+                createdAt: 'asc'
+              }
             }
           },
           orderBy: {
@@ -1317,6 +1369,35 @@ fastify.register(async function (fastify) {
         // Send messages in chronological order (oldest first)
         const messagesToSend = recentMessages.reverse().map((msg) => {
             const scores = msg.scores as any;
+
+            // Group reactions by emoji (same format as REST endpoint)
+            const reactionsMap = new Map<string, {
+              emoji: string;
+              count: number;
+              users: Array<{ userId: string; anonHandle: string }>;
+              hasReacted: boolean;
+            }>();
+
+            for (const reaction of msg.reactions) {
+              const existing = reactionsMap.get(reaction.emoji);
+              const reactionUser = { userId: reaction.userId, anonHandle: reaction.user.anonHandle };
+
+              if (existing) {
+                existing.count++;
+                existing.users.push(reactionUser);
+                if (reaction.userId === userSession.userId) {
+                  existing.hasReacted = true;
+                }
+              } else {
+                reactionsMap.set(reaction.emoji, {
+                  emoji: reaction.emoji,
+                  count: 1,
+                  users: [reactionUser],
+                  hasReacted: reaction.userId === userSession.userId
+                });
+              }
+            }
+
             return {
               type: 'display',
               id: msg.id,
@@ -1331,7 +1412,8 @@ fastify.register(async function (fastify) {
                 matchedPhrase: scores.matchedPhrase
               } : '',
               timestamp: msg.createdAt.toISOString(),
-              isHistorical: true
+              isHistorical: true,
+              reactions: Array.from(reactionsMap.values())
             };
           });
 
@@ -1636,9 +1718,13 @@ fastify.register(async function (fastify) {
               }
             });
 
-            // Send song response to sender (include DB message ID so client
-            // can replace its optimistic ID and reactions will resolve)
-            connection.send(JSON.stringify({ ...songMatchResult, messageId: savedMessage.id }));
+            // Send song response to sender (include DB message ID and createdAt
+            // so client can replace its optimistic ID/timestamp and reactions will resolve)
+            connection.send(JSON.stringify({
+              ...songMatchResult,
+              messageId: savedMessage.id,
+              createdAt: savedMessage.createdAt.toISOString()
+            }));
 
           } catch (error) {
             // Handle song matching errors
@@ -1664,10 +1750,20 @@ fastify.register(async function (fastify) {
               alternates: songMatchResult.alternates,
               why: songMatchResult.why,
               similarity: songMatchResult.scores.confidence,
-              timestamp: new Date().toISOString(),
+              timestamp: savedMessage.createdAt.toISOString(),
             };
 
             connectionManager.broadcastToRoom(defaultRoom.id, displayMessage, connectionId);
+
+            // Publish to Redis for cross-instance broadcast
+            if (redisService.isEnabled()) {
+              redisService.publish('messages:events', {
+                ...displayMessage,
+                type: 'message_created',
+                roomId: defaultRoom.id,
+                instanceId: INSTANCE_ID
+              });
+            }
             
             logger.info({
               userId: userSession.userId,
