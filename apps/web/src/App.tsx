@@ -82,6 +82,18 @@ function HomePage() {
           </div>
         </div>
       </div>
+
+      {/* Footer */}
+      <footer className="flex-none px-4 py-1.5 text-center text-xs text-gray-500">
+        Built by{' '}
+        <a href="https://cfiorelli.github.io/" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-300 transition-colors underline decoration-gray-600 hover:decoration-gray-400">
+          Christopher Fiorelli
+        </a>
+        {' '}&middot;{' '}
+        <a href="https://github.com/cfiorelli" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-300 transition-colors underline decoration-gray-600 hover:decoration-gray-400">
+          GitHub
+        </a>
+      </footer>
     </div>
   );
 }
