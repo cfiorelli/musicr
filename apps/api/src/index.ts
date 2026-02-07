@@ -1672,9 +1672,8 @@ fastify.register(async function (fastify) {
             return;
           }
 
-          // Process message for song matching
-          let songMatchResult;
-          let savedMessage;
+          // Step 1: Attempt song matching (non-fatal — message persists regardless)
+          let songMatchResult: Awaited<ReturnType<typeof songMatchingService.matchSongs>> | null = null;
           try {
             logger.info({
               text: messageData.text,
@@ -1693,86 +1692,103 @@ fastify.register(async function (fastify) {
               userId: userSession.userId,
               songResult: songMatchResult
             }, 'Song matching completed successfully');
+          } catch (matchError) {
+            logger.error({ error: matchError, userId: userSession.userId },
+              'Song matching failed — message will still be persisted');
+          }
 
-            // Save message to database
+          // Step 2: Always save message to DB (scores are null if matching failed)
+          let savedMessage;
+          try {
             savedMessage = await prisma.message.create({
               data: {
                 userId: userSession.userId,
                 roomId: defaultRoom.id,
                 text: messageData.text,
-                chosenSongId: null, // Will be set later when user selects
-                scores: {
-                  primary: {
-                    title: songMatchResult.primary.title,
-                    artist: songMatchResult.primary.artist,
-                    year: songMatchResult.primary.year
-                  },
-                  alternates: songMatchResult.alternates.map(song => ({
-                    title: song.title,
-                    artist: song.artist,
-                    year: song.year
-                  })),
-                  confidence: songMatchResult.scores.confidence,
-                  strategy: songMatchResult.scores.strategy
-                }
+                chosenSongId: null,
+                ...(songMatchResult && {
+                  scores: {
+                    primary: {
+                      title: songMatchResult.primary.title,
+                      artist: songMatchResult.primary.artist,
+                      year: songMatchResult.primary.year
+                    },
+                    alternates: songMatchResult.alternates.map(song => ({
+                      title: song.title,
+                      artist: song.artist,
+                      year: song.year
+                    })),
+                    confidence: songMatchResult.scores.confidence,
+                    strategy: songMatchResult.scores.strategy
+                  }
+                })
               }
             });
-
-            // Send song response to sender (include DB message ID and createdAt
-            // so client can replace its optimistic ID/timestamp and reactions will resolve)
-            connection.send(JSON.stringify({
-              ...songMatchResult,
-              messageId: savedMessage.id,
-              createdAt: savedMessage.createdAt.toISOString()
-            }));
-
-          } catch (error) {
-            // Handle song matching errors
-            logger.error({ error, userId: userSession.userId }, 'Error in song matching');
+          } catch (dbError) {
+            logger.error({ error: dbError, userId: userSession.userId }, 'Failed to persist message');
             connection.send(JSON.stringify({
               type: 'error',
-              message: 'Failed to match song',
+              message: 'Failed to save message',
               timestamp: Date.now()
             }));
             return;
           }
 
-          // Only broadcast if we have a valid result
+          // Step 3: Always respond to sender with messageId + createdAt
           if (songMatchResult) {
-            // Broadcast song match to all users in the room
-            const displayMessage = {
-              type: 'display',
-              id: savedMessage.id,
-              originalText: messageData.text,
-              userId: userSession.userId,
-              anonHandle: userSession.anonHandle,
-              primary: songMatchResult.primary,
-              alternates: songMatchResult.alternates,
-              why: songMatchResult.why,
-              similarity: songMatchResult.scores.confidence,
-              timestamp: savedMessage.createdAt.toISOString(),
-            };
-
-            connectionManager.broadcastToRoom(defaultRoom.id, displayMessage, connectionId);
-
-            // Publish to Redis for cross-instance broadcast
-            if (redisService.isEnabled()) {
-              redisService.publish('messages:events', {
-                ...displayMessage,
-                type: 'message_created',
-                roomId: defaultRoom.id,
-                instanceId: INSTANCE_ID
-              });
-            }
-            
-            logger.info({
-              userId: userSession.userId,
-              anonHandle: userSession.anonHandle,
-              primarySong: `${songMatchResult.primary.artist} - ${songMatchResult.primary.title}`,
-              strategy: songMatchResult.scores.strategy,
-              confidence: songMatchResult.scores.confidence
-            }, 'WebSocket song matching completed');
+            connection.send(JSON.stringify({
+              ...songMatchResult,
+              messageId: savedMessage.id,
+              createdAt: savedMessage.createdAt.toISOString()
+            }));
+          } else {
+            // Matching failed: send type:'song' ack so client reconciles the optimistic message
+            connection.send(JSON.stringify({
+              type: 'song',
+              messageId: savedMessage.id,
+              createdAt: savedMessage.createdAt.toISOString(),
+              primary: null,
+              alternates: [],
+              scores: null,
+              why: null
+            }));
           }
+
+          // Step 4: Always broadcast display message to room
+          const displayMessage = {
+            type: 'display',
+            id: savedMessage.id,
+            originalText: messageData.text,
+            userId: userSession.userId,
+            anonHandle: userSession.anonHandle,
+            primary: songMatchResult?.primary || null,
+            alternates: songMatchResult?.alternates || [],
+            why: songMatchResult?.why || null,
+            similarity: songMatchResult?.scores?.confidence || 0,
+            timestamp: savedMessage.createdAt.toISOString(),
+          };
+
+          connectionManager.broadcastToRoom(defaultRoom.id, displayMessage, connectionId);
+
+          // Publish to Redis for cross-instance broadcast
+          if (redisService.isEnabled()) {
+            redisService.publish('messages:events', {
+              ...displayMessage,
+              type: 'message_created',
+              roomId: defaultRoom.id,
+              instanceId: INSTANCE_ID
+            });
+          }
+
+          logger.info({
+            userId: userSession.userId,
+            anonHandle: userSession.anonHandle,
+            primarySong: songMatchResult
+              ? `${songMatchResult.primary.artist} - ${songMatchResult.primary.title}`
+              : '(no match)',
+            strategy: songMatchResult?.scores?.strategy || 'none',
+            confidence: songMatchResult?.scores?.confidence || 0
+          }, 'WebSocket message processing completed');
 
         } catch (error) {
           logger.error({
