@@ -28,7 +28,22 @@ export interface ReactionEvent {
   instanceId: string;
 }
 
-type PubSubEvent = PresenceEvent | ReactionEvent;
+export interface MessageEvent {
+  type: 'message_created';
+  id: string;
+  originalText: string;
+  userId: string;
+  anonHandle: string;
+  primary: any;
+  alternates: any[];
+  why: any;
+  similarity: number;
+  timestamp: string;
+  roomId: string;
+  instanceId: string;
+}
+
+type PubSubEvent = PresenceEvent | ReactionEvent | MessageEvent;
 
 export class RedisService {
   private publisher: Redis | null = null;
