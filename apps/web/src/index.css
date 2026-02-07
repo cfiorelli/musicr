@@ -8,13 +8,9 @@
     -webkit-text-size-adjust: 100%;
   }
 
-  /* Ensure all inputs are at least 16px on mobile to prevent zoom */
-  input[type="text"],
-  input[type="email"],
-  input[type="search"],
-  input[type="tel"],
-  input[type="url"],
-  input[type="password"],
+  /* iOS Safari auto-zooms on focus when computed font-size < 16px.
+     Cover all text-entry input types, including bare <input> without a type attr. */
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([type="hidden"]):not([type="submit"]):not([type="reset"]):not([type="button"]):not([type="image"]):not([type="color"]),
   textarea,
   select {
     font-size: 16px !important;

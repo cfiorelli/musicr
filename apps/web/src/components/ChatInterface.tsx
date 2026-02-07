@@ -378,7 +378,7 @@ const ChatInterface = () => {
   );
 
   return (
-    <div className="flex flex-col h-full" style={{ WebkitTextSizeAdjust: '100%' }}>
+    <div className="flex flex-col h-full">
       {/* Header with Room and Handle */}
       <div className="flex-none bg-gray-800/50 backdrop-blur-md rounded-xl p-3 mb-3 flex justify-between items-center border border-gray-700/50">
         <div className="flex items-center gap-4">
@@ -773,8 +773,7 @@ const ChatInterface = () => {
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={connectionStatus === 'connected' ? "Type anything to find a song..." : "Connecting..."}
-          className="flex-1 px-4 py-3 rounded-lg bg-gray-800/50 backdrop-blur-sm text-white placeholder-gray-500 border border-gray-700 focus:border-gray-600 focus:bg-gray-800/70 focus:outline-none transition-all"
-          style={{ fontSize: '16px' }}
+          className="flex-1 px-4 py-3 rounded-lg bg-gray-800/50 backdrop-blur-sm text-white placeholder-gray-500 border border-gray-700 focus:border-gray-600 focus:bg-gray-800/70 focus:outline-none transition-all text-base"
           disabled={connectionStatus !== 'connected'}
         />
         <button
