@@ -1696,13 +1696,6 @@ fastify.register(async function (fastify) {
               }));
               return;
             }
-            if (parent.replyToMessageId) {
-              connection.send(JSON.stringify({
-                type: 'error',
-                message: 'Cannot reply to a reply'
-              }));
-              return;
-            }
           }
 
           // Step 1: Attempt song matching (non-fatal — message persists regardless)

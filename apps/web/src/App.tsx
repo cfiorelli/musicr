@@ -40,7 +40,7 @@ function HomePage() {
               }}
               className="text-sm text-gray-400 hover:text-gray-300 transition-colors cursor-pointer"
             >
-              what is this?
+              About Musicr
             </button>
           </div>
           <div className="flex items-center gap-3">
