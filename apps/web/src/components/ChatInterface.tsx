@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
 import { useChatStore, type Message } from '../stores/chatStore';
 
+type TreeMessage = Message & { children: TreeMessage[] };
+
 const ChatInterface = () => {
   const [inputValue, setInputValue] = useState('');
   const [showQuickPalette, setShowQuickPalette] = useState(false);
@@ -16,15 +18,18 @@ const ChatInterface = () => {
   // Modal state: only one modal can be open at a time
   const [activeModal, setActiveModal] = useState<'onboarding' | 'info' | null>(null);
   const [historyLoadError, setHistoryLoadError] = useState(false);
+  const [inlineReplyText, setInlineReplyText] = useState('');
+  const [firstMatchId, setFirstMatchId] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const messagesRef = useRef<HTMLDivElement>(null);
   const lastLoadTimeRef = useRef<number>(0);
   const isLoadingRef = useRef<boolean>(false);
+  const inlineReplyRef = useRef<HTMLInputElement>(null);
 
   const examplePrompts = [
-    "I need a song for late-night coding",
-    "We just got good news",
-    "I feel anxious but hopeful"
+    "I'm stressed and overloaded today.",
+    "Tell me something that feels like a rainy night drive.",
+    "I need a song that feels like nervous excitement.",
   ];
   const {
     messages,
@@ -52,29 +57,39 @@ const ChatInterface = () => {
     setDebugMode(params.get('debug') === '1');
   }, []);
 
-  // Thread grouping: bucket replies under their parent, orphans render top-level
-  type ThreadedMessage = Message & { replies: Message[] };
-  const threadedMessages = useMemo<ThreadedMessage[]>(() => {
-    const messageIds = new Set(messages.map(m => m.id));
-    const replyMap = new Map<string, Message[]>();
-    const replyIds = new Set<string>();
+  // Build recursive tree from flat messages list
+  const threadedMessages = useMemo<TreeMessage[]>(() => {
+    const nodeMap = new Map<string, TreeMessage>();
+    const childIds = new Set<string>();
 
     for (const msg of messages) {
-      if (msg.replyToMessageId && messageIds.has(msg.replyToMessageId)) {
-        replyIds.add(msg.id);
-        const bucket = replyMap.get(msg.replyToMessageId) || [];
-        bucket.push(msg);
-        replyMap.set(msg.replyToMessageId, bucket);
+      nodeMap.set(msg.id, { ...msg, children: [] });
+    }
+
+    for (const msg of messages) {
+      if (msg.replyToMessageId && nodeMap.has(msg.replyToMessageId)) {
+        childIds.add(msg.id);
+        nodeMap.get(msg.replyToMessageId)!.children.push(nodeMap.get(msg.id)!);
       }
     }
 
-    const topLevel: ThreadedMessage[] = [];
-    for (const msg of messages) {
-      if (!replyIds.has(msg.id)) {
-        topLevel.push({ ...msg, replies: replyMap.get(msg.id) || [] });
+    // Safeguard 3: sort children chronologically (ascending by timestamp)
+    for (const node of nodeMap.values()) {
+      if (node.children.length > 1) {
+        node.children.sort((a, b) =>
+          new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+        );
       }
     }
-    return topLevel;
+
+    // Root messages = not a child of any other message (preserves original order)
+    const roots: TreeMessage[] = [];
+    for (const msg of messages) {
+      if (!childIds.has(msg.id)) {
+        roots.push(nodeMap.get(msg.id)!);
+      }
+    }
+    return roots;
   }, [messages]);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -87,10 +102,8 @@ const ChatInterface = () => {
   };
 
   const handleExampleClick = (example: string) => {
-    if (connectionStatus === 'connected') {
-      setLastMessage(example);
-      sendMessage(example);
-    }
+    setInputValue(example);
+    inputRef.current?.focus();
   };
 
   // Dismiss onboarding
@@ -138,6 +151,17 @@ const ChatInterface = () => {
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
+    // Ctrl/Cmd+Enter sends from global composer
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+      e.preventDefault();
+      if (inputValue.trim() && connectionStatus === 'connected') {
+        setLastMessage(inputValue.trim());
+        sendMessage(inputValue.trim());
+        setInputValue('');
+      }
+      return;
+    }
+
     if (e.key === 'ArrowUp' && inputValue === '' && lastMessage) {
       e.preventDefault();
       setInputValue(lastMessage);
@@ -154,7 +178,7 @@ const ChatInterface = () => {
       inputRef.current.focus();
     }
 
-    // Listen for show-info event from header "what is this?" link
+    // Listen for show-info event from header "About Musicr" link
     const handleShowInfo = () => {
       setActiveModal('info');
     };
@@ -209,7 +233,7 @@ const ChatInterface = () => {
   }, [connectionStatus, userHandle, activeModal]);
 
   // Centralized Escape key handler for all popups/modals
-  // Priority order: emoji picker > why panel > alternatives menu > modals
+  // Priority order: emoji picker > why panel > alternatives menu > inline reply > modals
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -264,6 +288,28 @@ const ChatInterface = () => {
     }
     fetchSongCount();
   }, []);
+
+  // Track first song match for "Meaning match" note (once per session)
+  useEffect(() => {
+    if (firstMatchId) return;
+    for (const msg of messages) {
+      if (msg.songTitle && msg.songArtist && !msg.isOptimistic) {
+        setFirstMatchId(msg.id);
+        return;
+      }
+    }
+  }, [messages, firstMatchId]);
+
+  // Safeguard 4: clear inline reply draft when replyingTo changes; scroll into view
+  useEffect(() => {
+    setInlineReplyText('');
+    if (replyingTo) {
+      setTimeout(() => {
+        inlineReplyRef.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        inlineReplyRef.current?.focus();
+      }, 100);
+    }
+  }, [replyingTo]);
 
   // Handle scroll detection to determine if user scrolled up
   const handleScroll = () => {
@@ -363,6 +409,275 @@ const ChatInterface = () => {
       return `${message.songTitle} — ${message.songArtist}${message.songYear ? ` (${message.songYear})` : ''}`;
     }
     return null;
+  };
+
+  // Song-title detection hint (only when input >= 10 chars)
+  const looksLikeSongTitle = inputValue.length >= 10 && (
+    inputValue.includes(' - ') || /\b\w+\s+by\s+\w+/i.test(inputValue)
+  );
+
+  // Recursive message renderer
+  // Safeguard 5: cycle guard via visited Set
+  // Safeguard 1: indent via inline style, not dynamic Tailwind class
+  const renderMessage = (msg: TreeMessage, depth: number, visited: Set<string>): React.ReactNode => {
+    if (visited.has(msg.id)) return null;
+    visited.add(msg.id);
+
+    const songDisplay = formatSongDisplay(msg);
+    const isNested = depth > 0;
+    const emojiSizeClass = isNested ? 'text-lg w-6' : 'text-xl w-7';
+    const nameClass = isNested
+      ? 'font-medium text-xs text-gray-400'
+      : 'font-medium text-sm text-gray-300';
+    const bubbleClass = isNested
+      ? 'rounded-md p-1.5 text-white bg-gray-800/40 border border-gray-700/30'
+      : 'rounded-lg p-2 text-white transition-all bg-gray-800/60 backdrop-blur-sm border border-gray-700/50 hover:border-gray-600/50';
+
+    return (
+      <div
+        key={msg.id}
+        className={isNested ? 'border-l-2 border-gray-700/50 pl-3' : ''}
+        style={isNested ? { marginLeft: Math.min(depth, 3) * 24 } : undefined}
+      >
+        <div className="group">
+          <div className="flex items-start gap-2">
+            <span className={`${emojiSizeClass} flex-shrink-0 mt-0.5 text-center`}>
+              {getUserEmoji(msg.anonHandle)}
+            </span>
+            <div className="flex-1 min-w-0">
+              {/* Username + timestamp */}
+              <div className="flex items-center gap-2 mb-0.5">
+                <span className={nameClass}>{msg.anonHandle}</span>
+                <span className="text-gray-600 text-xs">
+                  {new Date(msg.timestamp).toLocaleTimeString()}
+                </span>
+                {msg.isOptimistic && (
+                  <span className="text-amber-500 text-xs animate-pulse">sending...</span>
+                )}
+              </div>
+
+              {/* Message bubble: text is primary, song is secondary on its own line */}
+              <div className={bubbleClass}>
+                <div className="text-sm">
+                  <span>{msg.content}</span>
+                </div>
+                {songDisplay && (
+                  <div className="mt-1 flex items-center gap-1.5 flex-wrap">
+                    <span className="text-xs text-gray-500">Musicr picked:</span>
+                    <a
+                      href={getYouTubeSearchUrl(msg.songTitle!, msg.songArtist!)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-emerald-400/80 hover:text-emerald-300 underline decoration-emerald-500/30 hover:decoration-emerald-400/50 transition-colors"
+                      title="Listen on YouTube"
+                    >
+                      {songDisplay}
+                    </a>
+                    {msg.reasoning && (
+                      <button
+                        onClick={() => setExpandedWhyPanel(
+                          expandedWhyPanel === msg.id ? null : msg.id
+                        )}
+                        className="text-xs px-2 py-0.5 rounded-md text-gray-500 hover:text-gray-300 hover:bg-gray-700/50 transition-all opacity-0 group-hover:opacity-100 border border-gray-600/30 hover:border-gray-500/50"
+                        aria-label={expandedWhyPanel === msg.id ? 'Hide match explanation' : 'Show why this song matched'}
+                        title={expandedWhyPanel === msg.id ? 'Hide explanation' : 'Why this song?'}
+                      >
+                        {expandedWhyPanel === msg.id ? '✕' : '?'}
+                      </button>
+                    )}
+                    {firstMatchId === msg.id && (
+                      <span className="text-xs text-gray-500 italic">Meaning match · not exact search</span>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Why Panel - Compact Match Score */}
+              {expandedWhyPanel === msg.id && msg.reasoning && songDisplay && (
+                <div className="mt-2 p-2.5 bg-gray-800/60 border border-gray-700/50 rounded-lg text-sm backdrop-blur-sm">
+                  <div className="flex items-center justify-between gap-3">
+                    {(() => {
+                      const confidence = getConfidenceLabel(msg.similarity);
+                      const score = msg.similarity ?? 0.001;
+                      return (
+                        <div className="flex items-center gap-2 flex-1">
+                          <span className="text-gray-400 font-medium text-xs">Match:</span>
+                          <span className={`font-semibold text-sm ${confidence.color}`}>
+                            {confidence.emoji} {confidence.label}
+                          </span>
+                          <span className="text-gray-500 text-xs">({(score * 100).toFixed(1)}%)</span>
+                        </div>
+                      );
+                    })()}
+                    <button
+                      onClick={() => setExpandedWhyPanel(null)}
+                      className="text-gray-500 hover:text-gray-300 transition-colors px-2 py-1 rounded hover:bg-gray-700/50"
+                      aria-label="Close"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Reactions + action icon buttons (all messages, any depth) */}
+              <div className="flex flex-wrap items-center gap-1 mt-1">
+                {msg.reactions && msg.reactions.length > 0 && msg.reactions.map((reaction) => (
+                  <button
+                    key={reaction.emoji}
+                    onClick={() => {
+                      if (reaction.hasReacted) {
+                        removeReaction(msg.id, reaction.emoji);
+                      } else {
+                        addReaction(msg.id, reaction.emoji);
+                      }
+                    }}
+                    className={`
+                      flex items-center gap-1 px-2 py-1 rounded-full text-sm
+                      transition-all duration-200 hover:scale-110
+                      ${reaction.hasReacted
+                        ? 'bg-blue-500/30 border-2 border-blue-400'
+                        : 'bg-white/10 border border-white/20 hover:bg-white/20'
+                      }
+                    `}
+                    title={reaction.users.map(u => u.anonHandle).join(', ')}
+                  >
+                    <span>{reaction.emoji}</span>
+                    <span className="text-xs font-semibold text-white">{reaction.count}</span>
+                  </button>
+                ))}
+
+                {msg.userId !== 'system' && (
+                  <>
+                    <button
+                      onClick={() => setEmojiPickerOpen(msg.id)}
+                      aria-label="Add reaction"
+                      title="Add reaction"
+                      className="
+                        flex items-center gap-1 px-2 py-1 rounded-full text-xs
+                        bg-white/5 hover:bg-white/15 border border-white/10 hover:border-white/30
+                        text-gray-400 hover:text-gray-200
+                        transition-all duration-200
+                        opacity-80 md:opacity-0 md:group-hover:opacity-100
+                      "
+                    >
+                      <span>😊</span>
+                      <span className="text-[10px]">+</span>
+                    </button>
+                    <button
+                      onClick={() => setReplyingTo(msg.id)}
+                      aria-label="Reply"
+                      title="Reply to this message"
+                      className="
+                        flex items-center px-2 py-1 rounded-full text-xs
+                        bg-white/5 hover:bg-white/15 border border-white/10 hover:border-white/30
+                        text-gray-400 hover:text-gray-200
+                        transition-all duration-200
+                        opacity-80 md:opacity-0 md:group-hover:opacity-100
+                      "
+                    >
+                      <span>↩</span>
+                    </button>
+                    {msg.alternates && msg.alternates.length > 0 && (
+                      <button
+                        onClick={() => {
+                          setCurrentSelectedMessage(msg.id);
+                          setCurrentAlternates(msg.alternates || []);
+                          setShowQuickPalette(true);
+                        }}
+                        aria-label="Alternatives"
+                        title="More matches like this"
+                        className="
+                          flex items-center px-2 py-1 rounded-full text-xs
+                          bg-white/5 hover:bg-white/15 border border-white/10 hover:border-white/30
+                          text-gray-400 hover:text-gray-200
+                          transition-all duration-200
+                          opacity-80 md:opacity-0 md:group-hover:opacity-100
+                        "
+                      >
+                        <span>🎵</span>
+                      </button>
+                    )}
+                  </>
+                )}
+              </div>
+
+              {/* Inline reply composer */}
+              {replyingTo === msg.id && (
+                <div className="mt-1 flex gap-2">
+                  <input
+                    ref={inlineReplyRef}
+                    value={inlineReplyText}
+                    onChange={(e) => setInlineReplyText(e.target.value)}
+                    placeholder={`Replying to ${msg.anonHandle}...`}
+                    autoFocus
+                    className="flex-1 px-3 py-2 rounded-lg bg-gray-800/50 text-white placeholder-gray-500 text-base border border-gray-700 focus:border-gray-600 focus:outline-none transition-all"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                        e.preventDefault();
+                        if (inlineReplyText.trim()) {
+                          sendMessage(inlineReplyText.trim());
+                          setInlineReplyText('');
+                        }
+                      } else if (e.key === 'Enter') {
+                        e.preventDefault();
+                        if (inlineReplyText.trim()) {
+                          sendMessage(inlineReplyText.trim());
+                          setInlineReplyText('');
+                        }
+                      } else if (e.key === 'Escape') {
+                        setReplyingTo(null);
+                      }
+                    }}
+                  />
+                  <button
+                    onClick={() => {
+                      if (inlineReplyText.trim()) {
+                        sendMessage(inlineReplyText.trim());
+                        setInlineReplyText('');
+                      }
+                    }}
+                    className="px-3 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-sm transition-colors flex-shrink-0"
+                    aria-label="Send reply"
+                    title="Send reply"
+                  >
+                    ↩
+                  </button>
+                  <button
+                    onClick={() => setReplyingTo(null)}
+                    className="px-3 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg text-sm transition-colors flex-shrink-0"
+                    aria-label="Cancel reply"
+                    title="Cancel reply"
+                  >
+                    ✕
+                  </button>
+                </div>
+              )}
+
+              {/* Thread toggle + children */}
+              {msg.children.length > 0 && (
+                <div className="mt-1">
+                  <button
+                    onClick={() => toggleThread(msg.id)}
+                    className="text-xs text-gray-400 hover:text-gray-200 transition-colors"
+                  >
+                    {expandedThreads[msg.id]
+                      ? 'Hide replies'
+                      : `Show ${msg.children.length} ${msg.children.length === 1 ? 'reply' : 'replies'}`
+                    }
+                  </button>
+                  {expandedThreads[msg.id] && (
+                    <div className="mt-1 space-y-1">
+                      {msg.children.map(child => renderMessage(child, depth + 1, visited))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   const QuickPalette = ({ alternates, onSelect, onClose }: {
@@ -478,7 +793,7 @@ const ChatInterface = () => {
             </div>
           </details>
           <div className="mt-2 text-gray-400 text-xs italic">
-            💡 Open multiple tabs to test for split-brain. All instanceIds should match if using single backend.
+            Open multiple tabs to test for split-brain. All instanceIds should match if using single backend.
           </div>
         </div>
       )}
@@ -528,268 +843,29 @@ const ChatInterface = () => {
           </div>
         )}
 
-        <div className="space-y-1.5">
-          {threadedMessages.map((message) => {
-              const songDisplay = formatSongDisplay(message);
-
-              return (
-                <div key={message.id}>
-                  {/* Parent message */}
-                  <div className="group">
-                    <div className="flex items-start gap-3">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-0.5">
-                          <span className="font-medium text-sm text-gray-300">
-                            {getUserEmoji(message.anonHandle)} {message.anonHandle}
-                          </span>
-                          <span className="text-gray-600 text-xs">
-                            {new Date(message.timestamp).toLocaleTimeString()}
-                          </span>
-                          {message.isOptimistic && (
-                            <span className="text-amber-500 text-xs animate-pulse">sending...</span>
-                          )}
-                        </div>
-
-                        <div className="rounded-lg p-2 text-white transition-all bg-gray-800/60 backdrop-blur-sm border border-gray-700/50 hover:border-gray-600/50">
-                          <div className="flex items-center gap-2 flex-wrap text-sm">
-                            <span>{message.content}</span>
-                            {songDisplay && (
-                              <>
-                                <span className="text-gray-500">→</span>
-                                <a
-                                  href={getYouTubeSearchUrl(message.songTitle!, message.songArtist!)}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="font-medium text-emerald-400 hover:text-emerald-300 underline decoration-emerald-500/30 hover:decoration-emerald-400/50 transition-colors"
-                                  title="Listen on YouTube"
-                                >
-                                  {songDisplay}
-                                </a>
-                                {message.reasoning && (
-                                  <button
-                                    onClick={() => setExpandedWhyPanel(
-                                      expandedWhyPanel === message.id ? null : message.id
-                                    )}
-                                    className="text-xs px-2 py-1 rounded-md text-gray-500 hover:text-gray-300 hover:bg-gray-700/50 transition-all opacity-0 group-hover:opacity-100 border border-gray-600/30 hover:border-gray-500/50"
-                                    aria-label={expandedWhyPanel === message.id ? 'Hide match explanation' : 'Show why this song matched'}
-                                  >
-                                    {expandedWhyPanel === message.id ? '✕' : '?'}
-                                  </button>
-                                )}
-                                {message.alternates && message.alternates.length > 0 && (
-                                  <button
-                                    onClick={() => {
-                                      setCurrentSelectedMessage(message.id);
-                                      setCurrentAlternates(message.alternates || []);
-                                      setShowQuickPalette(true);
-                                    }}
-                                    className="text-xs bg-gray-700 hover:bg-gray-600 px-2.5 py-1 rounded-md text-gray-300 font-medium transition-colors opacity-0 group-hover:opacity-100"
-                                  >
-                                    🎵 alternatives ({message.alternates.length})
-                                  </button>
-                                )}
-                              </>
-                            )}
-                          </div>
-                        </div>
-
-                        {/* Why Panel - Compact Match Score */}
-                        {expandedWhyPanel === message.id && message.reasoning && songDisplay && (
-                          <div className="mt-2 p-2.5 bg-gray-800/60 border border-gray-700/50 rounded-lg text-sm backdrop-blur-sm">
-                            <div className="flex items-center justify-between gap-3">
-                              {(() => {
-                                const confidence = getConfidenceLabel(message.similarity);
-                                const score = message.similarity ?? 0.001;
-                                return (
-                                  <div className="flex items-center gap-2 flex-1">
-                                    <span className="text-gray-400 font-medium text-xs">Match:</span>
-                                    <span className={`font-semibold text-sm ${confidence.color}`}>
-                                      {confidence.emoji} {confidence.label}
-                                    </span>
-                                    <span className="text-gray-500 text-xs">({(score * 100).toFixed(1)}%)</span>
-                                  </div>
-                                );
-                              })()}
-                              <button
-                                onClick={() => setExpandedWhyPanel(null)}
-                                className="text-gray-500 hover:text-gray-300 transition-colors px-2 py-1 rounded hover:bg-gray-700/50"
-                                aria-label="Close"
-                              >
-                                ✕
-                              </button>
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Reactions + Reply button */}
-                        <div className="flex flex-wrap items-center gap-1 mt-1">
-                          {message.reactions && message.reactions.length > 0 && message.reactions.map((reaction) => (
-                            <button
-                              key={reaction.emoji}
-                              onClick={() => {
-                                if (reaction.hasReacted) {
-                                  removeReaction(message.id, reaction.emoji);
-                                } else {
-                                  addReaction(message.id, reaction.emoji);
-                                }
-                              }}
-                              className={`
-                                flex items-center gap-1 px-2 py-1 rounded-full text-sm
-                                transition-all duration-200 hover:scale-110
-                                ${reaction.hasReacted
-                                  ? 'bg-blue-500/30 border-2 border-blue-400'
-                                  : 'bg-white/10 border border-white/20 hover:bg-white/20'
-                                }
-                              `}
-                              title={reaction.users.map(u => u.anonHandle).join(', ')}
-                            >
-                              <span>{reaction.emoji}</span>
-                              <span className="text-xs font-semibold text-white">{reaction.count}</span>
-                            </button>
-                          ))}
-
-                          {message.userId !== 'system' && (
-                            <>
-                              <button
-                                onClick={() => setEmojiPickerOpen(message.id)}
-                                className="
-                                  flex items-center gap-1 px-2 py-1 rounded-full text-xs
-                                  bg-white/5 hover:bg-white/15 border border-white/10 hover:border-white/30
-                                  text-gray-400 hover:text-gray-200
-                                  transition-all duration-200
-                                  opacity-80 md:opacity-0 md:group-hover:opacity-100
-                                "
-                                title="Add reaction"
-                              >
-                                <span>😊</span>
-                                <span className="text-[10px]">+</span>
-                              </button>
-                              <button
-                                onClick={() => setReplyingTo(message.id)}
-                                className="
-                                  flex items-center px-2 py-1 rounded-full text-xs
-                                  bg-white/5 hover:bg-white/15 border border-white/10 hover:border-white/30
-                                  text-gray-400 hover:text-gray-200
-                                  transition-all duration-200
-                                  opacity-80 md:opacity-0 md:group-hover:opacity-100
-                                "
-                                title="Reply"
-                              >
-                                <span>↩</span>
-                              </button>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Threaded replies */}
-                  {message.replies.length > 0 && (
-                    <div className="mt-1">
-                      <button
-                        onClick={() => toggleThread(message.id)}
-                        className="text-xs text-gray-400 hover:text-gray-200 transition-colors ml-1 mb-1"
-                      >
-                        {expandedThreads[message.id]
-                          ? `Hide replies`
-                          : `See replies (${message.replies.length})`
-                        }
-                      </button>
-                      {expandedThreads[message.id] && (
-                    <div className="ml-6 border-l-2 border-gray-700/50 pl-3 space-y-1">
-                      {message.replies.map((reply) => {
-                        const replySongDisplay = formatSongDisplay(reply);
-                        return (
-                          <div key={reply.id} className="group">
-                            <div className="flex items-start gap-2">
-                              <div className="flex-1">
-                                <div className="flex items-center gap-2 mb-0.5">
-                                  <span className="font-medium text-xs text-gray-400">
-                                    {getUserEmoji(reply.anonHandle)} {reply.anonHandle}
-                                  </span>
-                                  <span className="text-gray-600 text-xs">
-                                    {new Date(reply.timestamp).toLocaleTimeString()}
-                                  </span>
-                                  {reply.isOptimistic && (
-                                    <span className="text-amber-500 text-xs animate-pulse">sending...</span>
-                                  )}
-                                </div>
-                                <div className="rounded-md p-1.5 text-white text-sm bg-gray-800/40 border border-gray-700/30">
-                                  <div className="flex items-center gap-2 flex-wrap">
-                                    <span>{reply.content}</span>
-                                    {replySongDisplay && (
-                                      <>
-                                        <span className="text-gray-500">→</span>
-                                        <a
-                                          href={getYouTubeSearchUrl(reply.songTitle!, reply.songArtist!)}
-                                          target="_blank"
-                                          rel="noopener noreferrer"
-                                          className="font-medium text-emerald-400 hover:text-emerald-300 underline decoration-emerald-500/30 hover:decoration-emerald-400/50 transition-colors"
-                                          title="Listen on YouTube"
-                                        >
-                                          {replySongDisplay}
-                                        </a>
-                                      </>
-                                    )}
-                                  </div>
-                                </div>
-                                {/* Reactions on replies */}
-                                <div className="flex flex-wrap items-center gap-1 mt-1">
-                                  {reply.reactions && reply.reactions.length > 0 && reply.reactions.map((reaction) => (
-                                    <button
-                                      key={reaction.emoji}
-                                      onClick={() => {
-                                        if (reaction.hasReacted) {
-                                          removeReaction(reply.id, reaction.emoji);
-                                        } else {
-                                          addReaction(reply.id, reaction.emoji);
-                                        }
-                                      }}
-                                      className={`
-                                        flex items-center gap-1 px-1.5 py-0.5 rounded-full text-xs
-                                        transition-all duration-200 hover:scale-110
-                                        ${reaction.hasReacted
-                                          ? 'bg-blue-500/30 border-2 border-blue-400'
-                                          : 'bg-white/10 border border-white/20 hover:bg-white/20'
-                                        }
-                                      `}
-                                      title={reaction.users.map(u => u.anonHandle).join(', ')}
-                                    >
-                                      <span>{reaction.emoji}</span>
-                                      <span className="text-xs font-semibold text-white">{reaction.count}</span>
-                                    </button>
-                                  ))}
-                                  {reply.userId !== 'system' && (
-                                    <button
-                                      onClick={() => setEmojiPickerOpen(reply.id)}
-                                      className="
-                                        flex items-center gap-1 px-1.5 py-0.5 rounded-full text-xs
-                                        bg-white/5 hover:bg-white/15 border border-white/10 hover:border-white/30
-                                        text-gray-400 hover:text-gray-200
-                                        transition-all duration-200
-                                        opacity-80 md:opacity-0 md:group-hover:opacity-100
-                                      "
-                                      title="Add reaction"
-                                    >
-                                      <span>😊</span>
-                                      <span className="text-[10px]">+</span>
-                                    </button>
-                                  )}
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-        </div>
+        {threadedMessages.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-full gap-4 text-center px-4">
+            <p className="text-gray-500 text-sm">Try one of these:</p>
+            <div className="flex flex-wrap gap-2 justify-center">
+              {examplePrompts.map(p => (
+                <button
+                  key={p}
+                  onClick={() => handleExampleClick(p)}
+                  className="px-3 py-1.5 bg-gray-800/50 border border-gray-700/50 rounded-full text-sm text-gray-400 hover:text-gray-200 hover:border-gray-600 transition-colors"
+                >
+                  {p}
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-1.5">
+            {(() => {
+              const visited = new Set<string>();
+              return threadedMessages.map(msg => renderMessage(msg, 0, visited));
+            })()}
+          </div>
+        )}
       </div>
 
       {/* Emoji Picker Modal - rendered outside scroll container so fixed positioning works
@@ -899,38 +975,18 @@ const ChatInterface = () => {
         </button>
       )}
 
-      {/* Replying to... bar */}
-      {replyingTo && (() => {
-        const parentMsg = messages.find(m => m.id === replyingTo);
-        if (!parentMsg) return null;
-        return (
-          <div className="flex-none flex items-center gap-2 px-3 py-2 mb-1 bg-gray-800/60 border border-gray-700/50 rounded-lg text-sm">
-            <span className="text-gray-500">↩</span>
-            <span className="text-gray-400">Replying to</span>
-            <span className="text-gray-300 font-medium">{parentMsg.anonHandle}</span>
-            <span className="text-gray-500 truncate flex-1">
-              {parentMsg.content.length > 60 ? parentMsg.content.slice(0, 60) + '...' : parentMsg.content}
-            </span>
-            <button
-              onClick={() => setReplyingTo(null)}
-              className="text-gray-400 hover:text-white transition-colors flex-shrink-0"
-              aria-label="Cancel reply"
-            >
-              ✕
-            </button>
-          </div>
-        );
-      })()}
-
-      {/* Message Input - Pinned at bottom */}
-      <form onSubmit={handleSubmit} className="flex-none flex gap-2">
+      {/* Message Input - Pinned at bottom (de-emphasised while inline reply is open) */}
+      <form
+        onSubmit={handleSubmit}
+        className={`flex-none flex gap-2 ${replyingTo ? 'opacity-40 pointer-events-none' : ''}`}
+      >
         <input
           ref={inputRef}
           type="text"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder={connectionStatus === 'connected' ? "Type anything to find a song..." : "Connecting..."}
+          placeholder={connectionStatus === 'connected' ? "Say something (a thought, joke, mood, memory)..." : "Connecting..."}
           className="flex-1 px-4 py-3 rounded-lg bg-gray-800/50 text-white placeholder-gray-500 border border-gray-700 focus:border-gray-600 focus:bg-gray-800/70 focus:outline-none transition-all text-base"
           disabled={connectionStatus !== 'connected'}
         />
@@ -943,6 +999,28 @@ const ChatInterface = () => {
           Send 🎵
         </button>
       </form>
+
+      {/* Helper text below input */}
+      <p className="text-center text-xs text-gray-600 mt-1">
+        We match the meaning to a song, not exact titles.
+      </p>
+
+      {/* Song-title detection hint (only when input >= 10 chars) */}
+      {looksLikeSongTitle && (
+        <p className="text-xs text-gray-600 mt-0.5 text-center">
+          Titles are treated as vibe prompts here, not exact lookups.
+        </p>
+      )}
+
+      {/* Jump to reply box helper (visible when inline reply is active) */}
+      {replyingTo && (
+        <button
+          onClick={() => inlineReplyRef.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })}
+          className="text-xs text-blue-400 hover:text-blue-300 mt-1 text-center w-full transition-colors"
+        >
+          Jump to reply box
+        </button>
+      )}
 
       {/* Quick Palette for Alternatives */}
       {showQuickPalette && currentSelectedMessage && currentAlternates && (
@@ -1029,7 +1107,7 @@ const ChatInterface = () => {
         </div>
       )}
 
-      {/* Info Modal - "What is this?" */}
+      {/* About Musicr Modal */}
       {activeModal === 'info' && (
         <div
           className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto"
@@ -1039,82 +1117,39 @@ const ChatInterface = () => {
             }
           }}
         >
-          <div className="max-w-2xl w-full bg-gray-900/95 backdrop-blur-md border border-gray-700 rounded-xl p-6 shadow-2xl relative my-8 max-h-[90vh] overflow-y-auto">
+          <div className="max-w-lg w-full bg-gray-900/95 backdrop-blur-md border border-gray-700 rounded-xl p-6 shadow-2xl relative my-8">
             <button
               onClick={() => setActiveModal(null)}
-              className="sticky top-0 right-0 ml-auto mb-3 w-10 h-10 flex items-center justify-center text-gray-500 hover:text-gray-300 transition-colors rounded-lg bg-gray-800 hover:bg-gray-700 text-xl z-10"
-              aria-label="Close info modal"
+              className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white transition-colors rounded-lg hover:bg-white/10"
+              aria-label="Close"
             >
               ✕
             </button>
-            <h2 className="text-2xl font-bold text-white mb-5 flex items-center gap-2">
-              <span>👋</span>
+            <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
+              <span>🎵</span>
               <span>About Musicr</span>
             </h2>
-            <div className="space-y-3 mb-5">
-              <div className="flex gap-3 items-start bg-gray-800/50 rounded-lg p-3 border border-gray-700/50">
-                <span className="text-2xl">🎵</span>
-                <div>
-                  <p className="text-white font-semibold text-base">What it is</p>
-                  <p className="text-gray-400 text-sm">A musical chat where every message gets matched to a song using AI semantic search</p>
-                </div>
-              </div>
-              <div className="flex gap-3 items-start bg-gray-800/50 rounded-lg p-3 border border-gray-700/50">
-                <span className="text-2xl">💬</span>
-                <div>
-                  <p className="text-white font-semibold text-base">How to use</p>
-                  <p className="text-gray-400 text-sm">Type like you're chatting normally - emotions, situations, moods - and watch songs appear!</p>
-                </div>
-              </div>
-              <div className="flex gap-3 items-start bg-gray-800/50 rounded-lg p-3 border border-gray-700/50">
-                <span className="text-2xl">✨</span>
-                <div>
-                  <p className="text-white font-semibold text-base">Why it's cool</p>
-                  <p className="text-gray-400 text-sm">Semantic AI matching finds songs by meaning, not keywords. No lyrics stored or analyzed.</p>
-                </div>
-              </div>
-              <div className="flex gap-3 items-start bg-gray-800/50 rounded-lg p-3 border border-gray-700/50">
-                <span className="text-2xl">🎬</span>
-                <div>
-                  <p className="text-white font-semibold text-base">Listen to songs</p>
-                  <p className="text-gray-400 text-sm">Click any song name to search and play it on YouTube!</p>
-                </div>
-              </div>
-            </div>
-            <div className="bg-gray-800/60 rounded-lg p-3 text-sm border border-gray-700/50">
-              <p className="text-white font-semibold mb-3 flex items-center gap-2">
-                <span className="text-xl">🔬</span>
-                <span>How it works (technical)</span>
+            <div className="space-y-3 text-gray-300 text-sm leading-relaxed">
+              <p>
+                Musicr turns messages into song picks. It doesn't keyword-match
+                your text — it tries to match the meaning.
               </p>
-              <div className="space-y-2 text-gray-200">
-                <div className="flex gap-2">
-                  <span className="text-blue-300 font-bold">1.</span>
-                  <div>
-                    <span className="font-semibold text-white">Embedding Generation:</span> Your message is converted into a 1536-dimensional vector by OpenAI's text-embedding model, capturing semantic meaning and context
-                  </div>
-                </div>
-                <div className="flex gap-2">
-                  <span className="text-blue-300 font-bold">2.</span>
-                  <div>
-                    <span className="font-semibold text-white">Similarity Search:</span> The system uses pgvector with HNSW indexing to find songs whose embeddings are closest to yours in high-dimensional space
-                  </div>
-                </div>
-                <div className="flex gap-2">
-                  <span className="text-blue-300 font-bold">3.</span>
-                  <div>
-                    <span className="font-semibold text-white">The Match:</span> Songs are ranked by cosine similarity score (0-1), where higher scores mean better semantic matches. Click "💡 why?" to see confidence scores!
-                  </div>
-                </div>
-              </div>
+              <p>
+                Say what's on your mind, and you'll get a track that fits the
+                vibe. Use it like a conversation: thoughts, jokes, stress,
+                memories — anything.
+              </p>
+              <p>
+                If you type a song title, Musicr may treat it as a vibe prompt,
+                not a lookup.
+              </p>
             </div>
-            <div className="bg-white/10 rounded-xl p-4 text-sm">
-              <p className="text-white font-semibold mb-3">💡 Keyboard Shortcuts</p>
-              <div className="space-y-2 text-gray-200">
-                <p>• Press <kbd className="bg-white/20 px-3 py-1 rounded font-mono">↑</kbd> to edit your last message</p>
-                <p>• Press <kbd className="bg-white/20 px-3 py-1 rounded font-mono">Cmd+K</kbd> to see alternative song matches</p>
-                <p>• Click <span className="bg-blue-500/60 px-3 py-1 rounded-full font-semibold">💡 why?</span> to understand matches</p>
-              </div>
-            </div>
+            <button
+              onClick={() => setActiveModal(null)}
+              className="mt-6 w-full px-4 py-3 bg-gray-700 hover:bg-gray-600 text-white font-medium rounded-lg transition-colors"
+            >
+              Close
+            </button>
           </div>
         </div>
       )}
