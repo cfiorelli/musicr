@@ -230,11 +230,21 @@ pnpm preview      # Preview production build locally
 - `GET /debug/connections` - Debug WebSocket connections
 - `WS /` - WebSocket connection for real-time chat
 
+## Secrets
+
+Production secrets live exclusively in Railway environment variables — never in code or git history. See [SECURITY.md](SECURITY.md) for:
+
+- Where each secret is configured
+- How to rotate `DATABASE_URL`, `OPENAI_API_KEY`, `COOKIE_SECRET`
+- What to do if a secret is leaked
+- Automated scanning (Gitleaks CI, Dependabot)
+
 ## Documentation
 
 - **Architecture:** [ARCHITECTURE.md](ARCHITECTURE.md) - System design and matching engine
 - **Contributing:** [CONTRIBUTING.md](CONTRIBUTING.md) - Development guidelines
 - **Operations:** [RUNBOOK.md](RUNBOOK.md) - Deployment and troubleshooting
+- **Security:** [SECURITY.md](SECURITY.md) - Secret rotation and leak response
 - **Test Fixtures:** [apps/api/fixtures/FIXTURES_README.md](apps/api/fixtures/FIXTURES_README.md)
 
 ## License
