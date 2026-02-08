@@ -13,12 +13,10 @@ dist/
 build/
 out/
 
-# Environment variables
+# Environment variables (all variants except templates)
 .env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env.*
+!.env.example
 
 # Logs
 npm-debug.log*
