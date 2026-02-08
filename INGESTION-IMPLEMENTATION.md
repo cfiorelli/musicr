@@ -40,7 +40,7 @@ Implemented a complete ingestion pipeline to expand the song catalog from ~193 t
 ```bash
 # Set environment variables
 export DATABASE_URL="postgresql://postgres:PASSWORD@host:port/railway?sslmode=disable"
-export OPENAI_API_KEY="sk-proj-..."
+export OPENAI_API_KEY="your-openai-api-key"
 
 # Navigate to API directory
 cd /home/hpz240/musicr/apps/api
