@@ -211,7 +211,7 @@
 ```bash
 cd /home/hpz240/musicr/apps/api
 DATABASE_URL="postgresql://postgres:***@your-railway-host.proxy.rlwy.net:PORT/railway?sslmode=require" \
-OPENAI_API_KEY="sk-proj-***" \
+OPENAI_API_KEY="your-openai-api-key" \
 pnpm tsx scripts/verify-phase1.ts
 ```
 
@@ -254,7 +254,7 @@ railway login
 railway init
 railway variables set NODE_ENV=production
 railway variables set COOKIE_SECRET=$(openssl rand -base64 32)
-railway variables set OPENAI_API_KEY=sk-proj-***
+railway variables set OPENAI_API_KEY=your-openai-api-key
 railway up
 ```
 

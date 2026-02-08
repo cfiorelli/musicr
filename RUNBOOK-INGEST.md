@@ -9,7 +9,7 @@
 ```bash
 # Environment variables
 export DATABASE_URL="postgresql://postgres:PASSWORD@host:port/railway?sslmode=disable"
-export OPENAI_API_KEY="sk-proj-..."
+export OPENAI_API_KEY="your-openai-api-key"
 
 # Navigate to API directory
 cd /home/hpz240/musicr/apps/api
@@ -254,7 +254,7 @@ Solution: Check artist-seeds.json for valid MBIDs. Test connection:
 **Problem:** `OPENAI_API_KEY environment variable is required`
 ```
 Solution: Set the environment variable:
-  export OPENAI_API_KEY="sk-proj-..."
+  export OPENAI_API_KEY="your-openai-api-key"
 ```
 
 **Problem:** `Failed to generate embedding: rate limit`

@@ -7,7 +7,7 @@ Automated pipeline for expanding the song catalog from legal metadata sources (M
 ```bash
 # Set environment
 export DATABASE_URL="postgresql://..."
-export OPENAI_API_KEY="sk-proj-..."
+export OPENAI_API_KEY="your-openai-api-key"
 
 # Import 2000 songs + generate embeddings
 ./ingest.sh full --target=2000
