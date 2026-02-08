@@ -416,12 +416,41 @@ const ChatInterface = () => {
     inputValue.includes(' - ') || /\b\w+\s+by\s+\w+/i.test(inputValue)
   );
 
-  // Recursive message renderer
+  // Detect code-like content (long unbroken tokens, shell commands, paths)
+  const isCodeLike = (text: string): boolean => {
+    const words = text.split(/\s+/);
+    if (words.some(w => w.length > 60)) return true;
+    if (text.length > 80 && /[|&]{2}|::|[\w.-]+\/[\w.-]+\//.test(text)) return true;
+    return false;
+  };
+
+  // Build flat visible rows from tree via DFS (prevents indent compounding)
   // Safeguard 5: cycle guard via visited Set
+  const visibleRows = useMemo(() => {
+    const rows: { msg: TreeMessage; depth: number }[] = [];
+    const visited = new Set<string>();
+
+    function walk(msg: TreeMessage, depth: number) {
+      if (visited.has(msg.id)) return;
+      visited.add(msg.id);
+      rows.push({ msg, depth });
+      if (msg.children.length > 0 && expandedThreads[msg.id]) {
+        for (const child of msg.children) {
+          walk(child, depth + 1);
+        }
+      }
+    }
+
+    for (const root of threadedMessages) {
+      walk(root, 0);
+    }
+
+    return rows;
+  }, [threadedMessages, expandedThreads]);
+
+  // Flat message row renderer — all rows are siblings (no nested DOM containers)
   // Safeguard 1: indent via inline style, not dynamic Tailwind class
-  const renderMessage = (msg: TreeMessage, depth: number, visited: Set<string>): React.ReactNode => {
-    if (visited.has(msg.id)) return null;
-    visited.add(msg.id);
+  const renderRow = (msg: TreeMessage, depth: number): React.ReactNode => {
 
     const songDisplay = formatSongDisplay(msg);
     const isNested = depth > 0;
@@ -430,14 +459,14 @@ const ChatInterface = () => {
       ? 'font-medium text-xs text-gray-400'
       : 'font-medium text-sm text-gray-300';
     const bubbleClass = isNested
-      ? 'rounded-md p-1.5 text-white bg-gray-800/40 border border-gray-700/30'
-      : 'rounded-lg p-2 text-white transition-all bg-gray-800/60 backdrop-blur-sm border border-gray-700/50 hover:border-gray-600/50';
+      ? 'rounded-md p-1.5 text-white bg-gray-800/40 border border-gray-700/30 max-w-full overflow-hidden'
+      : 'rounded-lg p-2 text-white transition-all bg-gray-800/60 backdrop-blur-sm border border-gray-700/50 hover:border-gray-600/50 max-w-full overflow-hidden';
 
     return (
       <div
         key={msg.id}
-        className={isNested ? 'border-l-2 border-gray-700/50 pl-3' : ''}
-        style={isNested ? { marginLeft: Math.min(depth, 3) * 24 } : undefined}
+        className={isNested ? 'border-l-2 border-gray-700/50 pl-2' : ''}
+        style={isNested ? { marginLeft: Math.min(depth, 3) * 16 } : undefined}
       >
         <div className="group">
           <div className="flex items-start gap-2">
@@ -456,11 +485,17 @@ const ChatInterface = () => {
                 )}
               </div>
 
-              {/* Message bubble: text is primary, song is secondary on its own line */}
+              {/* Message bubble */}
               <div className={bubbleClass}>
-                <div className="text-sm">
-                  <span>{msg.content}</span>
-                </div>
+                {isCodeLike(msg.content) ? (
+                  <pre className="text-xs font-mono whitespace-pre-wrap max-w-full overflow-x-auto" style={{ overflowWrap: 'anywhere' }}>
+                    {msg.content}
+                  </pre>
+                ) : (
+                  <div className="text-sm break-words" style={{ overflowWrap: 'anywhere' }}>
+                    {msg.content}
+                  </div>
+                )}
                 {songDisplay && (
                   <div className="mt-1 flex items-center gap-1.5 flex-wrap">
                     <span className="text-xs text-gray-500">Musicr picked:</span>
@@ -654,24 +689,19 @@ const ChatInterface = () => {
                 </div>
               )}
 
-              {/* Thread toggle + children */}
+              {/* Thread toggle (children rendered as sibling rows by visibleRows) */}
               {msg.children.length > 0 && (
-                <div className="mt-1">
-                  <button
-                    onClick={() => toggleThread(msg.id)}
-                    className="text-xs text-gray-400 hover:text-gray-200 transition-colors"
-                  >
-                    {expandedThreads[msg.id]
-                      ? 'Hide replies'
-                      : `Show ${msg.children.length} ${msg.children.length === 1 ? 'reply' : 'replies'}`
-                    }
-                  </button>
-                  {expandedThreads[msg.id] && (
-                    <div className="mt-1 space-y-1">
-                      {msg.children.map(child => renderMessage(child, depth + 1, visited))}
-                    </div>
-                  )}
-                </div>
+                <button
+                  onClick={() => toggleThread(msg.id)}
+                  className="text-xs text-gray-500 hover:text-gray-300 transition-colors mt-0.5"
+                >
+                  {expandedThreads[msg.id]
+                    ? (depth === 0 ? 'Hide replies' : '\u25BE')
+                    : (depth === 0
+                        ? `Show ${msg.children.length} ${msg.children.length === 1 ? 'reply' : 'replies'}`
+                        : `\u25B8 ${msg.children.length}`)
+                  }
+                </button>
               )}
             </div>
           </div>
@@ -802,7 +832,7 @@ const ChatInterface = () => {
       <div
         ref={messagesRef}
         onScroll={handleScroll}
-        className="flex-1 bg-gray-800/30 backdrop-blur-sm rounded-xl p-4 mb-3 overflow-y-auto min-h-0 border border-gray-700/30"
+        className="flex-1 bg-gray-800/30 backdrop-blur-sm rounded-xl p-4 mb-3 overflow-y-auto overflow-x-hidden min-h-0 border border-gray-700/30"
       >
         {/* Load Older Messages Button - Only show on error as fallback */}
         {historyLoadError && hasMoreHistory && messages.length > 0 && (
@@ -845,7 +875,10 @@ const ChatInterface = () => {
 
         {threadedMessages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full gap-4 text-center px-4">
-            <p className="text-gray-500 text-sm">Try one of these:</p>
+            <div>
+              <p className="text-gray-400 text-sm">Type a thought; Musicr replies with a song that matches the meaning.</p>
+              <p className="text-gray-500 text-xs mt-1">Not an exact title search.</p>
+            </div>
             <div className="flex flex-wrap gap-2 justify-center">
               {examplePrompts.map(p => (
                 <button
@@ -860,10 +893,7 @@ const ChatInterface = () => {
           </div>
         ) : (
           <div className="space-y-1.5">
-            {(() => {
-              const visited = new Set<string>();
-              return threadedMessages.map(msg => renderMessage(msg, 0, visited));
-            })()}
+            {visibleRows.map(({ msg, depth }) => renderRow(msg, depth))}
           </div>
         )}
       </div>
