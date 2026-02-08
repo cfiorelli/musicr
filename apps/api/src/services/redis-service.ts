@@ -41,6 +41,7 @@ export interface MessageEvent {
   timestamp: string;
   roomId: string;
   instanceId: string;
+  replyToMessageId?: string | null;
 }
 
 type PubSubEvent = PresenceEvent | ReactionEvent | MessageEvent;

@@ -44,23 +44,27 @@ model Song {
 }
 
 model Message {
-  id           String   @id @default(uuid()) @db.Uuid
-  userId       String   @db.Uuid
-  roomId       String   @db.Uuid
-  text         String
-  chosenSongId String?  @db.Uuid
-  scores       Json?
-  createdAt    DateTime @default(now())
+  id               String   @id @default(uuid()) @db.Uuid
+  userId           String   @db.Uuid
+  roomId           String   @db.Uuid
+  text             String
+  chosenSongId     String?  @db.Uuid
+  scores           Json?
+  replyToMessageId String?  @db.Uuid
+  createdAt        DateTime @default(now())
 
-  user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  room      Room              @relation(fields: [roomId], references: [id], onDelete: Cascade)
-  song      Song?             @relation(fields: [chosenSongId], references: [id])
-  reactions MessageReaction[]
+  user           User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  room           Room              @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  song           Song?             @relation(fields: [chosenSongId], references: [id])
+  replyToMessage Message?          @relation("MessageReplies", fields: [replyToMessageId], references: [id], onDelete: SetNull)
+  replies        Message[]         @relation("MessageReplies")
+  reactions      MessageReaction[]
 
   @@index([userId], map: "idx_messages_user_id")
   @@index([roomId], map: "idx_messages_room_id")
   @@index([chosenSongId], map: "idx_messages_song_id")
   @@index([createdAt], map: "idx_messages_created_at")
+  @@index([replyToMessageId], map: "idx_messages_reply_to_message_id")
   @@map("messages")
 }
 

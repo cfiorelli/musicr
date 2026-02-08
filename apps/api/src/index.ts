@@ -152,7 +152,8 @@ if (redisService.isEnabled()) {
       alternates: event.alternates,
       why: event.why,
       similarity: event.similarity,
-      timestamp: event.timestamp
+      timestamp: event.timestamp,
+      replyToMessageId: event.replyToMessageId || null
     });
   });
 
@@ -1017,6 +1018,7 @@ fastify.get<{
           artist: msg.song.artist,
           year: msg.song.year
         } : null,
+        replyToMessageId: msg.replyToMessageId || null,
         reactions: Array.from(reactionsMap.values())
       };
     });
@@ -1413,6 +1415,7 @@ fastify.register(async function (fastify) {
               } : '',
               timestamp: msg.createdAt.toISOString(),
               isHistorical: true,
+              replyToMessageId: msg.replyToMessageId || null,
               reactions: Array.from(reactionsMap.values())
             };
           });
@@ -1672,6 +1675,36 @@ fastify.register(async function (fastify) {
             return;
           }
 
+          // Validate optional replyToMessageId
+          const replyToMessageId: string | null = messageData.replyToMessageId || null;
+          if (replyToMessageId) {
+            if (!isUuid(replyToMessageId)) {
+              connection.send(JSON.stringify({
+                type: 'error',
+                message: 'Invalid replyToMessageId format'
+              }));
+              return;
+            }
+            const parent = await prisma.message.findFirst({
+              where: { id: replyToMessageId, roomId: defaultRoom.id },
+              select: { replyToMessageId: true }
+            });
+            if (!parent) {
+              connection.send(JSON.stringify({
+                type: 'error',
+                message: 'Parent message not found in this room'
+              }));
+              return;
+            }
+            if (parent.replyToMessageId) {
+              connection.send(JSON.stringify({
+                type: 'error',
+                message: 'Cannot reply to a reply'
+              }));
+              return;
+            }
+          }
+
           // Step 1: Attempt song matching (non-fatal — message persists regardless)
           let songMatchResult: Awaited<ReturnType<typeof songMatchingService.matchSongs>> | null = null;
           try {
@@ -1706,6 +1739,7 @@ fastify.register(async function (fastify) {
                 roomId: defaultRoom.id,
                 text: messageData.text,
                 chosenSongId: null,
+                replyToMessageId,
                 ...(songMatchResult && {
                   scores: {
                     primary: {
@@ -1739,7 +1773,8 @@ fastify.register(async function (fastify) {
             connection.send(JSON.stringify({
               ...songMatchResult,
               messageId: savedMessage.id,
-              createdAt: savedMessage.createdAt.toISOString()
+              createdAt: savedMessage.createdAt.toISOString(),
+              replyToMessageId
             }));
           } else {
             // Matching failed: send type:'song' ack so client reconciles the optimistic message
@@ -1750,7 +1785,8 @@ fastify.register(async function (fastify) {
               primary: null,
               alternates: [],
               scores: null,
-              why: null
+              why: null,
+              replyToMessageId
             }));
           }
 
@@ -1766,6 +1802,7 @@ fastify.register(async function (fastify) {
             why: songMatchResult?.why || null,
             similarity: songMatchResult?.scores?.confidence || 0,
             timestamp: savedMessage.createdAt.toISOString(),
+            replyToMessageId,
           };
 
           connectionManager.broadcastToRoom(defaultRoom.id, displayMessage, connectionId);

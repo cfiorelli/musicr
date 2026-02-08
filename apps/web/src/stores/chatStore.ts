@@ -32,6 +32,7 @@ export interface Message {
     users: Array<{ userId: string; anonHandle: string }>;
     hasReacted?: boolean; // Current user has reacted
   }>;
+  replyToMessageId?: string | null;
   timestamp: string;
   userId: string;
   anonHandle: string;
@@ -48,6 +49,8 @@ export interface ChatState {
   selectedMessage: string | null;
   alternates: Message['alternates'];
   roomUsers: RoomUser[];
+  replyingTo: string | null;
+  expandedThreads: Record<string, boolean>;
   isLoadingHistory: boolean;
   hasMoreHistory: boolean;
   debugInfo: {
@@ -79,6 +82,8 @@ export interface ChatState {
   fetchRoomUsers: () => Promise<void>;
   addRoomUser: (user: RoomUser) => void;
   removeRoomUser: (userId: string) => void;
+  setReplyingTo: (id: string | null) => void;
+  toggleThread: (parentId: string) => void;
   fetchMessageHistory: (roomId: string, limit?: number) => Promise<void>;
   loadOlderMessages: () => Promise<void>;
 }
@@ -158,6 +163,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
   selectedMessage: null,
   alternates: [],
   roomUsers: [],
+  replyingTo: null,
+  expandedThreads: {},
   isLoadingHistory: false,
   hasMoreHistory: true,
   debugInfo: {
@@ -346,6 +353,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
                 alternates: data.alternates,
                 reasoning: data.why?.reasoning || data.why?.matchedPhrase,
                 similarity: data.why?.similarity,
+                replyToMessageId: data.replyToMessageId || lastUserMessage.replyToMessageId || null,
                 isOptimistic: false
               });
             } else {
@@ -369,6 +377,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
                 alternates: data.alternates,
                 reasoning: data.why?.reasoning || data.why?.matchedPhrase || data.why,
                 similarity: data.why?.similarity,
+                replyToMessageId: data.replyToMessageId || lastUserMessage.replyToMessageId || null,
                 isOptimistic: false
               });
             } else {
@@ -385,6 +394,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
               alternates: data.alternates,
               reasoning: data.why?.reasoning || data.why?.matchedPhrase || data.why,
               similarity: data.why?.similarity,
+              replyToMessageId: data.replyToMessageId || null,
               timestamp: data.timestamp || new Date().toISOString(),
               userId: data.userId,
               anonHandle: data.anonHandle,
@@ -916,6 +926,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
         alternates: msg.alternates || [],
         reasoning: msg.why,
         similarity: msg.primary?.score,
+        replyToMessageId: msg.replyToMessageId || null,
         timestamp: msg.timestamp || new Date().toISOString(),
         userId: msg.userId,
         anonHandle: msg.anonHandle,
@@ -961,34 +972,51 @@ export const useChatStore = create<ChatState>((set, get) => ({
     }
   },
 
+  setReplyingTo: (id: string | null) => set((state) => ({
+    replyingTo: id,
+    ...(id ? { expandedThreads: { ...state.expandedThreads, [id]: true } } : {})
+  })),
+
+  toggleThread: (parentId: string) => set((state) => ({
+    expandedThreads: { ...state.expandedThreads, [parentId]: !state.expandedThreads[parentId] }
+  })),
+
   sendMessage: (content: string) => {
-    const { ws, userHandle, familyFriendly } = get();
+    const { ws, userHandle, familyFriendly, replyingTo } = get();
     console.log('[SEND DEBUG] Attempting to send message:', {
       content,
       wsState: ws?.readyState,
       wsOpen: ws?.readyState === WebSocket.OPEN,
-      userHandle
+      userHandle,
+      replyingTo
     });
-    
+
     if (ws && ws.readyState === WebSocket.OPEN) {
       // Add optimistic user message immediately
       const userMessage: Message = {
         id: generateId(),
         content,
+        replyToMessageId: replyingTo,
         timestamp: new Date().toISOString(),
         userId: 'user',
         anonHandle: userHandle,
         isOptimistic: true
       };
       get().addMessage(userMessage);
-      
+
       // Send to server
-      const messageData = {
+      const messageData: any = {
         type: 'msg',
         text: content
       };
+      if (replyingTo) {
+        messageData.replyToMessageId = replyingTo;
+      }
       console.log('[SEND DEBUG] Sending WebSocket message:', messageData);
       ws.send(JSON.stringify(messageData));
+
+      // Clear reply mode
+      set({ replyingTo: null });
     } else {
       console.error('[SEND DEBUG] Cannot send - WebSocket not ready:', {
         ws: !!ws,
@@ -1075,6 +1103,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
         alternates: msg.alternates || [],
         reasoning: msg.why,
         similarity: msg.primary?.score,
+        replyToMessageId: msg.replyToMessageId || null,
         timestamp: msg.timestamp || new Date().toISOString(),
         userId: msg.userId,
         anonHandle: msg.anonHandle,
@@ -1139,6 +1168,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
         alternates: msg.alternates || [],
         reasoning: msg.why,
         similarity: msg.primary?.score,
+        replyToMessageId: msg.replyToMessageId || null,
         timestamp: msg.timestamp || new Date().toISOString(),
         userId: msg.userId,
         anonHandle: msg.anonHandle,
