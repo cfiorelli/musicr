@@ -18,22 +18,26 @@ function print_usage() {
   echo ""
   echo "Commands:"
   echo "  dry-run             Run import in dry-run mode (no database changes)"
-  echo "  import [--target=N] Import songs from MusicBrainz (default: 2000)"
+  echo "  import [--target=N] Import songs from MusicBrainz artist seeds (default: 2000)"
+  echo "  fetch [--target=N]  Fetch songs by genre to JSONL (default: 100000)"
+  echo "  bulk-import --in=F  Import from JSONL with diversity caps + rollback"
   echo "  embed [--limit=N]   Generate embeddings for missing songs"
-  echo "  full [--target=N]   Run import + embed pipeline"
+  echo "  expand [--target=N] Full pipeline: fetch + bulk-import + embed + verify"
+  echo "  full [--target=N]   Legacy: artist-seed import + embed pipeline"
   echo "  verify              Run verification queries"
   echo ""
   echo "Options:"
-  echo "  --target=N          Target number of songs to import (default: 2000)"
+  echo "  --target=N          Target number of songs to fetch/import"
   echo "  --limit=N           Limit embeddings to process"
   echo "  --batch=N           Batch size for embeddings (default: 50)"
+  echo "  --in=FILE           Input JSONL file for bulk-import"
   echo ""
   echo "Examples:"
-  echo "  $0 dry-run                    # Test import without changes"
-  echo "  $0 import --target=500        # Import 500 songs"
-  echo "  $0 embed --limit=100          # Embed 100 songs"
-  echo "  $0 full --target=2000         # Import 2000 + embed all"
-  echo "  $0 verify                     # Run verification queries"
+  echo "  $0 fetch --target=100000              # Fetch 100k songs to JSONL"
+  echo "  $0 bulk-import --in=./data/mb.jsonl   # Import JSONL with diversity caps"
+  echo "  $0 expand --target=100000             # Full pipeline: fetch+import+embed"
+  echo "  $0 embed                              # Embed all missing vectors"
+  echo "  $0 verify                             # Run verification queries"
 }
 
 function check_env() {
@@ -42,7 +46,7 @@ function check_env() {
     exit 1
   fi
 
-  if [ "$1" != "verify" ] && [ "$1" != "dry-run" ] && [ -z "$OPENAI_API_KEY" ]; then
+  if [ "$1" != "verify" ] && [ "$1" != "dry-run" ] && [ "$1" != "fetch" ] && [ -z "$OPENAI_API_KEY" ]; then
     echo -e "${YELLOW}Warning: OPENAI_API_KEY not set (required for embeddings)${NC}"
   fi
 }
@@ -58,6 +62,24 @@ function run_import() {
   echo -e "${GREEN}=== IMPORTING SONGS (target: $target) ===${NC}"
   cd "$API_DIR"
   pnpm tsx scripts/ingestion/musicbrainz-importer.ts --target="$target"
+}
+
+function run_fetch() {
+  local target="${1:-100000}"
+  local outfile="${2:-$API_DIR/data/musicbrainz/musicbrainz_100k.jsonl}"
+  echo -e "${GREEN}=== FETCHING SONGS BY GENRE (target: $target) ===${NC}"
+  echo -e "Output: $outfile"
+  cd "$API_DIR"
+  pnpm tsx scripts/ingestion/musicbrainz-genre-fetcher.ts --target="$target" --out="$outfile"
+}
+
+function run_bulk_import() {
+  local infile="$1"
+  local dryrun_flag="${2:-}"
+  echo -e "${GREEN}=== BULK IMPORT (diversity caps active) ===${NC}"
+  echo -e "Input: $infile"
+  cd "$API_DIR"
+  pnpm tsx scripts/ingestion/musicbrainz-bulk-importer.ts --in="$infile" $dryrun_flag
 }
 
 function run_embed() {
@@ -84,7 +106,9 @@ function run_verify() {
 
   psql "$DATABASE_URL" << 'EOF'
 \echo '=== 1. Total Song Count ==='
-SELECT COUNT(*) as total_songs FROM songs;
+SELECT COUNT(*) as total_songs,
+       COUNT(*) FILTER (WHERE is_placeholder = false) as non_placeholder
+FROM songs;
 
 \echo ''
 \echo '=== 2. Songs by Source ==='
@@ -106,19 +130,42 @@ SELECT
 FROM songs;
 
 \echo ''
-\echo '=== 4. Duplicate Check (Title + Artist) ==='
-SELECT
-  title,
-  artist,
-  COUNT(*) as duplicate_count
-FROM songs
-GROUP BY title, artist
-HAVING COUNT(*) > 1
-ORDER BY duplicate_count DESC
-LIMIT 10;
+\echo '=== 4. Top 20 Artists by Count ==='
+SELECT artist, COUNT(*) as cnt
+FROM songs GROUP BY artist ORDER BY cnt DESC LIMIT 20;
 
 \echo ''
-\echo '=== 5. ISRC/MBID Coverage ==='
+\echo '=== 5. Top 20 (Artist, Album) by Count ==='
+SELECT artist, album, COUNT(*) as cnt
+FROM songs WHERE album IS NOT NULL
+GROUP BY artist, album ORDER BY cnt DESC LIMIT 20;
+
+\echo ''
+\echo '=== 6. Year Decade Distribution ==='
+SELECT
+  CASE
+    WHEN year IS NULL THEN 'Unknown'
+    ELSE (FLOOR(year / 10) * 10)::text || 's'
+  END as decade,
+  COUNT(*) as cnt
+FROM songs
+GROUP BY 1 ORDER BY 1;
+
+\echo ''
+\echo '=== 7. Tag Distribution (Top 30) ==='
+SELECT tag, COUNT(*) as cnt
+FROM songs, UNNEST(tags) AS tag
+GROUP BY tag ORDER BY cnt DESC LIMIT 30;
+
+\echo ''
+\echo '=== 8. Duplicate Check (Title + Artist) ==='
+SELECT title, artist, COUNT(*) as duplicate_count
+FROM songs GROUP BY title, artist
+HAVING COUNT(*) > 1
+ORDER BY duplicate_count DESC LIMIT 10;
+
+\echo ''
+\echo '=== 9. ISRC/MBID Coverage ==='
 SELECT
   COUNT(*) as total,
   COUNT(*) FILTER (WHERE isrc IS NOT NULL) as has_isrc,
@@ -128,41 +175,16 @@ SELECT
 FROM songs;
 
 \echo ''
-\echo '=== 6. Recently Imported (Last 10) ==='
-SELECT
-  id,
-  title,
-  artist,
-  album,
-  source,
-  isrc,
-  mbid,
-  created_at
-FROM songs
-WHERE source = 'musicbrainz'
-ORDER BY created_at DESC
-LIMIT 10;
+\echo '=== 10. DB Size ==='
+SELECT pg_size_pretty(pg_database_size(current_database())) as db_size,
+       pg_database_size(current_database()) as db_bytes,
+       pg_size_pretty(pg_total_relation_size('songs')) as songs_table_size;
 
 \echo ''
-\echo '=== 7. Sample Similarity Query ==='
-\echo 'Query: "happy upbeat energetic song"'
-
--- Generate embedding for test query (using first song as proxy)
-WITH test_vector AS (
-  SELECT embedding_vector
-  FROM songs
-  WHERE embedding_vector IS NOT NULL
-  LIMIT 1
-)
-SELECT
-  title,
-  artist,
-  album,
-  ROUND((1 - (songs.embedding_vector <=> test_vector.embedding_vector))::numeric, 3) as similarity
-FROM songs, test_vector
-WHERE songs.embedding_vector IS NOT NULL
-ORDER BY songs.embedding_vector <=> test_vector.embedding_vector
-LIMIT 10;
+\echo '=== 11. Import Batches ==='
+SELECT import_batch_id, COUNT(*) as cnt, MIN("createdAt") as first_at, MAX("createdAt") as last_at
+FROM songs WHERE import_batch_id IS NOT NULL
+GROUP BY import_batch_id ORDER BY first_at DESC LIMIT 10;
 
 \echo ''
 \echo '=== Verification Complete ==='
@@ -194,6 +216,42 @@ case "$COMMAND" in
     run_import "$TARGET"
     ;;
 
+  fetch)
+    TARGET="100000"
+    OUTFILE=""
+    for arg in "$@"; do
+      case $arg in
+        --target=*)
+          TARGET="${arg#*=}"
+          ;;
+        --out=*)
+          OUTFILE="${arg#*=}"
+          ;;
+      esac
+    done
+    run_fetch "$TARGET" "$OUTFILE"
+    ;;
+
+  bulk-import)
+    INFILE=""
+    DRYRUN=""
+    for arg in "$@"; do
+      case $arg in
+        --in=*)
+          INFILE="${arg#*=}"
+          ;;
+        --dry-run)
+          DRYRUN="--dry-run"
+          ;;
+      esac
+    done
+    if [ -z "$INFILE" ]; then
+      echo -e "${RED}Error: --in=FILE required for bulk-import${NC}"
+      exit 1
+    fi
+    run_bulk_import "$INFILE" "$DRYRUN"
+    ;;
+
   embed)
     LIMIT=""
     BATCH="50"
@@ -208,6 +266,32 @@ case "$COMMAND" in
       esac
     done
     run_embed "$LIMIT" "$BATCH"
+    ;;
+
+  expand)
+    TARGET="100000"
+    for arg in "$@"; do
+      case $arg in
+        --target=*)
+          TARGET="${arg#*=}"
+          ;;
+      esac
+    done
+
+    OUTFILE="$API_DIR/data/musicbrainz/musicbrainz_${TARGET}.jsonl"
+
+    echo -e "${GREEN}=== EXPAND PIPELINE (Fetch + Bulk Import + Embed + Verify) ===${NC}"
+    echo -e "Target: $TARGET songs from MusicBrainz"
+    echo -e "Output: $OUTFILE"
+    echo ""
+
+    run_fetch "$TARGET" "$OUTFILE"
+    echo ""
+    run_bulk_import "$OUTFILE"
+    echo ""
+    run_embed
+    echo ""
+    run_verify
     ;;
 
   full)
