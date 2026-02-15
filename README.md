@@ -1,5 +1,26 @@
 # Musicr
 
+**Type anything. Get a song that matches.**
+
+Live: [musicrweb-production.up.railway.app](https://musicrweb-production.up.railway.app) &middot;
+Repo: [github.com/cfiorelli/musicr](https://github.com/cfiorelli/musicr)
+
+### How it works
+
+- You type a message — a mood, a feeling, a sentence, anything.
+- Musicr turns your text into a 384-dimensional embedding using a local transformer model (Xenova/all-MiniLM-L6-v2).
+- It finds the closest song in a PostgreSQL + pgvector catalog via cosine similarity search.
+- The matched song appears instantly in the real-time chat — no accounts, no sign-up.
+
+### What I want feedback on
+
+- Does the matching feel surprising/delightful or random/off?
+- Is the "type → get a song" loop obvious enough without explanation?
+- Mobile experience — anything broken or awkward?
+- Ideas for the catalog (currently thousands of songs with pre-computed embeddings).
+
+---
+
 Real-time anonymous chat where user messages are converted into relevant song recommendations using AI-powered semantic search.
 
 **What it is:** A WebSocket-based chat application that transforms conversational text into music suggestions using 384-dimensional embeddings and pgvector similarity search.

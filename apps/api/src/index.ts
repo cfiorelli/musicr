@@ -67,9 +67,34 @@ await fastify.register(cookie, {
 // Register websocket plugin
 await fastify.register(websocket);
 
-// Add instance ID to all responses for debugging multi-instance routing
+// Add instance ID + version to all responses
 fastify.addHook('onSend', async (_request, reply) => {
   reply.header('X-Instance-Id', INSTANCE_ID);
+  reply.header('X-Build-Version', process.env.RAILWAY_GIT_COMMIT_SHA?.slice(0, 7) || process.env.npm_package_version || '1.0.0');
+});
+
+// Maintenance mode kill switch: MAINTENANCE_MODE=1 blocks send endpoints with 503
+const isMaintenanceMode = () => process.env.MAINTENANCE_MODE === '1';
+
+fastify.addHook('onRequest', async (request, reply) => {
+  if (!isMaintenanceMode()) return;
+
+  // Always allow health check and static/diagnostic routes
+  const path = request.url;
+  if (path === '/health' || path === '/' || path.startsWith('/api/debug') || path.startsWith('/api/admin')) {
+    return;
+  }
+
+  // Block send/write endpoints
+  if (
+    (request.method === 'POST' && path === '/api/map') ||
+    path === '/ws'
+  ) {
+    reply.code(503).send({
+      error: 'maintenance',
+      message: 'Musicr is temporarily in maintenance mode. Please try again in a few minutes.',
+    });
+  }
 });
 
 // Initialize services
@@ -469,9 +494,23 @@ fastify.get('/', async (_,reply) => {
 });
 
 // Health check endpoint - Railway uses this to verify service is up
-// Must be fast and simple - no database queries or external dependencies
 fastify.get('/health', async (_, reply) => {
-  reply.code(200).send({ ok: true, service: 'api' });
+  let dbOk = false;
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    dbOk = true;
+  } catch { /* db unreachable */ }
+
+  const status = dbOk ? 200 : 503;
+  reply.code(status).send({
+    ok: dbOk,
+    service: 'api',
+    instanceId: INSTANCE_ID,
+    version: process.env.RAILWAY_GIT_COMMIT_SHA?.slice(0, 7) || process.env.npm_package_version || '1.0.0',
+    uptime: Math.floor(process.uptime()),
+    db: dbOk ? 'connected' : 'unreachable',
+    maintenance: isMaintenanceMode(),
+  });
 });
 
 // User session endpoint - establishes anonymous user with cookie
@@ -496,11 +535,33 @@ fastify.get('/api/user/session', async (request, reply) => {
 // POST /api/map - Deterministic song mapping endpoint
 fastify.post('/api/map', async (request, reply) => {
   const startTime = Date.now();
-  
+
   try {
+    // Rate limit REST send endpoint
+    const clientIP = request.ip || request.socket.remoteAddress || 'unknown';
+    let effectiveRateLimitId = 'rest-anon';
+    try {
+      const sess = await userService.getUserSession(request, null);
+      effectiveRateLimitId = sess.userId;
+    } catch { /* use anon fallback */ }
+    const rlResult = rateLimiter.checkLimit(effectiveRateLimitId, clientIP);
+    if (!rlResult.allowed) {
+      reply.header('Retry-After', String(rlResult.retryAfter || 1));
+      return reply.code(429).send({ error: 'rate_limited', retryAfter: rlResult.retryAfter });
+    }
+
     // Validate request body
-    const { text, allowExplicit = false, userId } = validateMapRequest(request.body);
-    
+    const { text: rawText, allowExplicit = false, userId } = validateMapRequest(request.body);
+
+    // Hard caps: empty and length
+    const text = rawText.trim();
+    if (text.length === 0) {
+      return reply.code(400).send(createErrorResponse('validation_error', 'Text cannot be empty', 400));
+    }
+    if (text.length > 500) {
+      return reply.code(400).send(createErrorResponse('validation_error', 'Text too long (max 500 characters)', 400));
+    }
+
     logger.info({ text, allowExplicit, userId }, 'Processing song mapping request');
 
     // Get or determine user ID for preferences
@@ -1645,6 +1706,25 @@ fastify.register(async function (fastify) {
             }));
             return;
           }
+
+          // Server-side hard caps: empty and length
+          const trimmedText = String(messageData.text).trim();
+          if (trimmedText.length === 0) {
+            connection.send(JSON.stringify({
+              type: 'error',
+              message: 'Message cannot be empty'
+            }));
+            return;
+          }
+          if (trimmedText.length > 500) {
+            connection.send(JSON.stringify({
+              type: 'error',
+              message: 'Message too long (max 500 characters)'
+            }));
+            return;
+          }
+          // Use sanitized text from here on
+          messageData.text = trimmedText;
 
           logger.info({
             connectionId,
