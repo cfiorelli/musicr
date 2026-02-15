@@ -64,6 +64,9 @@ interface NormalizedSong {
   tags: string[];
   source: string;
   sourceUrl: string;
+  primaryArtist: string;
+  primaryArtistMbid?: string;
+  artistCredit?: string;
 }
 
 class MusicBrainzImporter {
@@ -189,6 +192,13 @@ class MusicBrainzImporter {
         .slice(0, 5)
         .map(t => t.name);
 
+      // Build full artist credit string (e.g. "Artist A feat. Artist B")
+      const credits = recording['artist-credit'] || [];
+      const creditStr = credits.length > 1
+        ? credits.map(c => c.artist?.name).filter(Boolean).join(' / ')
+        : undefined;
+      const primaryArtistMbid = credits[0]?.artist?.id;
+
       return {
         title: this.normalizeText(title),
         artist: this.normalizeText(artistName),
@@ -198,7 +208,10 @@ class MusicBrainzImporter {
         isrc: isrc ? this.normalizeIsrc(isrc) : undefined,
         tags,
         source: 'musicbrainz',
-        sourceUrl: `https://musicbrainz.org/recording/${recording.id}`
+        sourceUrl: `https://musicbrainz.org/recording/${recording.id}`,
+        primaryArtist: this.normalizeText(artistName),
+        primaryArtistMbid: primaryArtistMbid || undefined,
+        artistCredit: creditStr
       };
     } catch (error: any) {
       logger.error({ error: error.message, recording }, 'Failed to normalize recording');
@@ -257,7 +270,10 @@ class MusicBrainzImporter {
           tags: song.tags,
           source: song.source,
           sourceUrl: song.sourceUrl,
-          popularity: 0
+          popularity: 0,
+          primaryArtist: song.primaryArtist,
+          primaryArtistMbid: song.primaryArtistMbid,
+          artistCredit: song.artistCredit
         }
       });
 

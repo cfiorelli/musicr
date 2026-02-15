@@ -49,6 +49,9 @@ interface SongRecord {
   isrc?: string;
   source: 'musicbrainz';
   sourceUrl: string;
+  primaryArtist: string;
+  primaryArtistMbid?: string;
+  artistCredit?: string;
 }
 
 interface Checkpoint {
@@ -187,6 +190,12 @@ class MusicBrainzGenreFetcher {
         .slice(0, 5)
         .map(t => t.name);
 
+      const credits = rec['artist-credit'] || [];
+      const creditStr = credits.length > 1
+        ? credits.map(c => c.artist?.name).filter(Boolean).join(' / ')
+        : undefined;
+      const primaryArtistMbid = credits[0]?.artist?.id;
+
       return {
         title: this.normalizeText(rec.title),
         artist: this.normalizeText(artistName),
@@ -196,7 +205,10 @@ class MusicBrainzGenreFetcher {
         mbid: rec.id,
         isrc: rec.isrcs?.[0],
         source: 'musicbrainz',
-        sourceUrl: `https://musicbrainz.org/recording/${rec.id}`
+        sourceUrl: `https://musicbrainz.org/recording/${rec.id}`,
+        primaryArtist: this.normalizeText(artistName),
+        primaryArtistMbid: primaryArtistMbid || undefined,
+        artistCredit: creditStr
       };
     } catch (error: any) {
       logger.error({ error: error.message }, 'Failed to normalize recording');
