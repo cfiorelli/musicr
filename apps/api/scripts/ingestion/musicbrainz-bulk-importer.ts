@@ -41,6 +41,9 @@ interface SongRecord {
   isrc?: string;
   source: string;
   sourceUrl: string;
+  primaryArtist?: string;
+  primaryArtistMbid?: string;
+  artistCredit?: string;
 }
 
 interface Stats {
@@ -96,7 +99,8 @@ class BulkImporter {
    * Check diversity caps for a candidate song (NEW imports only)
    */
   private checkDiversityCaps(song: SongRecord): string | null {
-    const artistKey = song.artist.toLowerCase();
+    // Prefer canonical MBID for diversity key; fall back to display artist name
+    const artistKey = song.primaryArtistMbid || song.artist.toLowerCase();
     const artistCount = this.artistNewCount.get(artistKey) || 0;
     if (artistCount >= MAX_PER_ARTIST_NEW) {
       return `artist cap reached (${MAX_PER_ARTIST_NEW})`;
@@ -117,7 +121,7 @@ class BulkImporter {
    * Track diversity counts after successful import
    */
   private trackDiversity(song: SongRecord): void {
-    const artistKey = song.artist.toLowerCase();
+    const artistKey = song.primaryArtistMbid || song.artist.toLowerCase();
     this.artistNewCount.set(artistKey, (this.artistNewCount.get(artistKey) || 0) + 1);
     if (song.album) {
       const albumKey = `${artistKey}|||${song.album.toLowerCase()}`;
@@ -182,7 +186,10 @@ class BulkImporter {
           sourceUrl: song.sourceUrl,
           popularity: 0,
           isPlaceholder: false,
-          importBatchId: this.importBatchId
+          importBatchId: this.importBatchId,
+          primaryArtist: song.primaryArtist || song.artist,
+          primaryArtistMbid: song.primaryArtistMbid || null,
+          artistCredit: song.artistCredit || null
         }
       });
 

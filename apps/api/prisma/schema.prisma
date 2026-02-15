@@ -26,10 +26,13 @@ model Song {
   sourceUrl       String?                     @map("source_url")
   embedding       Json?
   embeddingVector Unsupported("vector(384)")? @map("embedding_vector")
-  isPlaceholder   Boolean                     @default(false) @map("is_placeholder")
-  importBatchId   String?                     @db.Uuid @map("import_batch_id")
-  createdAt       DateTime                    @default(now())
-  updatedAt       DateTime                    @updatedAt
+  isPlaceholder      Boolean                     @default(false) @map("is_placeholder")
+  importBatchId      String?                     @db.Uuid @map("import_batch_id")
+  primaryArtist      String?                     @map("primary_artist")
+  primaryArtistMbid  String?                     @map("primary_artist_mbid")
+  artistCredit       String?                     @map("artist_credit")
+  createdAt          DateTime                    @default(now())
+  updatedAt          DateTime                    @updatedAt
 
   messages Message[]
 
@@ -40,6 +43,7 @@ model Song {
   @@index([year], map: "idx_songs_year")
   @@index([isPlaceholder], map: "idx_songs_is_placeholder")
   @@index([importBatchId], map: "idx_songs_import_batch_id")
+  @@index([primaryArtistMbid], map: "idx_songs_primary_artist_mbid")
   // Note: HNSW index on embedding_vector created via raw SQL (idx_songs_embedding_hnsw)
   // Note: Unique index on ISRC created via raw SQL (idx_songs_isrc)
   @@map("songs")
