@@ -5,9 +5,47 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Musicr - Chat with Song Titles</title>
+    <style>
+      /* Static shell styles – visible before JS loads */
+      #static-shell {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        background: linear-gradient(to bottom right, #111827, #0f172a, #1f2937);
+        color: #d1d5db;
+        font-family: system-ui, -apple-system, sans-serif;
+        text-align: center;
+        padding: 1rem;
+      }
+      #static-shell h1 { font-size: 2rem; color: #fff; margin: 0 0 0.5rem; }
+      #static-shell p { margin: 0.25rem 0; font-size: 0.95rem; }
+      #static-shell .loading { color: #9ca3af; margin-top: 1.5rem; }
+      #static-shell a { color: #93c5fd; }
+      noscript .noscript-msg {
+        background: #292524; color: #fbbf24; padding: 1rem 1.5rem;
+        border-radius: 0.5rem; margin-top: 1.5rem; max-width: 28rem;
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Static shell: visible until React hydrates -->
+      <div id="static-shell">
+        <h1>🎵 Musicr</h1>
+        <p>Type anything. Get a song that matches.</p>
+        <p class="loading">Loading&hellip;</p>
+        <p style="margin-top:1rem; font-size:0.8rem;">
+          <a href="https://github.com/cfiorelli/musicr" target="_blank" rel="noopener noreferrer">View on GitHub</a>
+        </p>
+        <noscript>
+          <div class="noscript-msg">
+            Musicr requires JavaScript to run. Please enable JavaScript in your browser settings and reload.
+          </div>
+        </noscript>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

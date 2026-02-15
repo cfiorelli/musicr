@@ -5,6 +5,12 @@ import path from 'path';
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
+  define: {
+    __BUILD_VERSION__: JSON.stringify(
+      process.env.RAILWAY_GIT_COMMIT_SHA?.slice(0, 7) || 'dev'
+    ),
+    __BUILD_TIME__: JSON.stringify(new Date().toISOString()),
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),

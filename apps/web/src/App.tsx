@@ -1,9 +1,44 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import { useChatStore } from './stores/chatStore';
 import ChatInterface from './components/ChatInterface';
 import RoomUserList from './components/RoomUserList';
 import AdminDashboard from './components/AdminDashboard';
+
+function MaintenanceBanner() {
+  const { connectionStatus } = useChatStore();
+  const [maintenance, setMaintenance] = useState(false);
+
+  useEffect(() => {
+    // Detect maintenance via WS connection failures returning 503
+    if (connectionStatus === 'disconnected') {
+      const checkMaintenance = async () => {
+        try {
+          const { VITE_API_URL } = (import.meta as any).env || {};
+          const base = VITE_API_URL || `${window.location.protocol}//${window.location.hostname}:4000`;
+          const res = await fetch(`${base}/health`);
+          const data = await res.json();
+          // If health returns ok but we can't connect via WS, server may be in maintenance
+          setMaintenance(!data.ok);
+        } catch {
+          // Can't reach server at all
+        }
+      };
+      const t = setTimeout(checkMaintenance, 3000);
+      return () => clearTimeout(t);
+    } else {
+      setMaintenance(false);
+    }
+  }, [connectionStatus]);
+
+  if (!maintenance) return null;
+
+  return (
+    <div className="bg-amber-900/80 text-amber-200 text-center text-sm py-2 px-4">
+      Musicr is temporarily in maintenance mode. Chat will resume shortly.
+    </div>
+  );
+}
 
 function HomePage() {
   const { connect, disconnect, connectionStatus, setupLifecycleListeners } = useChatStore();
@@ -24,6 +59,7 @@ function HomePage() {
 
   return (
     <div className="flex flex-col h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-gray-800">
+      <MaintenanceBanner />
       {/* Header */}
       <header className="flex-none px-4 md:px-6 py-3 border-b border-white/10 bg-black/20 backdrop-blur-sm">
         <div className="max-w-screen-2xl mx-auto flex items-center justify-between">
@@ -90,9 +126,13 @@ function HomePage() {
           Christopher Fiorelli
         </a>
         {' '}&middot;{' '}
-        <a href="https://github.com/cfiorelli" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-300 transition-colors underline decoration-gray-600 hover:decoration-gray-400">
+        <a href="https://github.com/cfiorelli/musicr" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-300 transition-colors underline decoration-gray-600 hover:decoration-gray-400">
           GitHub
         </a>
+        {' '}&middot;{' '}
+        <span className="text-gray-600" title={`Built ${(globalThis as any).__BUILD_TIME__ || ''}`}>
+          v{(globalThis as any).__BUILD_VERSION__ || 'dev'}
+        </span>
       </footer>
     </div>
   );

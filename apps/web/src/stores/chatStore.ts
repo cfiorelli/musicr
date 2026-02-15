@@ -604,6 +604,26 @@ export const useChatStore = create<ChatState>((set, get) => ({
                 }
               };
             });
+          } else if (data.type === 'rate_limit') {
+            // Rate limited - show inline warning and remove optimistic message
+            console.warn('Rate limited:', data.message, 'retry after', data.retryAfter);
+
+            const { messages } = get();
+            const lastOptimistic = messages.filter(m => m.isOptimistic).pop();
+            if (lastOptimistic) {
+              set((state) => ({
+                messages: state.messages.filter(m => m.id !== lastOptimistic.id)
+              }));
+            }
+
+            const rlMsg: Message = {
+              id: generateId(),
+              content: `Slow down! Try again in ${data.retryAfter || 'a few'} seconds.`,
+              timestamp: new Date().toISOString(),
+              userId: 'system',
+              anonHandle: 'System',
+            };
+            get().addMessage(rlMsg);
           } else if (data.type === 'error') {
             // Server error - remove optimistic message and show error
             console.error('Server error:', data.message);
@@ -1013,7 +1033,24 @@ export const useChatStore = create<ChatState>((set, get) => ({
         messageData.replyToMessageId = replyingTo;
       }
       console.log('[SEND DEBUG] Sending WebSocket message:', messageData);
-      ws.send(JSON.stringify(messageData));
+      try {
+        ws.send(JSON.stringify(messageData));
+      } catch (sendError) {
+        console.error('[SEND] Failed to send:', sendError);
+        // Remove the optimistic message we just added
+        set((state) => ({
+          messages: state.messages.filter(m => m.id !== userMessage.id)
+        }));
+        const errMsg: Message = {
+          id: generateId(),
+          content: 'Failed to send message. Check your connection.',
+          timestamp: new Date().toISOString(),
+          userId: 'system',
+          anonHandle: 'System',
+        };
+        get().addMessage(errMsg);
+        return;
+      }
 
       // Clear reply mode
       set({ replyingTo: null });
@@ -1023,6 +1060,15 @@ export const useChatStore = create<ChatState>((set, get) => ({
         readyState: ws?.readyState,
         expectedOpen: WebSocket.OPEN
       });
+      // Show user-visible error
+      const errMsg: Message = {
+        id: generateId(),
+        content: 'Not connected. Reconnecting…',
+        timestamp: new Date().toISOString(),
+        userId: 'system',
+        anonHandle: 'System',
+      };
+      get().addMessage(errMsg);
     }
   },
 
