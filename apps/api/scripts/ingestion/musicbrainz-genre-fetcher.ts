@@ -61,10 +61,27 @@ interface Checkpoint {
 }
 
 const BROAD_GENRES = [
+  // Core genres (original 24)
   'rock', 'pop', 'hip hop', 'electronic', 'jazz', 'metal',
   'indie', 'punk', 'country', 'r&b', 'folk', 'classical',
   'reggae', 'soul', 'blues', 'alternative', 'dance', 'funk',
-  'disco', 'house', 'techno', 'dubstep', 'ska', 'grunge'
+  'disco', 'house', 'techno', 'dubstep', 'ska', 'grunge',
+  // Expanded genres for diversity
+  'latin', 'bossa nova', 'k-pop', 'j-pop', 'afrobeat', 'world',
+  'gospel', 'new wave', 'shoegaze', 'post-punk', 'emo', 'trap',
+  'ambient', 'lo-fi', 'synthwave', 'noise', 'experimental',
+  'progressive rock', 'psychedelic', 'garage rock', 'britpop',
+  'trip hop', 'drum and bass', 'trance', 'downtempo', 'idm',
+  'swing', 'bebop', 'fusion', 'smooth jazz',
+  'bluegrass', 'americana', 'outlaw country', 'honky tonk',
+  'hardcore', 'death metal', 'black metal', 'doom metal', 'thrash metal',
+  'indie pop', 'indie rock', 'chamber pop', 'dream pop', 'noise pop',
+  'singer-songwriter', 'acoustic', 'ballad',
+  'samba', 'cumbia', 'reggaeton', 'bachata', 'salsa', 'merengue',
+  'afro-cuban', 'highlife', 'mbalax', 'soukous',
+  'opera', 'choral', 'baroque', 'romantic', 'contemporary classical',
+  'soundtrack', 'musical', 'spoken word',
+  'new age', 'meditation', 'chillout',
 ];
 
 class MusicBrainzGenreFetcher {
