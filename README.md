@@ -1,120 +1,76 @@
 # Musicr
 
-**Type anything. Get a song that matches.**
+**Type anything. Get a song that matches the meaning.**
+
+Real-time anonymous chat where every message is matched to a song using semantic similarity. No accounts, no sign-up — just type and see what Musicr picks.
 
 Live: [musicrweb-production.up.railway.app](https://musicrweb-production.up.railway.app) &middot;
 Repo: [github.com/cfiorelli/musicr](https://github.com/cfiorelli/musicr)
 
 ### How it works
 
-- You type a message — a mood, a feeling, a sentence, anything.
-- Musicr turns your text into a 384-dimensional embedding using a local transformer model (Xenova/all-MiniLM-L6-v2).
-- It finds the closest song in a PostgreSQL + pgvector catalog via cosine similarity search.
-- The matched song appears instantly in the real-time chat — no accounts, no sign-up.
+1. You type a message — a mood, a memory, a joke, anything.
+2. The server embeds your text into a 384-dim vector (Xenova/all-MiniLM-L6-v2, runs server-side).
+3. pgvector finds the closest song in a ~114k-song catalog via HNSW cosine similarity.
+4. The matched song appears instantly in the chat. Click it to listen on YouTube.
+
+Matching is based on title + artist + tags + album metadata (no lyrics). Some matches are uncanny; some are a stretch — that tension is the fun part.
 
 ### What I want feedback on
 
 - Does the matching feel surprising/delightful or random/off?
-- Is the "type → get a song" loop obvious enough without explanation?
+- Is the "type -> get a song" loop obvious enough without explanation?
 - Mobile experience — anything broken or awkward?
-- Ideas for the catalog (currently thousands of songs with pre-computed embeddings).
+- Ideas for the catalog or matching quality.
 
----
+## Stack
 
-Real-time anonymous chat where user messages are converted into relevant song recommendations using AI-powered semantic search.
+- **Fastify** + WebSocket — real-time chat, rate limiting, maintenance mode
+- **PostgreSQL + pgvector** — HNSW index, cosine similarity search
+- **Xenova/all-MiniLM-L6-v2** — local embedding model (384-dim, no external API needed)
+- **Prisma ORM** — typed DB client, migrations
+- **React 18 + Zustand + Tailwind** — frontend
+- **Vite** — build tool
+- **pnpm workspaces** — monorepo (`apps/api`, `apps/web`, `shared/types`)
 
-**What it is:** A WebSocket-based chat application that transforms conversational text into music suggestions using 384-dimensional embeddings and pgvector similarity search.
+## Quick Start (local)
 
-**What it isn't:** A music player, streaming service, or lyrics database. Musicr recommends songs based on message content but doesn't play audio.
+Prerequisites: Node.js 20+, pnpm 8+, PostgreSQL 14+ with [pgvector](https://github.com/pgvector/pgvector).
 
-## Tech Stack
+```bash
+git clone https://github.com/cfiorelli/musicr.git && cd musicr
+pnpm install
 
-### Backend
-- **Fastify** - HTTP server and WebSocket handling
-- **Prisma ORM** - Database client with TypeScript types
-- **PostgreSQL + pgvector** - Vector similarity search with HNSW indexing
-- **Xenova/all-MiniLM-L6-v2** - Local embedding model (384-dim)
-- **Pino** - Structured JSON logging
+# Configure
+cp apps/api/.env.example apps/api/.env   # set DATABASE_URL
 
-### Frontend
-- **React 18** - UI framework
-- **Vite** - Build tool and dev server
-- **Zustand** - Lightweight state management
-- **Tailwind CSS** - Utility-first styling
+# Database
+cd apps/api
+pnpm prisma generate
+pnpm prisma migrate deploy
+pnpm seed                                # seeds songs + generates embeddings
+cd ../..
 
-### Monorepo
-- **pnpm workspaces** - Package management
-- **TypeScript** - Type safety across all packages
-
-## Project Structure
-
-```
-musicr/
-├── apps/
-│   ├── api/              # Fastify backend (port 4000)
-│   │   ├── src/
-│   │   │   ├── index.ts  # API entrypoint
-│   │   │   ├── engine/   # Song matching logic
-│   │   │   └── services/ # Database, WebSocket, users
-│   │   ├── prisma/       # Database schema and migrations
-│   │   └── scripts/      # Seeding and utilities
-│   └── web/              # React frontend (port 5173)
-│       └── src/
-│           ├── main.tsx  # Web entrypoint
-│           └── stores/   # Zustand state
-├── shared/
-│   └── types/            # Shared TypeScript types
-└── package.json          # Root workspace config
+# Run
+pnpm dev                                 # API :4000, Web :5173
 ```
 
-## Local Development
+Verify: `GET http://localhost:4000/health` should return `{ "ok": true }`.
 
-### Prerequisites
+## Key Endpoints
 
-- **Node.js 20+**
-- **pnpm 8+**
-- **PostgreSQL 14+** with pgvector extension
+| Endpoint | Description |
+|---|---|
+| `GET /health` | Health check (includes song count, DB status) |
+| `WS /` | WebSocket — real-time chat |
+| `GET /api/admin/analytics` | Song count, user stats |
 
-### Setup
+## Safety
 
-1. **Install dependencies**
-   ```bash
-   pnpm install
-   ```
-
-2. **Configure environment**
-   ```bash
-   cp .env.example .env
-   # Edit .env with your DATABASE_URL
-   ```
-
-3. **Set up database**
-   ```bash
-   cd apps/api
-
-   # Generate Prisma client
-   pnpm prisma generate
-
-   # Run migrations
-   pnpm prisma migrate deploy
-
-   # Seed database with songs (includes embedding generation)
-   pnpm seed
-   ```
-
-4. **Start development servers**
-   ```bash
-   # From root directory
-   pnpm dev
-
-   # OR run separately:
-   pnpm --filter @musicr/api dev    # API on http://localhost:4000
-   pnpm --filter @musicr/web dev    # Web on http://localhost:5173
-   ```
-
-5. **Verify setup**
-   - API health: http://localhost:4000/health
-   - Web UI: http://localhost:5173
+- **Rate limiting** — per-IP message throttle (production)
+- **Maintenance mode** — toggle via `MAINTENANCE_MODE=true` env var
+- **Hard input cap** — messages truncated at 500 chars
+- **Anonymous** — no PII stored; users identified by hashed IP + random handle
 
 ## Environment Variables
 
@@ -138,7 +94,7 @@ Create `.env` in the project root with the following:
 - `VITE_API_URL` - Frontend API URL [default: auto-detected from window.location]
 - `LOG_LEVEL` - Pino log level (`debug` | `info` | `warn` | `error`) [default: `info`]
 
-See `.env.example` for complete reference with Railway-specific variables.
+See `apps/api/.env.example` for a complete reference with Railway-specific variables.
 
 ## Database
 
