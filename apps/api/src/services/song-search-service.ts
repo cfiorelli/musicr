@@ -7,7 +7,7 @@
 import { PrismaClient } from '@prisma/client';
 import { logger } from '../config/index.js';
 import { SearchRequest, SearchResult } from '../schemas/api.js';
-import { getEmbeddingService, cosineSimilarity } from '../embeddings/index.js';
+import { getEmbeddingService } from '../embeddings/index.js';
 
 // Define Song type based on schema
 interface Song {
@@ -19,7 +19,6 @@ interface Song {
   tags: string[];
   phrases: string[];
   mbid: string | null;
-  embedding?: unknown;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -87,37 +86,27 @@ export class SongSearchService {
   }
 
   /**
-   * Search using embeddings (semantic similarity)
+   * Search using native pgvector similarity (cosine distance via HNSW index)
    */
   private async embeddingSearch(query: string, limit: number): Promise<SearchResult[]> {
     try {
       const embeddingService = await getEmbeddingService();
       const queryEmbedding = await embeddingService.embedSingle(query);
-      
-      // Get songs with embeddings using raw SQL
-      const songsWithEmbeddings = await this.prisma.$queryRaw<Array<Song & { embedding: number[] }>>`
-        SELECT * FROM songs 
-        WHERE embedding IS NOT NULL 
-        ORDER BY popularity DESC 
-        LIMIT ${limit * 3}
-      `;
+      const embeddingString = `[${queryEmbedding.join(',')}]`;
 
-      const results: SearchResult[] = [];
+      const results = await this.prisma.$queryRawUnsafe<Array<Song & { similarity: number }>>(`
+        SELECT s.id, s.title, s.artist, s.year, s.popularity, s.tags, s.phrases, s.mbid,
+               s."createdAt", s."updatedAt",
+               (s.embedding_vector <=> '${embeddingString}'::vector) * -1 + 1 as similarity
+        FROM songs s
+        WHERE s.embedding_vector IS NOT NULL AND s.is_placeholder = false
+        ORDER BY s.embedding_vector <=> '${embeddingString}'::vector
+        LIMIT ${limit}
+      `);
 
-      for (const song of songsWithEmbeddings) {
-        try {
-          const songEmbedding = song.embedding as number[];
-          const similarity = cosineSimilarity(queryEmbedding, songEmbedding);
-          
-          if (similarity > 0.3) { // Lower threshold for search
-            results.push(this.songToSearchResult(song, 'embedding', similarity));
-          }
-        } catch (error) {
-          logger.debug({ error, songId: song.id }, 'Failed to parse embedding for song');
-        }
-      }
-
-      return results.sort((a, b) => (b.score || 0) - (a.score || 0));
+      return results
+        .filter(r => r.similarity > 0.3)
+        .map(r => this.songToSearchResult(r, 'embedding', r.similarity));
 
     } catch (error) {
       logger.warn({ error }, 'Embedding search failed, returning empty results');

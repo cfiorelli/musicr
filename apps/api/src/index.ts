@@ -879,8 +879,7 @@ fastify.post('/api/admin/seed', async (request, reply) => {
           year: songData.year,
           popularity: songData.popularity,
           tags: songData.tags,
-          phrases: songData.phrases,
-          embedding: new Array(384).fill(0) // Placeholder embedding
+          phrases: songData.phrases
         }
       });
     }
@@ -1279,7 +1278,6 @@ fastify.post('/api/admin/migrate', async (request, reply) => {
         "tags" TEXT[] DEFAULT ARRAY[]::TEXT[],
         "phrases" TEXT[] DEFAULT ARRAY[]::TEXT[],
         "mbid" TEXT UNIQUE,
-        "embedding" JSONB,
         "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
         "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
       );

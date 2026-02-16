@@ -14,7 +14,6 @@ export interface Song {
   tags: string[];
   phrases: string[];
   mbid: string | null;
-  embedding: number[] | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -52,7 +51,6 @@ export interface SongCreate {
   tags?: string[];
   phrases?: string[];
   mbid?: string | null;
-  embedding?: number[] | null;
 }
 
 export interface UserCreate {

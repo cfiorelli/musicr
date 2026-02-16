@@ -61,7 +61,6 @@ async function createTables() {
         tags TEXT[] DEFAULT '{}',
         phrases TEXT[] DEFAULT '{}',
         mbid TEXT UNIQUE,
-        embedding JSONB,
         "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
         "updatedAt" TIMESTAMP WITH TIME ZONE DEFAULT NOW()
       );

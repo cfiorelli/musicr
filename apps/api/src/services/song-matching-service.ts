@@ -20,7 +20,6 @@ interface Song {
   tags: string[];
   phrases: string[];
   mbid: string | null;
-  embedding?: unknown;
   createdAt: Date;
   updatedAt: Date;
 }
