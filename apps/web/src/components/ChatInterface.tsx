@@ -549,7 +549,7 @@ const ChatInterface = () => {
                         <span className={`font-semibold text-sm ${confidence.color}`}>
                           {confidence.emoji} {confidence.label}
                         </span>
-                        <span className="text-gray-500 text-xs">({(score * 100).toFixed(1)}%)</span>
+                        <span className="text-gray-500 text-xs" title="Cosine similarity between your message and this song's metadata (higher = closer match)">({(score * 100).toFixed(1)}%)</span>
                       </div>
                     );
                   })()}
