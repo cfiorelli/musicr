@@ -24,6 +24,7 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
+.logs/
 
 # Runtime data
 pids
@@ -52,6 +53,16 @@ Thumbs.db
 *.db
 *.sqlite
 *.sqlite3
+
+# Secrets & certificates — never commit
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Backup files
+*.backup
+*.bundle
 
 # Note: Prisma migrations ARE committed to version control
 # Do not add prisma/migrations/* to gitignore
