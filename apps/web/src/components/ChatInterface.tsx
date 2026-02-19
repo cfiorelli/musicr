@@ -15,7 +15,6 @@ const ChatInterface = () => {
   const [songCount, setSongCount] = useState<number | null>(null);
   const [expandedWhyPanel, setExpandedWhyPanel] = useState<string | null>(null);
   const [emojiPickerOpen, setEmojiPickerOpen] = useState<string | null>(null);
-  const [quickReactions] = useState(['❤️', '😂', '🎵', '🔥', '👍', '🎉']);
   // Modal state: only one modal can be open at a time
   const [activeModal, setActiveModal] = useState<'onboarding' | 'info' | null>(null);
   const [historyLoadError, setHistoryLoadError] = useState(false);
@@ -226,7 +225,7 @@ const ChatInterface = () => {
   // Warns if any input/textarea/select has computed font-size < 16px,
   // which triggers iOS Safari auto-zoom on focus.
   useEffect(() => {
-    if (!import.meta.env.DEV) return;
+    if (!(import.meta as any).env?.DEV) return;
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
       (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
     // Run check on all platforms in dev (iOS issues are invisible on desktop otherwise)
@@ -311,7 +310,7 @@ const ChatInterface = () => {
     async function fetchSongCount() {
       try {
         // Note: VITE_API_URL includes /api prefix, so don't add it again
-        const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
+        const apiBase = (import.meta as any).env?.VITE_API_URL || 'http://localhost:4000/api';
         const response = await fetch(`${apiBase}/admin/analytics`);
         const data = await response.json();
         setSongCount(data.songs || null);
@@ -522,11 +521,11 @@ const ChatInterface = () => {
                       onClick={() => setExpandedWhyPanel(
                         expandedWhyPanel === msg.id ? null : msg.id
                       )}
-                      className="text-xs px-2 py-0.5 rounded-md text-gray-500 hover:text-gray-300 hover:bg-gray-700/50 transition-all opacity-0 group-hover:opacity-100 border border-gray-600/30 hover:border-gray-500/50"
+                      className="text-xs px-2 py-0.5 rounded-md text-gray-500 hover:text-gray-300 hover:bg-gray-700/50 transition-all opacity-60 hover:opacity-100 md:opacity-0 md:group-hover:opacity-100 border border-gray-600/30 hover:border-gray-500/50"
                       aria-label={expandedWhyPanel === msg.id ? 'Hide match explanation' : 'Show why this song matched'}
                       title={expandedWhyPanel === msg.id ? 'Hide explanation' : 'Why this song?'}
                     >
-                      {expandedWhyPanel === msg.id ? '✕' : '?'}
+                      {expandedWhyPanel === msg.id ? '✕' : 'why?'}
                     </button>
                   )}
                   {firstMatchId === msg.id && (
@@ -536,31 +535,44 @@ const ChatInterface = () => {
               )}
             </div>
 
-            {/* Why Panel - Compact Match Score */}
+            {/* Why Panel - Match Explanation */}
             {expandedWhyPanel === msg.id && msg.reasoning && songDisplay && (
-              <div className="mt-2 p-2.5 bg-gray-800/60 border border-gray-700/50 rounded-lg text-sm backdrop-blur-sm">
-                <div className="flex items-center justify-between gap-3">
+              <div className="mt-2 p-3 bg-gray-800/70 border border-gray-700/60 rounded-lg backdrop-blur-sm">
+                {/* Header row: confidence + close */}
+                <div className="flex items-center justify-between gap-3 mb-2">
                   {(() => {
                     const confidence = getConfidenceLabel(msg.similarity);
                     const score = msg.similarity ?? 0.001;
                     return (
-                      <div className="flex items-center gap-2 flex-1">
-                        <span className="text-gray-400 font-medium text-xs">Match:</span>
+                      <div className="flex items-center gap-2">
                         <span className={`font-semibold text-sm ${confidence.color}`}>
                           {confidence.emoji} {confidence.label}
                         </span>
-                        <span className="text-gray-500 text-xs" title="Cosine similarity between your message and this song's metadata (higher = closer match)">({(score * 100).toFixed(1)}%)</span>
+                        <span
+                          className="text-gray-500 text-xs tabular-nums"
+                          title="Cosine similarity between your message and this song's metadata"
+                        >
+                          {(score * 100).toFixed(1)}%
+                        </span>
                       </div>
                     );
                   })()}
                   <button
                     onClick={() => setExpandedWhyPanel(null)}
-                    className="text-gray-500 hover:text-gray-300 transition-colors px-2 py-1 rounded hover:bg-gray-700/50"
-                    aria-label="Close"
+                    className="text-gray-500 hover:text-gray-300 transition-colors p-1 rounded hover:bg-gray-700/50 flex-shrink-0"
+                    aria-label="Close explanation"
                   >
                     ✕
                   </button>
                 </div>
+                {/* Reasoning text */}
+                <p className="text-xs text-gray-400 leading-relaxed">
+                  {msg.reasoning}
+                </p>
+                {/* Song title reminder */}
+                <p className="text-xs text-gray-600 mt-1.5 italic">
+                  Matched to: {songDisplay}
+                </p>
               </div>
             )}
 

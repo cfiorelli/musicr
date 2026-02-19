@@ -645,7 +645,6 @@ export const useChatStore = create<ChatState>((set, get) => ({
               timestamp: new Date().toISOString(),
               userId: 'system',
               anonHandle: 'System',
-              isModeration: true,
             };
             get().addMessage(errorMessage);
           }
@@ -824,7 +823,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
   },
 
   handleVisibilityChange: () => {
-    const { connectionStatus, debugInfo } = get();
+    const { connectionStatus } = get();
     const isDebug = window.location.search.includes('debug=1');
 
     if (isDebug) {
@@ -1002,7 +1001,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
   })),
 
   sendMessage: (content: string) => {
-    const { ws, userHandle, familyFriendly, replyingTo } = get();
+    const { ws, userHandle, replyingTo } = get();
     console.log('[SEND DEBUG] Attempting to send message:', {
       content,
       wsState: ws?.readyState,

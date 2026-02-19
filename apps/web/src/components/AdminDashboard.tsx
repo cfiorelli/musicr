@@ -13,7 +13,7 @@ interface AdminAnalytics {
   };
   connections: {
     total: number;
-    byRoom: Record<string, number>;
+    byRoom: Record<string, { connections: number; users: number }>;
   };
   recentMappings: Array<{
     id: string;
@@ -84,42 +84,13 @@ function AdminDashboard() {
     return `${Math.round(confidence * 100)}%`;
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading analytics...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="text-center bg-white p-8 rounded-lg shadow-lg max-w-md">
-          <div className="text-red-600 text-4xl mb-4">⚠️</div>
-          <h2 className="text-xl font-bold text-gray-800 mb-2">Error</h2>
-          <p className="text-gray-600 mb-4">{error}</p>
-          <button
-            onClick={fetchAnalytics}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
-          >
-            Try Again
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  if (!analytics) {
-    return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <p className="text-gray-600">No analytics data available</p>
-      </div>
-    );
-  }
+  // Skeleton card shown while loading
+  const StatSkeleton = () => (
+    <div className="bg-white p-6 rounded-lg shadow animate-pulse">
+      <div className="h-4 bg-gray-200 rounded w-3/4 mb-3"></div>
+      <div className="h-8 bg-gray-300 rounded w-1/2"></div>
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -136,9 +107,10 @@ function AdminDashboard() {
             <div className="flex gap-4">
               <button
                 onClick={fetchAnalytics}
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                disabled={loading}
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 transition-colors"
               >
-                Refresh Data
+                {loading ? 'Refreshing…' : 'Refresh Data'}
               </button>
               <a
                 href="/"
@@ -150,157 +122,197 @@ function AdminDashboard() {
           </div>
         </div>
 
+        {/* Error banner (inline, not full-screen) */}
+        {error && (
+          <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <span className="text-red-600 text-xl">⚠️</span>
+              <p className="text-red-700">{error}</p>
+            </div>
+            <button
+              onClick={fetchAnalytics}
+              className="px-3 py-1.5 bg-red-600 text-white rounded hover:bg-red-700 transition-colors text-sm"
+            >
+              Retry
+            </button>
+          </div>
+        )}
+
         {/* Summary Statistics */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-lg font-semibold text-gray-700 mb-2">Total Songs</h3>
-            <p className="text-3xl font-bold text-blue-600">{analytics.summary?.totalSongs || 0}</p>
-          </div>
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-lg font-semibold text-gray-700 mb-1">Unique Devices</h3>
-            <p className="text-sm text-gray-500 mb-2">Actual users</p>
-            <p className="text-3xl font-bold text-green-600">{analytics.summary?.uniqueDevices || 0}</p>
-          </div>
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-lg font-semibold text-gray-700 mb-1">Total User Records</h3>
-            <p className="text-sm text-gray-500 mb-2">Including reconnects</p>
-            <p className="text-3xl font-bold text-gray-600">{analytics.summary?.totalUsers || 0}</p>
-          </div>
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-lg font-semibold text-gray-700 mb-2">Success Rate</h3>
-            <p className="text-3xl font-bold text-indigo-600">{Math.round((analytics.summary?.successRate || 0) * 100)}%</p>
-          </div>
+          {!analytics ? (
+            <><StatSkeleton /><StatSkeleton /><StatSkeleton /><StatSkeleton /></>
+          ) : (
+            <>
+              <div className="bg-white p-6 rounded-lg shadow">
+                <h3 className="text-lg font-semibold text-gray-700 mb-2">Total Songs</h3>
+                <p className="text-3xl font-bold text-blue-600">{analytics.summary?.totalSongs ?? 0}</p>
+              </div>
+              <div className="bg-white p-6 rounded-lg shadow">
+                <h3 className="text-lg font-semibold text-gray-700 mb-1">Unique Devices</h3>
+                <p className="text-sm text-gray-500 mb-2">Actual users</p>
+                <p className="text-3xl font-bold text-green-600">{analytics.summary?.uniqueDevices ?? 0}</p>
+              </div>
+              <div className="bg-white p-6 rounded-lg shadow">
+                <h3 className="text-lg font-semibold text-gray-700 mb-1">Total User Records</h3>
+                <p className="text-sm text-gray-500 mb-2">Including reconnects</p>
+                <p className="text-3xl font-bold text-gray-600">{analytics.summary?.totalUsers ?? 0}</p>
+              </div>
+              <div className="bg-white p-6 rounded-lg shadow">
+                <h3 className="text-lg font-semibold text-gray-700 mb-2">Success Rate</h3>
+                <p className="text-3xl font-bold text-indigo-600">{Math.round(analytics.summary?.successRate ?? 0)}%</p>
+              </div>
+            </>
+          )}
         </div>
-        
+
         {/* Secondary Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-lg font-semibold text-gray-700 mb-2">Total Messages</h3>
-            <p className="text-3xl font-bold text-purple-600">{analytics.summary?.totalMappings || 0}</p>
-          </div>
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-lg font-semibold text-gray-700 mb-2">Successful Matches</h3>
-            <p className="text-3xl font-bold text-green-600">{analytics.summary?.successfulMappings || 0}</p>
-          </div>
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-lg font-semibold text-gray-700 mb-2">Avg Confidence</h3>
-            <p className="text-3xl font-bold text-blue-600">{Math.round((analytics.summary?.averageConfidence || 0) * 100)}%</p>
-          </div>
+          {!analytics ? (
+            <><StatSkeleton /><StatSkeleton /><StatSkeleton /></>
+          ) : (
+            <>
+              <div className="bg-white p-6 rounded-lg shadow">
+                <h3 className="text-lg font-semibold text-gray-700 mb-2">Total Messages</h3>
+                <p className="text-3xl font-bold text-purple-600">{analytics.summary?.totalMappings ?? 0}</p>
+              </div>
+              <div className="bg-white p-6 rounded-lg shadow">
+                <h3 className="text-lg font-semibold text-gray-700 mb-2">Successful Matches</h3>
+                <p className="text-3xl font-bold text-green-600">{analytics.summary?.successfulMappings ?? 0}</p>
+              </div>
+              <div className="bg-white p-6 rounded-lg shadow">
+                <h3 className="text-lg font-semibold text-gray-700 mb-2">Avg Confidence</h3>
+                <p className="text-3xl font-bold text-blue-600">{Math.round((analytics.summary?.averageConfidence ?? 0) * 100)}%</p>
+              </div>
+            </>
+          )}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Connection Statistics */}
           <div className="bg-white p-6 rounded-lg shadow">
             <h3 className="text-xl font-bold text-gray-800 mb-4">Active Connections</h3>
+            {!analytics ? <div className="animate-pulse space-y-3"><div className="h-4 bg-gray-200 rounded w-full" /><div className="h-4 bg-gray-200 rounded w-3/4" /></div> : (
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-gray-700">Total Connections</span>
-                <span className="text-2xl font-bold text-blue-600">{analytics.connections?.total || 0}</span>
+                <span className="text-2xl font-bold text-blue-600">{analytics.connections?.total ?? 0}</span>
               </div>
               <div className="mt-4">
                 <h4 className="text-lg font-semibold text-gray-700 mb-2">By Room</h4>
                 <div className="space-y-2">
-                  {Object.entries(analytics.connections?.byRoom || {}).map(([room, count]) => (
+                  {Object.entries(analytics.connections?.byRoom ?? {}).map(([room, stat]) => (
                     <div key={room} className="flex items-center justify-between">
-                      <span className="text-gray-600">{room}</span>
-                      <span className="font-semibold text-green-600">{count}</span>
+                      <span className="text-gray-600 text-sm truncate max-w-40" title={room}>{room}</span>
+                      <span className="font-semibold text-green-600">{stat.connections} conn / {stat.users} users</span>
                     </div>
                   ))}
-                  {Object.keys(analytics.connections?.byRoom || {}).length === 0 && (
+                  {Object.keys(analytics.connections?.byRoom ?? {}).length === 0 && (
                     <p className="text-gray-500 text-sm">No active rooms</p>
                   )}
                 </div>
               </div>
             </div>
+            )}
           </div>
 
           {/* Database Statistics */}
           <div className="bg-white p-6 rounded-lg shadow">
             <h3 className="text-xl font-bold text-gray-800 mb-4">Database Status</h3>
+            {!analytics ? <div className="animate-pulse space-y-3"><div className="h-4 bg-gray-200 rounded w-full" /><div className="h-4 bg-gray-200 rounded w-3/4" /></div> : (
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-gray-700">Status</span>
                 <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                  (analytics.database?.status || 'unknown') === 'connected' 
-                    ? 'bg-green-100 text-green-800' 
+                  (analytics.database?.status ?? 'unknown') === 'connected'
+                    ? 'bg-green-100 text-green-800'
                     : 'bg-red-100 text-red-800'
                 }`}>
-                  {analytics.database?.status || 'unknown'}
+                  {analytics.database?.status ?? 'unknown'}
                 </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-gray-700">Songs Count</span>
-                <span className="font-semibold text-blue-600">{analytics.database?.songsCount || 0}</span>
+                <span className="font-semibold text-blue-600">{analytics.database?.songsCount ?? 0}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-gray-700">User Records</span>
-                <span className="font-semibold text-gray-600">{analytics.database?.usersCount || 0}</span>
+                <span className="font-semibold text-gray-600">{analytics.database?.usersCount ?? 0}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-gray-700">Unique Devices</span>
-                <span className="font-semibold text-green-600">{analytics.summary?.uniqueDevices || 0}</span>
+                <span className="font-semibold text-green-600">{analytics.summary?.uniqueDevices ?? 0}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-gray-700">Messages Count</span>
-                <span className="font-semibold text-purple-600">{analytics.database?.messagesCount || 0}</span>
+                <span className="font-semibold text-purple-600">{analytics.database?.messagesCount ?? 0}</span>
               </div>
             </div>
+            )}
           </div>
 
           {/* Server Information */}
           <div className="bg-white p-6 rounded-lg shadow">
             <h3 className="text-xl font-bold text-gray-800 mb-4">Server Information</h3>
+            {!analytics ? <div className="animate-pulse space-y-3"><div className="h-4 bg-gray-200 rounded w-full" /><div className="h-4 bg-gray-200 rounded w-3/4" /></div> : (
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-gray-700">Uptime</span>
                 <span className="font-semibold text-indigo-600">
-                  {Math.floor((analytics.server?.uptime || 0) / 3600)}h {Math.floor(((analytics.server?.uptime || 0) % 3600) / 60)}m
+                  {Math.floor((analytics.server?.uptime ?? 0) / 3600)}h {Math.floor(((analytics.server?.uptime ?? 0) % 3600) / 60)}m
                 </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-gray-700">Node.js Version</span>
-                <span className="font-semibold text-green-600">{analytics.server?.nodeVersion || 'Unknown'}</span>
+                <span className="font-semibold text-green-600">{analytics.server?.nodeVersion ?? 'Unknown'}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-gray-700">Memory Usage</span>
                 <span className="font-semibold text-purple-600">
-                  {Math.round((analytics.server.memory?.heapUsed || 0) / 1024 / 1024)}MB
+                  {Math.round((analytics.server?.memory?.heapUsed ?? 0) / 1024 / 1024)}MB
                 </span>
               </div>
               <div className="text-xs text-gray-500 mt-2">
                 Last updated: {analytics.timestamp ? formatTimestamp(analytics.timestamp) : 'Unknown'}
               </div>
             </div>
+            )}
           </div>
 
           {/* Performance Metrics */}
           <div className="bg-white p-6 rounded-lg shadow">
             <h3 className="text-xl font-bold text-gray-800 mb-4">Performance Metrics</h3>
+            {!analytics ? <div className="animate-pulse space-y-3"><div className="h-4 bg-gray-200 rounded w-full" /><div className="h-4 bg-gray-200 rounded w-3/4" /></div> : (
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-gray-700">Total Mappings</span>
-                <span className="font-semibold text-blue-600">{analytics.summary?.totalMappings || 0}</span>
+                <span className="font-semibold text-blue-600">{analytics.summary?.totalMappings ?? 0}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-gray-700">Successful Mappings</span>
-                <span className="font-semibold text-green-600">{analytics.summary?.successfulMappings || 0}</span>
+                <span className="font-semibold text-green-600">{analytics.summary?.successfulMappings ?? 0}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-gray-700">Success Rate</span>
-                <span className="font-semibold text-purple-600">{Math.round((analytics.summary?.successRate || 0) * 100)}%</span>
+                <span className="font-semibold text-purple-600">{Math.round(analytics.summary?.successRate ?? 0)}%</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-gray-700">Average Confidence</span>
-                <span className="font-semibold text-indigo-600">{Math.round((analytics.summary?.averageConfidence || 0) * 100)}%</span>
+                <span className="font-semibold text-indigo-600">{Math.round((analytics.summary?.averageConfidence ?? 0) * 100)}%</span>
               </div>
             </div>
+            )}
           </div>
 
           {/* Recent Mappings */}
           <div className="bg-white p-6 rounded-lg shadow lg:col-span-2">
             <h3 className="text-xl font-bold text-gray-800 mb-4">Recent Activity</h3>
             <div className="max-h-96 overflow-y-auto">
-              {(analytics.recentMappings || []).length > 0 ? (
+              {!analytics ? (
+                <div className="animate-pulse space-y-2">
+                  {[1,2,3].map(i => <div key={i} className="h-8 bg-gray-200 rounded w-full" />)}
+                </div>
+              ) : (analytics.recentMappings ?? []).length > 0 ? (
                 <table className="w-full text-sm">
                   <thead className="sticky top-0 bg-white border-b">
                     <tr className="text-left">
@@ -312,7 +324,7 @@ function AdminDashboard() {
                     </tr>
                   </thead>
                   <tbody>
-                    {(analytics.recentMappings || []).map((mapping) => (
+                    {(analytics.recentMappings ?? []).map((mapping) => (
                       <tr key={mapping.id} className="border-b hover:bg-gray-50">
                         <td className="py-2 px-1 text-gray-600 text-xs">
                           {new Date(mapping.timestamp).toLocaleTimeString()}

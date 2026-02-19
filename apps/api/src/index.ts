@@ -21,6 +21,8 @@ import {
   SearchResponse
 } from './schemas/api.js';
 import { getInstanceFingerprint, createRequestFingerprint } from './utils/fingerprint.js';
+import { isBlocked, getBlockedCount } from './utils/ip-blocklist.js';
+import { containsBlockedKeyword, getBlockedKeywordCount } from './utils/content-filter.js';
 import { nanoid } from 'nanoid';
 import os from 'os';
 
@@ -77,6 +79,12 @@ fastify.addHook('onSend', async (_request, reply) => {
 const isMaintenanceMode = () => process.env.MAINTENANCE_MODE === '1';
 
 fastify.addHook('onRequest', async (request, reply) => {
+  // P0: Emergency IP blocklist — blocks both HTTP and WS upgrade requests.
+  if (isBlocked(request.ip)) {
+    logger.warn({ ip: request.ip, method: request.method, url: request.url }, 'Blocked IP rejected');
+    return reply.code(403).send({ error: 'forbidden' });
+  }
+
   if (!isMaintenanceMode()) return;
 
   // Always allow health check and static/diagnostic routes
@@ -494,11 +502,31 @@ fastify.get('/', async (_,reply) => {
 });
 
 // Health check endpoint - Railway uses this to verify service is up
+// DB size alert threshold (env-configurable, default 4 GB)
+const DB_SIZE_ALERT_BYTES = parseInt(process.env.DB_SIZE_ALERT_BYTES || String(4 * 1024 * 1024 * 1024), 10);
+
 fastify.get('/health', async (_, reply) => {
   let dbOk = false;
+  let dbSizeBytes: number | null = null;
   try {
     await prisma.$queryRaw`SELECT 1`;
     dbOk = true;
+
+    // Fetch DB size (non-fatal if it fails)
+    const sizeResult = await prisma.$queryRaw<[{ size: bigint }]>`
+      SELECT pg_database_size(current_database()) AS size
+    `;
+    dbSizeBytes = Number(sizeResult[0].size);
+
+    // Alert if above threshold
+    if (dbSizeBytes > DB_SIZE_ALERT_BYTES) {
+      logger.warn({
+        dbSizeBytes,
+        dbSizeMB: Math.round(dbSizeBytes / 1024 / 1024),
+        thresholdBytes: DB_SIZE_ALERT_BYTES,
+        thresholdMB: Math.round(DB_SIZE_ALERT_BYTES / 1024 / 1024),
+      }, 'DB_SIZE_ALERT: database exceeds size threshold');
+    }
   } catch { /* db unreachable */ }
 
   const status = dbOk ? 200 : 503;
@@ -509,7 +537,10 @@ fastify.get('/health', async (_, reply) => {
     version: process.env.RAILWAY_GIT_COMMIT_SHA?.slice(0, 7) || process.env.npm_package_version || '1.0.0',
     uptime: Math.floor(process.uptime()),
     db: dbOk ? 'connected' : 'unreachable',
+    dbSizeMB: dbSizeBytes !== null ? Math.round(dbSizeBytes / 1024 / 1024) : null,
     maintenance: isMaintenanceMode(),
+    blockedIps: getBlockedCount(),
+    blockedKeywords: getBlockedKeywordCount(),
   });
 });
 
@@ -560,6 +591,10 @@ fastify.post('/api/map', async (request, reply) => {
     }
     if (text.length > 500) {
       return reply.code(400).send(createErrorResponse('validation_error', 'Text too long (max 500 characters)', 400));
+    }
+    if (containsBlockedKeyword(text)) {
+      logger.warn({ text }, 'REST map request blocked by content filter');
+      return reply.code(400).send(createErrorResponse('content_filtered', 'Message contains disallowed content', 400));
     }
 
     logger.info({ text, allowExplicit, userId }, 'Processing song mapping request');
@@ -754,7 +789,14 @@ fastify.get('/api/admin/analytics', async (_, reply) => {
       }
     });
     const uniqueDevicesCount = uniqueIPs.length;
-    
+
+    // Count messages that actually have a song match (scores IS NOT NULL)
+    // Raw query avoids Prisma's JSON null type ambiguity
+    const successfulMappingsResult = await prisma.$queryRaw<[{ count: bigint }]>`
+      SELECT COUNT(*)::bigint AS count FROM messages WHERE scores IS NOT NULL
+    `;
+    const successfulMappingsCount = Number(successfulMappingsResult[0].count);
+
     // Get recent messages with song matching results
     const recentMessages = await prisma.message.findMany({
       take: 10,
@@ -765,13 +807,13 @@ fastify.get('/api/admin/analytics', async (_, reply) => {
       }
     });
 
-    // Calculate performance metrics from recent messages
-    const messagesWithScores = recentMessages.filter(m => m.scores);
-    const averageConfidence = messagesWithScores.length > 0 
-      ? messagesWithScores.reduce((sum, m) => {
+    // Average confidence from recent messages (recent window is more useful than all-time)
+    const recentWithScores = recentMessages.filter(m => m.scores);
+    const averageConfidence = recentWithScores.length > 0
+      ? recentWithScores.reduce((sum, m) => {
           const scores = m.scores as any;
           return sum + (scores?.confidence || 0);
-        }, 0) / messagesWithScores.length
+        }, 0) / recentWithScores.length
       : 0;
 
     const analytics = {
@@ -780,8 +822,9 @@ fastify.get('/api/admin/analytics', async (_, reply) => {
         totalUsers: usersCount,
         uniqueDevices: uniqueDevicesCount,
         totalMappings: messagesCount,
-        successfulMappings: messagesWithScores.length,
-        successRate: messagesCount > 0 ? (messagesWithScores.length / messagesCount) * 100 : 0,
+        successfulMappings: successfulMappingsCount,
+        // successRate is 0–100 (percentage)
+        successRate: messagesCount > 0 ? (successfulMappingsCount / messagesCount) * 100 : 0,
         averageConfidence: Math.round(averageConfidence * 100) / 100
       },
       connections: {
@@ -1723,6 +1766,16 @@ fastify.register(async function (fastify) {
           }
           // Use sanitized text from here on
           messageData.text = trimmedText;
+
+          // Keyword content filter
+          if (containsBlockedKeyword(trimmedText)) {
+            logger.warn({ userId: userSession.userId, text: trimmedText }, 'Message blocked by content filter');
+            connection.send(JSON.stringify({
+              type: 'error',
+              message: 'Your message was not sent because it contains disallowed content.'
+            }));
+            return;
+          }
 
           logger.info({
             connectionId,

@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Live App
+    url: https://musicr.cfiorelli.com
+    about: Try Musicr live before filing an issue.

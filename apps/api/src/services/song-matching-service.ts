@@ -198,8 +198,19 @@ export class SongMatchingService {
   ): Promise<SongMatchResult> {
     logger.debug({ text, allowExplicit, userId }, 'Starting song matching process');
 
-    // Process text directly without moderation
-    return await this.processMatchingStrategies(text, allowExplicit, userId);
+    const t0 = Date.now();
+    const result = await this.processMatchingStrategies(text, allowExplicit, userId);
+    const totalMs = Date.now() - t0;
+
+    logger.info({
+      totalMs,
+      textLength: text.length,
+      primaryTitle: result.primary?.title,
+      strategy: result.scores?.strategy,
+      confidence: result.scores?.confidence,
+    }, 'obs:match_latency');
+
+    return result;
   }
 
   /**
@@ -359,7 +370,15 @@ export class SongMatchingService {
   private async findEmbeddingMatches(text: string): Promise<SongMatch[]> {
     try {
       // Use SemanticSearcher which properly uses native embedding_vector column with HNSW index
+      const t0 = Date.now();
       const semanticMatches = await this.semanticSearcher.findSimilar(text, 50);
+      const embeddingAndVectorMs = Date.now() - t0;
+
+      logger.info({
+        embeddingAndVectorMs,
+        resultCount: semanticMatches.length,
+        topSimilarity: semanticMatches[0]?.similarity?.toFixed(4),
+      }, 'obs:embedding_latency');
 
       if (process.env.DEBUG_MATCHING === '1') {
         logger.info({
