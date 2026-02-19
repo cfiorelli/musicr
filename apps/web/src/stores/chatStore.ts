@@ -338,12 +338,13 @@ export const useChatStore = create<ChatState>((set, get) => ({
           if (data.type === 'song') {
             // Update optimistic message with song result
             const { messages, updateMessage, userId: storeUserId } = get();
-            const lastUserMessage = messages.filter(m => m.userId === 'user' || m.userId === storeUserId).pop();
-            console.log('Looking for optimistic message to update:', lastUserMessage);
+            // Use isOptimistic flag directly — avoids matching settled messages from other connections
+            const pendingMessage = messages.filter(m => m.isOptimistic).pop();
+            console.log('Looking for optimistic message to update:', pendingMessage);
 
-            if (lastUserMessage && lastUserMessage.isOptimistic) {
+            if (pendingMessage) {
               console.log('Updating optimistic message with song result:', data);
-              updateMessage(lastUserMessage.id, {
+              updateMessage(pendingMessage.id, {
                 ...(data.messageId && { id: data.messageId }),
                 ...(data.createdAt && { timestamp: data.createdAt }),
                 ...(storeUserId && { userId: storeUserId }),
@@ -351,9 +352,9 @@ export const useChatStore = create<ChatState>((set, get) => ({
                 songArtist: data.primary?.artist,
                 songYear: data.primary?.year,
                 alternates: data.alternates,
-                reasoning: data.why?.reasoning || data.why?.matchedPhrase,
+                reasoning: data.why?.reasoning || data.why?.matchedPhrase || null,
                 similarity: data.why?.similarity,
-                replyToMessageId: data.replyToMessageId || lastUserMessage.replyToMessageId || null,
+                replyToMessageId: data.replyToMessageId || pendingMessage.replyToMessageId || null,
                 isOptimistic: false
               });
             } else {
@@ -362,12 +363,13 @@ export const useChatStore = create<ChatState>((set, get) => ({
           } else if (data.primary && !data.type) {
             // Direct song mapping response (for user's own message)
             const { messages, updateMessage, userId: storeUserId } = get();
-            const lastUserMessage = messages.filter(m => m.userId === 'user' || m.userId === storeUserId).pop();
-            console.log('Received song mapping response for user message:', lastUserMessage);
+            // Use isOptimistic flag directly — avoids matching settled messages from other connections
+            const pendingMessage = messages.filter(m => m.isOptimistic).pop();
+            console.log('Received song mapping response for user message:', pendingMessage);
 
-            if (lastUserMessage && lastUserMessage.isOptimistic) {
+            if (pendingMessage) {
               console.log('Updating optimistic message with song mapping:', data);
-              updateMessage(lastUserMessage.id, {
+              updateMessage(pendingMessage.id, {
                 ...(data.messageId && { id: data.messageId }),
                 ...(data.createdAt && { timestamp: data.createdAt }),
                 ...(storeUserId && { userId: storeUserId }),
@@ -375,9 +377,9 @@ export const useChatStore = create<ChatState>((set, get) => ({
                 songArtist: data.primary?.artist,
                 songYear: data.primary?.year,
                 alternates: data.alternates,
-                reasoning: data.why?.reasoning || data.why?.matchedPhrase || data.why,
+                reasoning: data.why?.reasoning || data.why?.matchedPhrase || null,
                 similarity: data.why?.similarity,
-                replyToMessageId: data.replyToMessageId || lastUserMessage.replyToMessageId || null,
+                replyToMessageId: data.replyToMessageId || pendingMessage.replyToMessageId || null,
                 isOptimistic: false
               });
             } else {

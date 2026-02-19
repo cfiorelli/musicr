@@ -566,9 +566,11 @@ const ChatInterface = () => {
                   </button>
                 </div>
                 {/* Reasoning text */}
-                <p className="text-xs text-gray-400 leading-relaxed">
-                  {msg.reasoning}
-                </p>
+                {typeof msg.reasoning === 'string' && msg.reasoning && (
+                  <p className="text-xs text-gray-400 leading-relaxed">
+                    {msg.reasoning}
+                  </p>
+                )}
                 {/* Song title reminder */}
                 <p className="text-xs text-gray-600 mt-1.5 italic">
                   Matched to: {songDisplay}
