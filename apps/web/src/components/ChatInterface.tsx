@@ -516,7 +516,7 @@ const ChatInterface = () => {
                   >
                     {songDisplay}
                   </a>
-                  {(msg.reasoning || msg.aboutness) && (
+                  {msg.similarity !== undefined && (
                     <button
                       onClick={() => setExpandedWhyPanel(
                         expandedWhyPanel === msg.id ? null : msg.id
@@ -536,7 +536,7 @@ const ChatInterface = () => {
             </div>
 
             {/* Why Panel - Match Explanation */}
-            {expandedWhyPanel === msg.id && (msg.reasoning || msg.aboutness) && songDisplay && (
+            {expandedWhyPanel === msg.id && songDisplay && msg.similarity !== undefined && (
               <div className="mt-2 p-3 bg-gray-800/70 border border-gray-700/60 rounded-lg backdrop-blur-sm">
                 {/* Header row: confidence + close */}
                 <div className="flex items-center justify-between gap-3 mb-2">

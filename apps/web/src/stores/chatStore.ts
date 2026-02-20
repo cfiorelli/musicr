@@ -407,7 +407,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
               songArtist: data.primary?.artist,
               songYear: data.primary?.year,
               alternates: data.alternates,
-              reasoning: data.why?.reasoning || data.why?.matchedPhrase || data.why,
+              reasoning: data.why?.reasoning || data.why?.matchedPhrase || null,
               similarity: data.why?.similarity,
               aboutness: data.aboutness ?? undefined,
               replyToMessageId: data.replyToMessageId || null,
