@@ -105,6 +105,18 @@ model Room {
 
 model SongAboutness {
   songId           String                      @id @db.Uuid @map("song_id")
+
+  // V2 fields (emotions + moments, OpenAI-generated)
+  emotionsText       String?                     @map("emotions_text")
+  emotionsVector     Unsupported("vector(384)")? @map("emotions_vector")
+  emotionsConfidence String?                     @map("emotions_confidence")
+  momentsText        String?                     @map("moments_text")
+  momentsVector      Unsupported("vector(384)")? @map("moments_vector")
+  momentsConfidence  String?                     @map("moments_confidence")
+  provider           String?                     @map("provider")
+  generationModel    String?                     @map("generation_model")
+
+  // Legacy V1 fields — kept for compatibility, no longer written after V2 backfill
   aboutnessText    String                      @map("aboutness_text")
   aboutnessJson    Json                        @map("aboutness_json")
   aboutnessVector  Unsupported("vector(384)")? @map("aboutness_vector")
@@ -115,7 +127,9 @@ model SongAboutness {
   song Song @relation(fields: [songId], references: [id], onDelete: Cascade)
 
   @@index([aboutnessVersion], map: "idx_song_aboutness_version")
-  // Note: HNSW index on aboutness_vector created via raw SQL (idx_song_aboutness_hnsw)
+  // HNSW indexes created via raw SQL:
+  //   idx_song_aboutness_hnsw         — on aboutness_vector (legacy V1)
+  //   idx_song_aboutness_emotions_hnsw — on emotions_vector (V2, cosine)
   @@map("song_aboutness")
 }
 
