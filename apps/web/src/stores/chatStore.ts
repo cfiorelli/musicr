@@ -11,6 +11,16 @@ export interface RoomUser {
   joinedAt: string;
 }
 
+export interface MessageAboutness {
+  themes: string[];
+  mood: string[];
+  setting: string;
+  oneLiner: string;
+  distMeta?: number;
+  distAbout?: number;
+  aboutScore?: number;
+}
+
 export interface Message {
   id: string;
   content: string;
@@ -26,6 +36,7 @@ export interface Message {
   }>;
   reasoning?: string;
   similarity?: number; // 0-1 score indicating match confidence
+  aboutness?: MessageAboutness; // populated when ABOUTNESS_ENABLED=true
   reactions?: Array<{
     emoji: string;
     count: number;
@@ -354,6 +365,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
                 alternates: data.alternates,
                 reasoning: data.why?.reasoning || data.why?.matchedPhrase || null,
                 similarity: data.why?.similarity,
+                aboutness: data.aboutness ?? undefined,
                 replyToMessageId: data.replyToMessageId || pendingMessage.replyToMessageId || null,
                 isOptimistic: false
               });
@@ -379,6 +391,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
                 alternates: data.alternates,
                 reasoning: data.why?.reasoning || data.why?.matchedPhrase || null,
                 similarity: data.why?.similarity,
+                aboutness: data.aboutness ?? undefined,
                 replyToMessageId: data.replyToMessageId || pendingMessage.replyToMessageId || null,
                 isOptimistic: false
               });
@@ -396,6 +409,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
               alternates: data.alternates,
               reasoning: data.why?.reasoning || data.why?.matchedPhrase || data.why,
               similarity: data.why?.similarity,
+              aboutness: data.aboutness ?? undefined,
               replyToMessageId: data.replyToMessageId || null,
               timestamp: data.timestamp || new Date().toISOString(),
               userId: data.userId,
