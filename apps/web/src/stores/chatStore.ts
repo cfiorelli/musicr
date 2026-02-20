@@ -12,13 +12,21 @@ export interface RoomUser {
 }
 
 export interface MessageAboutness {
-  themes: string[];
-  mood: string[];
-  setting: string;
-  oneLiner: string;
+  // V1 legacy fields
+  themes?: string[];
+  mood?: string[];
+  setting?: string;
+  oneLiner?: string;
   distMeta?: number;
   distAbout?: number;
   aboutScore?: number;
+  // V2 fields (emotions + moments)
+  emotions?: string;
+  emotions_confidence?: string;
+  moments?: string;
+  moments_confidence?: string;
+  distEmotion?: number;
+  distMoment?: number;
 }
 
 export interface Message {
