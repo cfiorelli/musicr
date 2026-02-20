@@ -1,6 +1,36 @@
 # Musicr Status Snapshot
 
-**Generated:** 2026-02-17 (read-only inspection, no mutations)
+**Generated:** 2026-02-17; updated 2026-02-20 (Aboutness V2)
+
+---
+
+## Aboutness V2 Status (updated 2026-02-20)
+
+| Item | Status |
+|---|---|
+| V1 metadata-derived approach | **REMOVED** — 10,000 legacy rows purged from DB |
+| OpenAI provider decision | **FINALIZED** — gpt-4o-mini, title+artist only |
+| Local model comparison | **CLOSED** — A/B pilot ran Feb 2026, OpenAI won |
+| Schema migration | **APPLIED** — `20260220000000_aboutness_v2_emotions_moments` |
+| New columns | emotions_text/vector/confidence, moments_text/vector/confidence, provider, generation_model |
+| emotions_vector index | **CREATED** — HNSW cosine (`idx_song_aboutness_emotions_hnsw`) |
+| moments_vector index | **NOT indexed** (rerank on candidate set only, deliberate) |
+| Generator service | `apps/api/src/services/aboutness/generator.ts` |
+| Backfill script | `apps/api/scripts/ingestion/aboutness-v2-backfill.ts` |
+| Sample review script | `apps/api/scripts/ingestion/aboutness-v2-sample-review.ts` |
+| API matching | V2 3-signal path added (`ABOUTNESS_V2_ENABLED` flag, default false) |
+| UI Why panel | Updated for V2 emotions/moments display |
+| V2 rows in DB | **0** — backfill not yet run in prod |
+| Feature flag | `ABOUTNESS_V2_ENABLED=false` — off in prod pending backfill |
+
+**To enable in prod:**
+1. Run backfill (`--limit=50` first to validate, then full)
+2. Set `ABOUTNESS_V2_ENABLED=true` in Railway Variables
+3. Redeploy API
+
+**Rollback:** Set `ABOUTNESS_V2_ENABLED=false` → redeploy.
+
+---
 
 ---
 

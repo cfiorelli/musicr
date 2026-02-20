@@ -565,10 +565,53 @@ const ChatInterface = () => {
                     ✕
                   </button>
                 </div>
-                {/* Aboutness chips: mood + themes */}
-                {msg.aboutness && (
+                {/* Aboutness V2: emotions + moments */}
+                {msg.aboutness && (msg.aboutness.emotions || msg.aboutness.moments) && (
+                  <div className="mb-2 space-y-2">
+                    {msg.aboutness.emotions && (
+                      <div>
+                        <p className="text-xs font-medium text-violet-400 mb-0.5 uppercase tracking-wide">
+                          Feels like
+                          {msg.aboutness.emotions_confidence && (
+                            <span className="ml-1.5 normal-case font-normal text-gray-600">
+                              [{msg.aboutness.emotions_confidence}]
+                            </span>
+                          )}
+                        </p>
+                        <p className="text-xs text-gray-300 leading-relaxed">
+                          {msg.aboutness.emotions.replace(/\[confidence:\s*\w+\]\s*$/, '').trim()}
+                        </p>
+                      </div>
+                    )}
+                    {msg.aboutness.moments && (
+                      <div>
+                        <p className="text-xs font-medium text-emerald-400 mb-0.5 uppercase tracking-wide">
+                          Fits when
+                          {msg.aboutness.moments_confidence && (
+                            <span className="ml-1.5 normal-case font-normal text-gray-600">
+                              [{msg.aboutness.moments_confidence}]
+                            </span>
+                          )}
+                        </p>
+                        <p className="text-xs text-gray-300 leading-relaxed">
+                          {msg.aboutness.moments.replace(/\[confidence:\s*\w+\]\s*$/, '').trim()}
+                        </p>
+                      </div>
+                    )}
+                    {debugMode && (
+                      <p className="text-xs text-gray-600 tabular-nums">
+                        meta: {msg.aboutness.distMeta !== undefined ? (1 - msg.aboutness.distMeta).toFixed(3) : '—'}{' '}
+                        emo: {msg.aboutness.distEmotion !== undefined ? (1 - msg.aboutness.distEmotion).toFixed(3) : '—'}{' '}
+                        mom: {msg.aboutness.distMoment !== undefined ? (1 - msg.aboutness.distMoment).toFixed(3) : '—'}{' '}
+                        score: {msg.aboutness.aboutScore !== undefined ? msg.aboutness.aboutScore.toFixed(3) : '—'}
+                      </p>
+                    )}
+                  </div>
+                )}
+                {/* Aboutness V1 legacy: mood chips + themes + oneLiner */}
+                {msg.aboutness && !msg.aboutness.emotions && !msg.aboutness.moments && (
                   <div className="mb-2 space-y-1.5">
-                    {msg.aboutness.mood.length > 0 && (
+                    {msg.aboutness.mood && msg.aboutness.mood.length > 0 && (
                       <div className="flex flex-wrap gap-1">
                         {msg.aboutness.mood.slice(0, 6).map((m) => (
                           <span
@@ -580,7 +623,7 @@ const ChatInterface = () => {
                         ))}
                       </div>
                     )}
-                    {msg.aboutness.themes.length > 0 && (
+                    {msg.aboutness.themes && msg.aboutness.themes.length > 0 && (
                       <div className="flex flex-wrap gap-1">
                         {msg.aboutness.themes.slice(0, 6).map((t) => (
                           <span

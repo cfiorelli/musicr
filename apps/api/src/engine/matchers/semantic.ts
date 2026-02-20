@@ -21,12 +21,24 @@ export interface SemanticMatch {
   popularity: number;
 }
 
-/** Result from union+rerank when ABOUTNESS_ENABLED=true */
+/** Result from union+rerank when ABOUTNESS_ENABLED=true (V1 legacy) */
 export interface AboutnessMatch extends SemanticMatch {
   distMeta?: number;
   distAbout?: number;
   aboutScore: number;
   aboutnessJson?: any;
+}
+
+/** Result from 3-signal union+rerank when ABOUTNESS_V2_ENABLED=true */
+export interface AboutnessV2Match extends SemanticMatch {
+  distMeta?: number;
+  distEmotion?: number;
+  distMoment?: number;
+  aboutScore: number;
+  emotionsText?: string;
+  momentsText?: string;
+  emotionsConfidence?: string;
+  momentsConfidence?: string;
 }
 
 export interface SemanticConfig {
@@ -604,6 +616,196 @@ export class SemanticSearcher {
       topK: topK.length,
       duration,
     }, 'Aboutness union+rerank completed');
+
+    return topK;
+  }
+
+  /**
+   * V2 three-signal union+rerank:
+   *   (A) songs.embedding_vector        — metadata (indexed)
+   *   (B) song_aboutness.emotions_vector — emotional character (indexed)
+   *   (C) song_aboutness.moments_vector  — scene/moment fit (NOT indexed; reranked on candidate set)
+   *
+   * Fallback behaviour:
+   *   - If emotions leg fails → returns meta-only ranked result
+   *   - If moments data missing for a candidate → moment sim = 0 (still eligible)
+   *   - If this whole method throws → caller falls back to meta-only path
+   */
+  async findSimilarUnionRerankV2(
+    message: string,
+    k: number = 10,
+    opts: {
+      topNMeta: number;
+      topNEmotion: number;
+      metaWeight: number;
+      emotionWeight: number;
+      momentWeight: number;
+    }
+  ): Promise<AboutnessV2Match[]> {
+    const startTime = Date.now();
+    const { topNMeta, topNEmotion, metaWeight, emotionWeight, momentWeight } = opts;
+
+    // 1. Embed message
+    const embeddingService = await getEmbeddingService();
+    const messageEmbedding = await embeddingService.embedSingle(message);
+
+    if (messageEmbedding.length !== 384) {
+      throw new Error(
+        `Embedding dimension mismatch: got ${messageEmbedding.length}, expected 384`
+      );
+    }
+
+    const embeddingString = `[${messageEmbedding.join(',')}]`;
+
+    // 2. Materialise query vector (avoids pg planner 0-row bug)
+    await this.prisma.$executeRawUnsafe(`
+      CREATE TEMP TABLE IF NOT EXISTS query_vec_temp (vec vector(384))
+    `);
+    await this.prisma.$executeRawUnsafe(`DELETE FROM query_vec_temp`);
+    await this.prisma.$executeRawUnsafe(
+      `INSERT INTO query_vec_temp (vec) VALUES ('${embeddingString}'::vector(384))`
+    );
+
+    const efSearch = Math.max(Math.max(topNMeta, topNEmotion) * 2, 100);
+    await this.prisma.$executeRawUnsafe(`SET LOCAL hnsw.ef_search = ${efSearch}`);
+
+    // 3. Meta leg
+    type MetaRow = {
+      id: string; title: string; artist: string;
+      tags: string[]; year: number | null; popularity: number;
+      dist_meta: number;
+    };
+    let metaRows: MetaRow[] = [];
+    try {
+      metaRows = await this.prisma.$queryRawUnsafe<MetaRow[]>(`
+        SELECT s.id, s.title, s.artist, s.tags, s.year, s.popularity,
+               (s.embedding_vector <=> q.vec) AS dist_meta
+        FROM public.songs s
+        CROSS JOIN query_vec_temp q
+        WHERE s.embedding_vector IS NOT NULL AND s.is_placeholder = false
+        ORDER BY s.embedding_vector <=> q.vec
+        LIMIT ${topNMeta}
+      `);
+    } catch (err: any) {
+      logger.error({ error: err.message }, 'V2 aboutness: meta leg failed');
+    }
+
+    // 4. Emotions leg (indexed HNSW)
+    type EmotionRow = {
+      song_id: string; dist_emotion: number;
+      emotions_text: string | null; emotions_confidence: string | null;
+      moments_text: string | null; moments_confidence: string | null;
+      moments_vector_hex: string | null;
+    };
+    let emotionRows: EmotionRow[] = [];
+    try {
+      emotionRows = await this.prisma.$queryRawUnsafe<EmotionRow[]>(`
+        SELECT
+          sa.song_id,
+          (sa.emotions_vector <=> q.vec) AS dist_emotion,
+          sa.emotions_text,
+          sa.emotions_confidence,
+          sa.moments_text,
+          sa.moments_confidence,
+          sa.moments_vector::text AS moments_vector_hex
+        FROM song_aboutness sa
+        CROSS JOIN query_vec_temp q
+        WHERE sa.emotions_vector IS NOT NULL
+        ORDER BY sa.emotions_vector <=> q.vec
+        LIMIT ${topNEmotion}
+      `);
+    } catch (err: any) {
+      logger.warn({ error: err.message }, 'V2 aboutness: emotions leg failed — meta-only fallback');
+    }
+
+    // 5. Build candidate union
+    const metaMap = new Map<string, MetaRow>();
+    for (const r of metaRows) metaMap.set(r.id, r);
+
+    const emotionMap = new Map<string, EmotionRow>();
+    for (const r of emotionRows) emotionMap.set(r.song_id, r);
+
+    const allIds = new Set<string>([
+      ...metaRows.map(r => r.id),
+      ...emotionRows.map(r => r.song_id),
+    ]);
+
+    // 6. Compute moments similarity for candidate set
+    // moments_vector is stored but not indexed — we compute cosine sim on the small candidate set
+    // by fetching the stored vectors and computing dot product in JS (after cosine normalisation)
+    // This avoids a full-table sequential scan.
+    const candidateIdList = [...allIds];
+    type MomentRow = { song_id: string; dist_moment: number };
+    let momentMap = new Map<string, number>();
+
+    if (candidateIdList.length > 0 && emotionRows.some(r => r.moments_vector_hex)) {
+      try {
+        // Use pgvector distance on the candidate set only — no index needed for small set
+        const idLiteral = candidateIdList.map(id => `'${id}'::uuid`).join(',');
+        const momentRows = await this.prisma.$queryRawUnsafe<MomentRow[]>(`
+          SELECT sa.song_id, (sa.moments_vector <=> q.vec) AS dist_moment
+          FROM song_aboutness sa
+          CROSS JOIN query_vec_temp q
+          WHERE sa.song_id IN (${idLiteral})
+            AND sa.moments_vector IS NOT NULL
+        `);
+        for (const r of momentRows) momentMap.set(r.song_id, r.dist_moment);
+      } catch (err: any) {
+        logger.warn({ error: err.message }, 'V2 aboutness: moments similarity failed — using 0');
+      }
+    }
+
+    // 7. Rerank
+    const candidates: AboutnessV2Match[] = [];
+    for (const songId of allIds) {
+      const meta = metaMap.get(songId);
+      const emo = emotionMap.get(songId);
+
+      const distMeta = meta?.dist_meta;
+      const distEmotion = emo?.dist_emotion;
+      const distMoment = momentMap.get(songId);
+
+      const simMeta = distMeta !== undefined ? 1 - distMeta : 0;
+      const simEmotion = distEmotion !== undefined ? 1 - distEmotion : 0;
+      const simMoment = distMoment !== undefined ? 1 - distMoment : 0;
+
+      const aboutScore =
+        metaWeight * simMeta + emotionWeight * simEmotion + momentWeight * simMoment;
+
+      const base = meta ?? { id: songId, title: '', artist: '', tags: [], year: null, popularity: 0, dist_meta: undefined };
+
+      candidates.push({
+        songId,
+        title: base.title,
+        artist: base.artist,
+        similarity: aboutScore,
+        distance: 1 - aboutScore,
+        tags: base.tags || [],
+        year: base.year ?? undefined,
+        decade: base.year ? Math.floor(base.year / 10) * 10 : undefined,
+        popularity: base.popularity,
+        distMeta,
+        distEmotion,
+        distMoment,
+        aboutScore,
+        emotionsText: emo?.emotions_text ?? undefined,
+        momentsText: emo?.moments_text ?? undefined,
+        emotionsConfidence: emo?.emotions_confidence ?? undefined,
+        momentsConfidence: emo?.moments_confidence ?? undefined,
+      });
+    }
+
+    candidates.sort((a, b) => b.aboutScore - a.aboutScore);
+    const topK = candidates.slice(0, k * 2);
+
+    logger.debug({
+      metaCandidates: metaRows.length,
+      emotionCandidates: emotionRows.length,
+      momentCandidates: momentMap.size,
+      unionSize: allIds.size,
+      topK: topK.length,
+      duration: Date.now() - startTime,
+    }, 'V2 aboutness union+rerank completed');
 
     return topK;
   }
