@@ -34,7 +34,8 @@ model Song {
   createdAt          DateTime                    @default(now())
   updatedAt          DateTime                    @updatedAt
 
-  messages Message[]
+  messages  Message[]
+  aboutness SongAboutness?
 
   @@index([tags], map: "idx_songs_tags", type: Gin)
   @@index([phrases], map: "idx_songs_phrases", type: Gin)
@@ -100,6 +101,22 @@ model Room {
   @@index([name], map: "idx_rooms_name")
   @@index([createdAt], map: "idx_rooms_created_at")
   @@map("rooms")
+}
+
+model SongAboutness {
+  songId           String                      @id @db.Uuid @map("song_id")
+  aboutnessText    String                      @map("aboutness_text")
+  aboutnessJson    Json                        @map("aboutness_json")
+  aboutnessVector  Unsupported("vector(384)")? @map("aboutness_vector")
+  aboutnessVersion Int                         @map("aboutness_version")
+  embeddingModel   String                      @map("embedding_model")
+  generatedAt      DateTime                    @map("generated_at") @db.Timestamptz
+
+  song Song @relation(fields: [songId], references: [id], onDelete: Cascade)
+
+  @@index([aboutnessVersion], map: "idx_song_aboutness_version")
+  // Note: HNSW index on aboutness_vector created via raw SQL (idx_song_aboutness_hnsw)
+  @@map("song_aboutness")
 }
 
 model MessageReaction {
