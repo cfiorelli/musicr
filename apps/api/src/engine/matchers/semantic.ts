@@ -21,6 +21,14 @@ export interface SemanticMatch {
   popularity: number;
 }
 
+/** Result from union+rerank when ABOUTNESS_ENABLED=true */
+export interface AboutnessMatch extends SemanticMatch {
+  distMeta?: number;
+  distAbout?: number;
+  aboutScore: number;
+  aboutnessJson?: any;
+}
+
 export interface SemanticConfig {
   knn_size: number;
   embedding_model?: string;
@@ -429,16 +437,174 @@ export class SemanticSearcher {
    * Batch similarity search for multiple queries
    */
   async batchFindSimilar(
-    messages: string[], 
+    messages: string[],
     k: number = 50
   ): Promise<SemanticMatch[][]> {
     const results: SemanticMatch[][] = [];
-    
+
     for (const message of messages) {
       const matches = await this.findSimilar(message, k);
       results.push(matches);
     }
-    
+
     return results;
+  }
+
+  /**
+   * Union + rerank: query both meta embedding and aboutness embedding,
+   * combine candidates, score by weighted combination, return top K.
+   *
+   * Falls back gracefully if the aboutness query fails (returns meta-only).
+   * Requires ABOUTNESS_ENABLED env flag to be checked by caller.
+   */
+  async findSimilarUnionRerank(
+    message: string,
+    k: number = 10,
+    opts: { topN: number; metaWeight: number; aboutnessWeight: number }
+  ): Promise<AboutnessMatch[]> {
+    const startTime = Date.now();
+    const { topN, metaWeight, aboutnessWeight } = opts;
+
+    // 1. Embed message (same model as runtime)
+    const embeddingService = await getEmbeddingService();
+    const messageEmbedding = await embeddingService.embedSingle(message);
+
+    const expectedDims = 384;
+    if (messageEmbedding.length !== expectedDims) {
+      throw new Error(
+        `Embedding dimension mismatch: got ${messageEmbedding.length}, expected ${expectedDims}`
+      );
+    }
+
+    const embeddingString = `[${messageEmbedding.join(',')}]`;
+    const limit = topN;
+
+    // 2. Materialise query vector in temp table (avoids pg planner issue)
+    await this.prisma.$executeRawUnsafe(`
+      CREATE TEMP TABLE IF NOT EXISTS query_vec_temp (vec vector(384))
+    `);
+    await this.prisma.$executeRawUnsafe(`DELETE FROM query_vec_temp`);
+    await this.prisma.$executeRawUnsafe(
+      `INSERT INTO query_vec_temp (vec) VALUES ('${embeddingString}'::vector(384))`
+    );
+
+    // Set HNSW ef_search for both legs
+    await this.prisma.$executeRawUnsafe(
+      `SET LOCAL hnsw.ef_search = ${Math.max(limit * 2, 100)}`
+    );
+
+    // 3. Meta leg: songs.embedding_vector
+    type MetaRow = { id: string; title: string; artist: string; tags: string[]; year: number | null; popularity: number; dist_meta: number };
+    let metaRows: MetaRow[] = [];
+    try {
+      metaRows = await this.prisma.$queryRawUnsafe<MetaRow[]>(`
+        SELECT
+          s.id,
+          s.title,
+          s.artist,
+          s.tags,
+          s.year,
+          s.popularity,
+          (s.embedding_vector <=> q.vec) AS dist_meta
+        FROM public.songs s
+        CROSS JOIN query_vec_temp q
+        WHERE s.embedding_vector IS NOT NULL
+          AND s.is_placeholder = false
+        ORDER BY s.embedding_vector <=> q.vec
+        LIMIT ${limit}
+      `);
+    } catch (err: any) {
+      logger.error({ error: err.message }, 'Aboutness: meta leg failed');
+    }
+
+    // 4. Aboutness leg: song_aboutness.aboutness_vector
+    type AboutRow = { song_id: string; dist_about: number; aboutness_json: any };
+    let aboutRows: AboutRow[] = [];
+    try {
+      aboutRows = await this.prisma.$queryRawUnsafe<AboutRow[]>(`
+        SELECT
+          sa.song_id,
+          (sa.aboutness_vector <=> q.vec) AS dist_about,
+          sa.aboutness_json
+        FROM song_aboutness sa
+        CROSS JOIN query_vec_temp q
+        WHERE sa.aboutness_vector IS NOT NULL
+        ORDER BY sa.aboutness_vector <=> q.vec
+        LIMIT ${limit}
+      `);
+    } catch (err: any) {
+      logger.warn({ error: err.message }, 'Aboutness: aboutness leg failed — falling back to meta-only');
+    }
+
+    // 5. Build candidate maps
+    const metaMap = new Map<string, MetaRow>();
+    for (const r of metaRows) metaMap.set(r.id, r);
+
+    const aboutMap = new Map<string, AboutRow>();
+    for (const r of aboutRows) aboutMap.set(r.song_id, r);
+
+    // Union of candidate songIds
+    const allIds = new Set<string>([
+      ...metaRows.map(r => r.id),
+      ...aboutRows.map(r => r.song_id),
+    ]);
+
+    // 6. Rerank
+    const candidates: AboutnessMatch[] = [];
+    for (const songId of allIds) {
+      const meta = metaMap.get(songId);
+      const about = aboutMap.get(songId);
+
+      const distMeta = meta?.dist_meta;
+      const distAbout = about?.dist_about;
+      const simMeta = distMeta !== undefined ? 1 - distMeta : 0;
+      const simAbout = distAbout !== undefined ? 1 - distAbout : 0;
+      const aboutScore = metaWeight * simMeta + aboutnessWeight * simAbout;
+
+      // Need at least one leg to have the song's base info
+      if (!meta && !about) continue;
+
+      // Fetch base song info from meta leg if available; aboutness leg only has song_id
+      const base = meta ?? {
+        id: songId,
+        title: '',
+        artist: '',
+        tags: [],
+        year: null,
+        popularity: 0,
+        dist_meta: undefined,
+      };
+
+      candidates.push({
+        songId,
+        title: base.title,
+        artist: base.artist,
+        similarity: aboutScore,
+        distance: 1 - aboutScore,
+        tags: base.tags || [],
+        year: base.year ?? undefined,
+        decade: base.year ? Math.floor(base.year / 10) * 10 : undefined,
+        popularity: base.popularity,
+        distMeta,
+        distAbout,
+        aboutScore,
+        aboutnessJson: about?.aboutness_json ?? undefined,
+      });
+    }
+
+    // Sort by combined score descending
+    candidates.sort((a, b) => b.aboutScore - a.aboutScore);
+    const topK = candidates.slice(0, k * 2); // over-fetch; caller will re-filter
+
+    const duration = Date.now() - startTime;
+    logger.debug({
+      metaCandidates: metaRows.length,
+      aboutCandidates: aboutRows.length,
+      unionSize: allIds.size,
+      topK: topK.length,
+      duration,
+    }, 'Aboutness union+rerank completed');
+
+    return topK;
   }
 }
