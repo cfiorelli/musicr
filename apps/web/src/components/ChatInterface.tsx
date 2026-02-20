@@ -516,7 +516,7 @@ const ChatInterface = () => {
                   >
                     {songDisplay}
                   </a>
-                  {msg.reasoning && (
+                  {(msg.reasoning || msg.aboutness) && (
                     <button
                       onClick={() => setExpandedWhyPanel(
                         expandedWhyPanel === msg.id ? null : msg.id
@@ -536,7 +536,7 @@ const ChatInterface = () => {
             </div>
 
             {/* Why Panel - Match Explanation */}
-            {expandedWhyPanel === msg.id && msg.reasoning && songDisplay && (
+            {expandedWhyPanel === msg.id && (msg.reasoning || msg.aboutness) && songDisplay && (
               <div className="mt-2 p-3 bg-gray-800/70 border border-gray-700/60 rounded-lg backdrop-blur-sm">
                 {/* Header row: confidence + close */}
                 <div className="flex items-center justify-between gap-3 mb-2">
@@ -565,7 +565,48 @@ const ChatInterface = () => {
                     ✕
                   </button>
                 </div>
-                {/* Reasoning text */}
+                {/* Aboutness chips: mood + themes */}
+                {msg.aboutness && (
+                  <div className="mb-2 space-y-1.5">
+                    {msg.aboutness.mood.length > 0 && (
+                      <div className="flex flex-wrap gap-1">
+                        {msg.aboutness.mood.slice(0, 6).map((m) => (
+                          <span
+                            key={m}
+                            className="text-xs px-1.5 py-0.5 rounded-full bg-violet-900/40 text-violet-300 border border-violet-700/40"
+                          >
+                            {m}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                    {msg.aboutness.themes.length > 0 && (
+                      <div className="flex flex-wrap gap-1">
+                        {msg.aboutness.themes.slice(0, 6).map((t) => (
+                          <span
+                            key={t}
+                            className="text-xs px-1.5 py-0.5 rounded-full bg-emerald-900/30 text-emerald-400/80 border border-emerald-700/30"
+                          >
+                            {t}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                    {msg.aboutness.oneLiner && (
+                      <p className="text-xs text-gray-400 leading-relaxed">
+                        {msg.aboutness.oneLiner}
+                      </p>
+                    )}
+                    {debugMode && (
+                      <p className="text-xs text-gray-600 tabular-nums">
+                        meta: {msg.aboutness.distMeta !== undefined ? (1 - msg.aboutness.distMeta).toFixed(3) : '—'}{' '}
+                        about: {msg.aboutness.distAbout !== undefined ? (1 - msg.aboutness.distAbout).toFixed(3) : '—'}{' '}
+                        score: {msg.aboutness.aboutScore !== undefined ? msg.aboutness.aboutScore.toFixed(3) : '—'}
+                      </p>
+                    )}
+                  </div>
+                )}
+                {/* Reasoning text (from meta-only path) */}
                 {typeof msg.reasoning === 'string' && msg.reasoning && (
                   <p className="text-xs text-gray-400 leading-relaxed">
                     {msg.reasoning}
