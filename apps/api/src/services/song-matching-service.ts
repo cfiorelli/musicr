@@ -8,13 +8,21 @@
 
 import { PrismaClient } from '@prisma/client';
 import { logger } from '../config/index.js';
-import { SemanticSearcher, AboutnessMatch } from '../engine/matchers/semantic.js';
+import { SemanticSearcher, AboutnessMatch, AboutnessV2Match } from '../engine/matchers/semantic.js';
 
-// Aboutness feature flags (read once at module load; change requires restart)
+// V1 Aboutness feature flags (legacy; read once at module load)
 const ABOUTNESS_ENABLED = process.env.ABOUTNESS_ENABLED === 'true';
 const ABOUTNESS_TOPN = parseInt(process.env.ABOUTNESS_TOPN || '100', 10);
 const ABOUTNESS_WEIGHT = parseFloat(process.env.ABOUTNESS_WEIGHT || '0.7');
 const META_WEIGHT = parseFloat(process.env.META_WEIGHT || '0.3');
+
+// V2 Aboutness feature flags (emotions + moments; read once at module load)
+const ABOUTNESS_V2_ENABLED = process.env.ABOUTNESS_V2_ENABLED === 'true';
+const ABOUTNESS_TOPN_META = parseInt(process.env.ABOUTNESS_TOPN_META || '100', 10);
+const ABOUTNESS_TOPN_EMOTION = parseInt(process.env.ABOUTNESS_TOPN_EMOTION || '100', 10);
+const ABOUTNESS_META_WEIGHT = parseFloat(process.env.ABOUTNESS_META_WEIGHT || '0.2');
+const ABOUTNESS_EMOTION_WEIGHT = parseFloat(process.env.ABOUTNESS_EMOTION_WEIGHT || '0.5');
+const ABOUTNESS_MOMENT_WEIGHT = parseFloat(process.env.ABOUTNESS_MOMENT_WEIGHT || '0.3');
 
 // Define Song type based on schema
 interface Song {
@@ -56,15 +64,23 @@ export interface SongMatchResult {
     tags?: string[];
     fallbackReason?: string;
   };
-  /** Populated when ABOUTNESS_ENABLED=true and aboutness data exists for the primary song */
+  /** Populated when aboutness data exists for the primary song */
   aboutness?: {
-    themes: string[];
-    mood: string[];
-    setting: string;
-    oneLiner: string;
+    // V1 legacy fields
+    themes?: string[];
+    mood?: string[];
+    setting?: string;
+    oneLiner?: string;
     distMeta?: number;
     distAbout?: number;
     aboutScore?: number;
+    // V2 fields (emotions + moments)
+    emotions?: string;
+    emotions_confidence?: string;
+    moments?: string;
+    moments_confidence?: string;
+    distEmotion?: number;
+    distMoment?: number;
   };
 }
 
@@ -247,7 +263,19 @@ export class SongMatchingService {
       }, '[DEBUG_MATCHING] Text normalization');
     }
 
-    // ── Aboutness union+rerank path (feature-flagged) ──────────────────────
+    // ── Aboutness V2 path: emotions + moments 3-signal retrieval ───────────
+    if (ABOUTNESS_V2_ENABLED) {
+      try {
+        const v2Result = await this.findEmbeddingMatchesWithAboutnessV2(
+          cleanText, allowExplicit, userId
+        );
+        if (v2Result) return v2Result;
+      } catch (err) {
+        logger.warn({ error: err }, 'Aboutness V2 path failed — falling back to meta-only');
+      }
+    }
+
+    // ── Aboutness V1 union+rerank path (legacy, feature-flagged) ───────────
     if (ABOUTNESS_ENABLED) {
       try {
         const aboutnessResult = await this.findEmbeddingMatchesWithAboutness(
@@ -256,7 +284,7 @@ export class SongMatchingService {
         if (aboutnessResult) return aboutnessResult;
         // fall through to standard path if aboutness returned nothing
       } catch (err) {
-        logger.warn({ error: err }, 'Aboutness path failed — falling back to meta-only');
+        logger.warn({ error: err }, 'Aboutness V1 path failed — falling back to meta-only');
       }
     }
 
@@ -619,6 +647,147 @@ export class SongMatchingService {
       },
       why: {
         matchedPhrase: primary.reason.matchedPhrase,
+        similarity: primary.reason.similarity,
+        mood: primary.reason.mood,
+      },
+      aboutness,
+    };
+  }
+
+  /**
+   * Aboutness V2: emotions + moments 3-signal union+rerank.
+   * Returns SongMatchResult or null on no matches.
+   * Caller falls through to V1 or meta-only on null.
+   */
+  private async findEmbeddingMatchesWithAboutnessV2(
+    text: string,
+    allowExplicit: boolean,
+    userId?: string,
+  ): Promise<SongMatchResult | null> {
+    const t0 = Date.now();
+
+    const v2Matches: AboutnessV2Match[] = await this.semanticSearcher.findSimilarUnionRerankV2(
+      text,
+      50,
+      {
+        topNMeta: ABOUTNESS_TOPN_META,
+        topNEmotion: ABOUTNESS_TOPN_EMOTION,
+        metaWeight: ABOUTNESS_META_WEIGHT,
+        emotionWeight: ABOUTNESS_EMOTION_WEIGHT,
+        momentWeight: ABOUTNESS_MOMENT_WEIGHT,
+      },
+    );
+
+    logger.info(
+      { resultCount: v2Matches.length, latencyMs: Date.now() - t0 },
+      'obs:aboutness_v2_latency',
+    );
+
+    if (v2Matches.length === 0) return null;
+
+    // Hydrate full song objects
+    const matchPromises = v2Matches.map(async (am) => {
+      const song = await this.prisma.song.findFirst({
+        where: { id: am.songId, isPlaceholder: false },
+      });
+      if (!song) return null;
+      return {
+        song: song as Song,
+        score: am.aboutScore,
+        reason: {
+          strategy: 'embedding' as const,
+          similarity: am.aboutScore,
+          mood: this.detectMood(text),
+        },
+        distMeta: am.distMeta,
+        distEmotion: am.distEmotion,
+        distMoment: am.distMoment,
+        aboutScore: am.aboutScore,
+        emotionsText: am.emotionsText,
+        momentsText: am.momentsText,
+        emotionsConfidence: am.emotionsConfidence,
+        momentsConfidence: am.momentsConfidence,
+      };
+    });
+
+    type HydratedV2 = NonNullable<Awaited<(typeof matchPromises)[0]>>;
+    const hydratedRaw = await Promise.all(matchPromises);
+    let hydrated: HydratedV2[] = hydratedRaw.filter((m): m is HydratedV2 => m !== null);
+
+    // Filter recent songs
+    if (userId) {
+      try {
+        const recentMessages = await this.prisma.message.findMany({
+          where: { userId },
+          include: { song: true },
+          orderBy: { createdAt: 'desc' },
+          take: 10,
+        });
+        const recentSongIds = new Set(recentMessages.map(m => m.song?.id).filter(Boolean));
+        const filtered = hydrated.filter(m => !recentSongIds.has(m.song.id));
+        if (filtered.length >= 3) hydrated = filtered;
+      } catch (err) {
+        logger.warn({ error: err }, 'V2 aboutness: could not fetch recent songs');
+      }
+    }
+
+    if (!allowExplicit) {
+      hydrated = hydrated.filter(m => !this.isExplicit(m.song));
+    }
+
+    if (hydrated.length === 0) return null;
+
+    hydrated.sort((a, b) => b.score - a.score);
+    const primary = hydrated[0];
+
+    const confidence = this.calculateConfidence(
+      hydrated.map(m => ({ song: m.song, score: m.score, reason: m.reason })),
+    );
+
+    let alternates: SongMatch[] = [];
+    if (confidence < this.CONFIDENCE_THRESHOLD) {
+      alternates = await this.selectAlternates(
+        hydrated.map(m => ({ song: m.song, score: m.score, reason: m.reason })),
+        userId,
+      );
+    }
+
+    const aboutness: SongMatchResult['aboutness'] = {
+      emotions: primary.emotionsText,
+      emotions_confidence: primary.emotionsConfidence,
+      moments: primary.momentsText,
+      moments_confidence: primary.momentsConfidence,
+      distMeta: primary.distMeta,
+      distEmotion: primary.distEmotion,
+      distMoment: primary.distMoment,
+      aboutScore: primary.aboutScore,
+    };
+
+    logger.info({
+      text,
+      primarySong: `${primary.song.artist} - ${primary.song.title}`,
+      strategy: 'aboutness-v2-rerank',
+      score: primary.score,
+      confidence,
+      hasEmotions: !!primary.emotionsText,
+      hasMoments: !!primary.momentsText,
+    }, 'Song matching completed (aboutness V2 path)');
+
+    return {
+      primary: primary.song,
+      alternates: alternates.map(m => m.song),
+      scores: {
+        confidence,
+        strategy: 'aboutness-v2-rerank',
+        debugInfo: {
+          primaryScore: primary.score,
+          totalMatches: hydrated.length,
+          distMeta: primary.distMeta,
+          distEmotion: primary.distEmotion,
+          distMoment: primary.distMoment,
+        },
+      },
+      why: {
         similarity: primary.reason.similarity,
         mood: primary.reason.mood,
       },
