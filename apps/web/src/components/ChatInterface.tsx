@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
 import { useChatStore, type Message } from '../stores/chatStore';
+import { cleanAboutnessText, getMatchStrengthLabel } from '../utils/songMatch';
 
 type ReplyMessage = Message & { parentAuthor?: string };
 type ThreadGroup = { root: Message; replies: ReplyMessage[] };
@@ -13,7 +14,6 @@ const ChatInterface = () => {
   const [autoScroll, setAutoScroll] = useState(true);
   const [unreadCount, setUnreadCount] = useState(0);
   const [songCount, setSongCount] = useState<number | null>(null);
-  const [expandedWhyPanel, setExpandedWhyPanel] = useState<string | null>(null);
   const [emojiPickerOpen, setEmojiPickerOpen] = useState<string | null>(null);
   // Modal state: only one modal can be open at a time
   const [activeModal, setActiveModal] = useState<'onboarding' | 'info' | null>(null);
@@ -171,17 +171,6 @@ const ChatInterface = () => {
     return emojis[Math.abs(hash) % emojis.length];
   };
 
-  const getConfidenceLabel = (similarity?: number): { label: string; color: string; emoji: string } => {
-    // Never return null or "Unknown" - always provide a numeric value
-    const score = similarity ?? 0.001; // Default to very low if undefined
-
-    if (score >= 0.7) return { label: 'Very Strong', color: 'text-green-400', emoji: '🎯' };
-    if (score >= 0.5) return { label: 'Strong', color: 'text-green-300', emoji: '✨' };
-    if (score >= 0.35) return { label: 'Moderate', color: 'text-yellow-300', emoji: '🎵' };
-    if (score >= 0.2) return { label: 'Weak', color: 'text-orange-300', emoji: '🔍' };
-    return { label: 'Very Weak', color: 'text-red-300', emoji: '⚠️' };
-  };
-
   const handleKeyDown = (e: React.KeyboardEvent) => {
     // Ctrl/Cmd+Enter sends from global composer
     if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
@@ -272,8 +261,6 @@ const ChatInterface = () => {
         // Close in priority order (most specific to least specific)
         if (emojiPickerOpen) {
           setEmojiPickerOpen(null);
-        } else if (expandedWhyPanel) {
-          setExpandedWhyPanel(null);
         } else if (showQuickPalette) {
           setShowQuickPalette(false);
           setCurrentSelectedMessage(null);
@@ -292,7 +279,7 @@ const ChatInterface = () => {
 
     window.addEventListener('keydown', handleEsc);
     return () => window.removeEventListener('keydown', handleEsc);
-  }, [emojiPickerOpen, expandedWhyPanel, showQuickPalette, replyingTo, activeModal]);
+  }, [emojiPickerOpen, showQuickPalette, replyingTo, activeModal]);
 
   // Auto-scroll to bottom when new messages arrive (if auto-scroll is enabled)
   useEffect(() => {
@@ -505,162 +492,68 @@ const ChatInterface = () => {
                 </div>
               )}
               {songDisplay && (
-                <div className="mt-1 flex items-center gap-1.5 flex-wrap">
-                  <span className="text-xs text-gray-500">Musicr picked:</span>
-                  <a
-                    href={getYouTubeSearchUrl(msg.songTitle!, msg.songArtist!)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-xs text-emerald-400/80 hover:text-emerald-300 underline decoration-emerald-500/30 hover:decoration-emerald-400/50 transition-colors"
-                    title="Listen on YouTube"
-                  >
-                    {songDisplay}
-                  </a>
-                  {msg.similarity !== undefined && (
-                    <button
-                      onClick={() => setExpandedWhyPanel(
-                        expandedWhyPanel === msg.id ? null : msg.id
-                      )}
-                      className="text-xs px-2 py-0.5 rounded-md text-gray-500 hover:text-gray-300 hover:bg-gray-700/50 transition-all opacity-60 hover:opacity-100 md:opacity-0 md:group-hover:opacity-100 border border-gray-600/30 hover:border-gray-500/50"
-                      aria-label={expandedWhyPanel === msg.id ? 'Hide match explanation' : 'Show why this song matched'}
-                      title={expandedWhyPanel === msg.id ? 'Hide explanation' : 'Why this song?'}
+                <>
+                  {/* Song link row */}
+                  <div className="mt-1 flex items-center gap-1.5 flex-wrap">
+                    <span className="text-xs text-gray-500">Musicr picked:</span>
+                    <a
+                      href={getYouTubeSearchUrl(msg.songTitle!, msg.songArtist!)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-emerald-400/80 hover:text-emerald-300 underline decoration-emerald-500/30 hover:decoration-emerald-400/50 transition-colors"
+                      title="Listen on YouTube"
                     >
-                      {expandedWhyPanel === msg.id ? '✕' : 'why?'}
-                    </button>
+                      {songDisplay}
+                    </a>
+                    {/* Qualitative strength label — no raw % */}
+                    {(() => {
+                      const strength = getMatchStrengthLabel(msg.similarity);
+                      return strength ? (
+                        <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${strength.color} bg-gray-700/40`}>
+                          {strength.label}
+                        </span>
+                      ) : null;
+                    })()}
+                    {firstMatchId === msg.id && (
+                      <span className="text-xs text-gray-500 italic">Meaning match · not exact search</span>
+                    )}
+                  </div>
+                  {/* Inline explanation card — always visible when data exists */}
+                  {msg.aboutness && (msg.aboutness.emotions || msg.aboutness.moments) && (
+                    <div className="mt-1.5 pl-2 border-l-2 border-gray-700/60 space-y-0.5">
+                      {msg.aboutness.emotions && (
+                        <div className="flex items-baseline gap-1.5 min-w-0">
+                          <span className="flex-none text-[10px] font-semibold uppercase tracking-wider text-violet-400/80 leading-tight">
+                            Feels like
+                          </span>
+                          <span className="text-xs text-gray-300 truncate">
+                            {cleanAboutnessText(msg.aboutness.emotions)}
+                          </span>
+                        </div>
+                      )}
+                      {msg.aboutness.moments && (
+                        <div className="flex items-baseline gap-1.5 min-w-0">
+                          <span className="flex-none text-[10px] font-semibold uppercase tracking-wider text-emerald-400/80 leading-tight">
+                            Fits when
+                          </span>
+                          <span className="text-xs text-gray-300 truncate">
+                            {cleanAboutnessText(msg.aboutness.moments)}
+                          </span>
+                        </div>
+                      )}
+                      {debugMode && (
+                        <p className="text-[10px] text-gray-600 tabular-nums">
+                          meta: {msg.aboutness.distMeta !== undefined ? (1 - msg.aboutness.distMeta).toFixed(3) : '—'}{' '}
+                          emo: {msg.aboutness.distEmotion !== undefined ? (1 - msg.aboutness.distEmotion).toFixed(3) : '—'}{' '}
+                          mom: {msg.aboutness.distMoment !== undefined ? (1 - msg.aboutness.distMoment).toFixed(3) : '—'}{' '}
+                          score: {msg.aboutness.aboutScore !== undefined ? msg.aboutness.aboutScore.toFixed(3) : '—'}
+                        </p>
+                      )}
+                    </div>
                   )}
-                  {firstMatchId === msg.id && (
-                    <span className="text-xs text-gray-500 italic">Meaning match · not exact search</span>
-                  )}
-                </div>
+                </>
               )}
             </div>
-
-            {/* Why Panel - Match Explanation */}
-            {expandedWhyPanel === msg.id && songDisplay && msg.similarity !== undefined && (
-              <div className="mt-2 p-3 bg-gray-800/70 border border-gray-700/60 rounded-lg backdrop-blur-sm">
-                {/* Header row: confidence + close */}
-                <div className="flex items-center justify-between gap-3 mb-2">
-                  {(() => {
-                    const confidence = getConfidenceLabel(msg.similarity);
-                    const score = msg.similarity ?? 0.001;
-                    return (
-                      <div className="flex items-center gap-2">
-                        <span className={`font-semibold text-sm ${confidence.color}`}>
-                          {confidence.emoji} {confidence.label}
-                        </span>
-                        <span
-                          className="text-gray-500 text-xs tabular-nums"
-                          title="Cosine similarity between your message and this song's metadata"
-                        >
-                          {(score * 100).toFixed(1)}%
-                        </span>
-                      </div>
-                    );
-                  })()}
-                  <button
-                    onClick={() => setExpandedWhyPanel(null)}
-                    className="text-gray-500 hover:text-gray-300 transition-colors p-1 rounded hover:bg-gray-700/50 flex-shrink-0"
-                    aria-label="Close explanation"
-                  >
-                    ✕
-                  </button>
-                </div>
-                {/* Aboutness V2: emotions + moments */}
-                {msg.aboutness && (msg.aboutness.emotions || msg.aboutness.moments) && (
-                  <div className="mb-2 space-y-2">
-                    {msg.aboutness.emotions && (
-                      <div>
-                        <p className="text-xs font-medium text-violet-400 mb-0.5 uppercase tracking-wide">
-                          Feels like
-                          {msg.aboutness.emotions_confidence && (
-                            <span className="ml-1.5 normal-case font-normal text-gray-600">
-                              [{msg.aboutness.emotions_confidence}]
-                            </span>
-                          )}
-                        </p>
-                        <p className="text-xs text-gray-300 leading-relaxed">
-                          {msg.aboutness.emotions.replace(/\[confidence:\s*\w+\]\s*$/, '').trim()}
-                        </p>
-                      </div>
-                    )}
-                    {msg.aboutness.moments && (
-                      <div>
-                        <p className="text-xs font-medium text-emerald-400 mb-0.5 uppercase tracking-wide">
-                          Fits when
-                          {msg.aboutness.moments_confidence && (
-                            <span className="ml-1.5 normal-case font-normal text-gray-600">
-                              [{msg.aboutness.moments_confidence}]
-                            </span>
-                          )}
-                        </p>
-                        <p className="text-xs text-gray-300 leading-relaxed">
-                          {msg.aboutness.moments.replace(/\[confidence:\s*\w+\]\s*$/, '').trim()}
-                        </p>
-                      </div>
-                    )}
-                    {debugMode && (
-                      <p className="text-xs text-gray-600 tabular-nums">
-                        meta: {msg.aboutness.distMeta !== undefined ? (1 - msg.aboutness.distMeta).toFixed(3) : '—'}{' '}
-                        emo: {msg.aboutness.distEmotion !== undefined ? (1 - msg.aboutness.distEmotion).toFixed(3) : '—'}{' '}
-                        mom: {msg.aboutness.distMoment !== undefined ? (1 - msg.aboutness.distMoment).toFixed(3) : '—'}{' '}
-                        score: {msg.aboutness.aboutScore !== undefined ? msg.aboutness.aboutScore.toFixed(3) : '—'}
-                      </p>
-                    )}
-                  </div>
-                )}
-                {/* Aboutness V1 legacy: mood chips + themes + oneLiner */}
-                {msg.aboutness && !msg.aboutness.emotions && !msg.aboutness.moments && (
-                  <div className="mb-2 space-y-1.5">
-                    {msg.aboutness.mood && msg.aboutness.mood.length > 0 && (
-                      <div className="flex flex-wrap gap-1">
-                        {msg.aboutness.mood.slice(0, 6).map((m) => (
-                          <span
-                            key={m}
-                            className="text-xs px-1.5 py-0.5 rounded-full bg-violet-900/40 text-violet-300 border border-violet-700/40"
-                          >
-                            {m}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                    {msg.aboutness.themes && msg.aboutness.themes.length > 0 && (
-                      <div className="flex flex-wrap gap-1">
-                        {msg.aboutness.themes.slice(0, 6).map((t) => (
-                          <span
-                            key={t}
-                            className="text-xs px-1.5 py-0.5 rounded-full bg-emerald-900/30 text-emerald-400/80 border border-emerald-700/30"
-                          >
-                            {t}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                    {msg.aboutness.oneLiner && (
-                      <p className="text-xs text-gray-400 leading-relaxed">
-                        {msg.aboutness.oneLiner}
-                      </p>
-                    )}
-                    {debugMode && (
-                      <p className="text-xs text-gray-600 tabular-nums">
-                        meta: {msg.aboutness.distMeta !== undefined ? (1 - msg.aboutness.distMeta).toFixed(3) : '—'}{' '}
-                        about: {msg.aboutness.distAbout !== undefined ? (1 - msg.aboutness.distAbout).toFixed(3) : '—'}{' '}
-                        score: {msg.aboutness.aboutScore !== undefined ? msg.aboutness.aboutScore.toFixed(3) : '—'}
-                      </p>
-                    )}
-                  </div>
-                )}
-                {/* Reasoning text (from meta-only path) */}
-                {typeof msg.reasoning === 'string' && msg.reasoning && (
-                  <p className="text-xs text-gray-400 leading-relaxed">
-                    {msg.reasoning}
-                  </p>
-                )}
-                {/* Song title reminder */}
-                <p className="text-xs text-gray-600 mt-1.5 italic">
-                  Matched to: {songDisplay}
-                </p>
-              </div>
-            )}
 
             {/* Reactions + action icon buttons */}
             <div className="flex flex-wrap items-center gap-1 mt-1">
@@ -824,10 +717,7 @@ const ChatInterface = () => {
               className="w-full text-left p-3 rounded bg-white/10 hover:bg-white/20 text-white transition-colors"
             >
               <div className="font-medium">{alt.title}</div>
-              <div className="text-sm text-gray-300">{alt.artist} ({alt.year})</div>
-              {alt.score && (
-                <div className="text-xs text-gray-400">Score: {(alt.score * 100).toFixed(1)}%</div>
-              )}
+              <div className="text-sm text-gray-300">{alt.artist}{alt.year ? ` (${alt.year})` : ''}</div>
             </button>
           ))}
         </div>
