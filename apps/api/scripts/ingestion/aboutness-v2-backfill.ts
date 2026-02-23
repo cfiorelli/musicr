@@ -1,30 +1,36 @@
 import 'dotenv/config';
 import { prisma } from '../../src/services/database.js';
-import { generateEmotionsAboutness, generateMomentsAboutness } from '../../src/services/aboutness/generator.js';
+import {
+  generateAboutnessBatch,
+  type BatchSongInput,
+} from '../../src/services/aboutness/generator.js';
 import { pipeline } from '@xenova/transformers';
 
 /**
- * Aboutness V2 Backfill Script
+ * Aboutness V2 Backfill Script — Batched Generation
  *
- * Generates emotions + moments aboutness profiles for songs using OpenAI (title+artist only),
- * embeds both texts with Xenova/all-MiniLM-L6-v2, and upserts into song_aboutness.
+ * Generates emotions + moments aboutness profiles for songs using OpenAI
+ * (title+artist only), via the batched generator (10 songs per API request).
+ * Embeds both texts with Xenova/all-MiniLM-L6-v2, upserts into song_aboutness.
  *
- * Flow per song:
- *   1) SELECT id, title, artist, mbid
- *   2) generateEmotionsAboutness(title, artist)   → text + confidence
- *   3) generateMomentsAboutness(title, artist)    → text + confidence
- *   4) embed emotions_text → emotions_vector (384)
- *   5) embed moments_text  → moments_vector (384)
- *   6) UPSERT song_aboutness with generation_version = target version
+ * Flow per batch of batchSize songs:
+ *   1) SELECT id, title, artist, mbid  (cursor-based, skip existing V2 rows)
+ *   2) generateAboutnessBatch([...])   → 1 OpenAI call for emotions + moments
+ *   3) embed each emotions_text → emotions_vector (384-dim)
+ *   4) embed each moments_text  → moments_vector (384-dim)
+ *   5) UPSERT song_aboutness (generation_version = target version)
+ *
+ *   Fallback: if batch JSON parse fails, falls back to per-song calls.
+ *   Retry:    429 errors handled by withRateLimitRetry in generator.ts.
  *
  * Resumable: skips songs with existing row at target version.
- * NO OFFSET: uses stable cursor on song_id for consistent resumability.
+ * NO OFFSET:  uses stable cursor on song_id for consistent resumability.
  * Safe to stop + restart at any time.
  *
  * Flags:
  *   --limit=N              Process at most N songs total
- *   --batchSize=N          Songs per iteration (default: 10)
- *   --concurrency=N        Parallel OpenAI calls per batch (default: 3)
+ *   --batchSize=N          Songs per OpenAI request (default: 10)
+ *   --concurrency=N        Parallel batches (default: 1; keep at 1 to stay within RPD)
  *   --version=N            Generation version to write (default: 2)
  *   --dry-run              Print sample, no DB writes, no OpenAI calls
  *   --ids=id1,id2,...      Process only these song IDs (for targeted testing)
@@ -32,15 +38,16 @@ import { pipeline } from '@xenova/transformers';
  * RUN:
  *   DATABASE_URL=<url> OPENAI_API_KEY=<key> \
  *     pnpm -C apps/api exec tsx scripts/ingestion/aboutness-v2-backfill.ts \
- *     --limit=50 --batchSize=10 --concurrency=3
+ *     --batchSize=10 --concurrency=1
  */
 
 const EMBEDDING_MODEL = 'Xenova/all-MiniLM-L6-v2';
 const DIMS = 384;
 const PROVIDER = 'openai';
 const DEFAULT_BATCH_SIZE = 10;
-const DEFAULT_CONCURRENCY = 3;
+const DEFAULT_CONCURRENCY = 1;
 const DEFAULT_VERSION = 2;
+const STORED_MAX_CHARS = 100;
 
 // ── CLI args ──────────────────────────────────────────────────────────────────
 
@@ -111,8 +118,6 @@ async function upsertRow(params: {
 
   const now = new Date().toISOString();
 
-  // We upsert: if a row for this song already exists (from any version), update it.
-  // Legacy V1 columns get dummy values so NOT NULL constraints are satisfied.
   const eVec = `'[${emotionsVector.join(',')}]'::vector(${DIMS})`;
   const mVec = `'[${momentsVector.join(',')}]'::vector(${DIMS})`;
 
@@ -158,51 +163,104 @@ async function upsertRow(params: {
 
 // ── Batch processor ───────────────────────────────────────────────────────────
 
-async function processSong(
-  song: SongRow,
+interface BatchStats {
+  processed: number;
+  errors: number;
+  batchCalls: number;
+  fallbackSongs: number;
+}
+
+async function processBatch(
+  songs: SongRow[],
   version: number,
-  dryRun: boolean,
-): Promise<{ success: boolean; emotionsLen: number; momentsLen: number }> {
-  if (dryRun) {
-    console.log(`  [DRY RUN] "${song.title}" by ${song.artist} (${song.id})`);
-    return { success: true, emotionsLen: 0, momentsLen: 0 };
-  }
+  stats: BatchStats,
+  startTime: number,
+  target: number,
+): Promise<void> {
+  const batchInput: BatchSongInput[] = songs.map(s => ({
+    song_id: s.id,
+    title: s.title,
+    artist: s.artist,
+  }));
 
-  let emotionsResult, momentsResult;
+  stats.batchCalls++;
 
+  let batchResults;
   try {
-    [emotionsResult, momentsResult] = await Promise.all([
-      generateEmotionsAboutness(song.title, song.artist),
-      generateMomentsAboutness(song.title, song.artist),
-    ]);
+    batchResults = await generateAboutnessBatch(batchInput);
   } catch (err: any) {
-    console.error(`  ERROR generating for "${song.title}" by ${song.artist}: ${err.message}`);
-    return { success: false, emotionsLen: 0, momentsLen: 0 };
+    // generateAboutnessBatch itself handles fallback internally; this catch is
+    // for truly fatal errors (e.g. DB/embedder failure before any results).
+    console.error(`  BATCH ERROR: ${err.message}`);
+    stats.errors += songs.length;
+    return;
   }
 
-  const [emotionsVec, momentsVec] = await Promise.all([
-    embedText(emotionsResult.text),
-    embedText(momentsResult.text),
-  ]);
+  // Detect which songs fell back to individual calls
+  // (generateAboutnessBatch logs fallbacks internally)
+  const respondedIds = new Set(batchResults.map(r => r.song_id));
+  for (const s of songs) {
+    if (!respondedIds.has(s.id)) {
+      stats.fallbackSongs++;
+      stats.errors++;
+    }
+  }
 
-  await upsertRow({
-    songId: song.id,
-    emotionsText: emotionsResult.text,
-    emotionsVector: emotionsVec,
-    emotionsConfidence: emotionsResult.confidence,
-    momentsText: momentsResult.text,
-    momentsVector: momentsVec,
-    momentsConfidence: momentsResult.confidence,
-    provider: PROVIDER,
-    generationModel: emotionsResult.model,
-    version,
-  });
+  for (const result of batchResults) {
+    const song = songs.find(s => s.id === result.song_id);
+    if (!song) continue;
 
-  return {
-    success: true,
-    emotionsLen: emotionsResult.text.length,
-    momentsLen: momentsResult.text.length,
-  };
+    // Marker for songs that failed even the individual fallback
+    if (result.emotions.text === 'unknown') {
+      stats.errors++;
+      stats.processed++;
+      continue;
+    }
+
+    // Count fallback songs (those that weren't handled by the batch call)
+    // We detect this by checking if the batch had fewer entries than input;
+    // generateAboutnessBatch reports internally but we recount here for stats.
+
+    const emotionsText = result.emotions.text.substring(0, STORED_MAX_CHARS);
+    const momentsText = result.moments.text.substring(0, STORED_MAX_CHARS);
+
+    try {
+      const [emotionsVec, momentsVec] = await Promise.all([
+        embedText(emotionsText),
+        embedText(momentsText),
+      ]);
+
+      await upsertRow({
+        songId: song.id,
+        emotionsText,
+        emotionsVector: emotionsVec,
+        emotionsConfidence: result.emotions.confidence,
+        momentsText,
+        momentsVector: momentsVec,
+        momentsConfidence: result.moments.confidence,
+        provider: PROVIDER,
+        generationModel: result.emotions.model,
+        version,
+      });
+
+      stats.processed++;
+
+      const elapsed = (Date.now() - startTime) / 1000;
+      const rate = stats.processed / elapsed;
+      const eta = rate > 0 ? Math.round((target - stats.processed) / rate) : '?';
+      const pct = ((stats.processed / target) * 100).toFixed(1);
+      console.log(
+        `  [${stats.processed}/${target} ${pct}%] "${song.title}" by ${song.artist}` +
+        ` | emo=${emotionsText.length}c[${result.emotions.confidence}]` +
+        ` mom=${momentsText.length}c[${result.moments.confidence}]` +
+        ` | ${rate.toFixed(2)} songs/s | eta ${eta}s`,
+      );
+    } catch (err: any) {
+      console.error(`  ERROR embedding/upserting "${song.title}": ${err.message}`);
+      stats.errors++;
+      stats.processed++;
+    }
+  }
 }
 
 // ── Main ──────────────────────────────────────────────────────────────────────
@@ -210,11 +268,11 @@ async function processSong(
 async function main() {
   const opts = parseArgs();
 
-  console.log('Aboutness V2 Backfill');
+  console.log('Aboutness V2 Backfill [BATCHED]');
   console.log('─'.repeat(60));
   console.log(`  Version:      ${opts.version}`);
-  console.log(`  Batch size:   ${opts.batchSize}`);
-  console.log(`  Concurrency:  ${opts.concurrency}`);
+  console.log(`  Batch size:   ${opts.batchSize} songs/OpenAI request`);
+  console.log(`  Concurrency:  ${opts.concurrency} batches parallel`);
   console.log(`  Limit:        ${opts.limit ?? 'none'}`);
   console.log(`  Dry run:      ${opts.dryRun}`);
   console.log(`  IDs filter:   ${opts.ids ? opts.ids.join(', ') : 'none'}`);
@@ -232,8 +290,7 @@ async function main() {
     await initEmbedder();
   }
 
-  let processed = 0;
-  let errors = 0;
+  const stats: BatchStats = { processed: 0, errors: 0, batchCalls: 0, fallbackSongs: 0 };
   let lastId = '00000000-0000-0000-0000-000000000000'; // cursor start
   const startTime = Date.now();
 
@@ -263,16 +320,15 @@ async function main() {
 
   const target = opts.limit ? Math.min(totalEligible, opts.limit) : totalEligible;
 
-  while (processed < target) {
-    const remaining = target - processed;
-    const fetchSize = Math.min(opts.batchSize, remaining);
+  while (stats.processed + stats.errors < target) {
+    const remaining = target - (stats.processed + stats.errors);
+    const fetchSize = Math.min(opts.batchSize * opts.concurrency, remaining);
 
-    // Stable cursor-based pagination (NO OFFSET)
     let songs: SongRow[];
 
     if (opts.ids) {
-      // Targeted mode: process specific IDs
-      const idsToProcess = opts.ids.slice(processed, processed + fetchSize);
+      const done = stats.processed + stats.errors;
+      const idsToProcess = opts.ids.slice(done, done + fetchSize);
       songs = await prisma.$queryRaw<SongRow[]>`
         SELECT s.id, s.title, s.artist, s.mbid
         FROM songs s
@@ -297,29 +353,25 @@ async function main() {
     if (songs.length === 0) break;
     lastId = songs[songs.length - 1].id;
 
-    // Process in parallel up to concurrency limit
-    for (let i = 0; i < songs.length; i += opts.concurrency) {
-      const chunk = songs.slice(i, i + opts.concurrency);
-      const results = await Promise.all(chunk.map(s => processSong(s, opts.version, opts.dryRun)));
-
-      for (let j = 0; j < chunk.length; j++) {
-        const s = chunk[j];
-        const r = results[j];
-        processed++;
-        if (!r.success) {
-          errors++;
-        } else if (!opts.dryRun) {
-          const elapsed = (Date.now() - startTime) / 1000;
-          const rate = processed / elapsed;
-          const eta = rate > 0 ? Math.round((target - processed) / rate) : '?';
-          const pct = ((processed / target) * 100).toFixed(1);
-          console.log(
-            `  [${processed}/${target} ${pct}%] "${s.title}" by ${s.artist}` +
-            ` | emo=${r.emotionsLen}c mom=${r.momentsLen}c` +
-            ` | ${rate.toFixed(1)} songs/s | eta ${eta}s`,
-          );
-        }
+    if (opts.dryRun) {
+      for (const s of songs) {
+        console.log(`  [DRY RUN] "${s.title}" by ${s.artist} (${s.id})`);
       }
+      stats.processed += songs.length;
+      continue;
+    }
+
+    // Split into batchSize chunks and process up to concurrency batches in parallel
+    const chunks: SongRow[][] = [];
+    for (let i = 0; i < songs.length; i += opts.batchSize) {
+      chunks.push(songs.slice(i, i + opts.batchSize));
+    }
+
+    for (let i = 0; i < chunks.length; i += opts.concurrency) {
+      const parallel = chunks.slice(i, i + opts.concurrency);
+      await Promise.all(
+        parallel.map(chunk => processBatch(chunk, opts.version, stats, startTime, target)),
+      );
     }
   }
 
@@ -328,15 +380,17 @@ async function main() {
   console.log('═'.repeat(60));
   console.log('BACKFILL SUMMARY');
   console.log('═'.repeat(60));
-  console.log(`  Version:    ${opts.version}`);
-  console.log(`  Processed:  ${processed}`);
-  console.log(`  Errors:     ${errors}`);
-  console.log(`  Time:       ${elapsed}s`);
-  console.log(`  Mode:       ${opts.dryRun ? 'DRY RUN' : 'LIVE'}`);
+  console.log(`  Version:         ${opts.version}`);
+  console.log(`  Processed:       ${stats.processed}`);
+  console.log(`  Errors:          ${stats.errors}`);
+  console.log(`  Batch calls:     ${stats.batchCalls}`);
+  console.log(`  Fallback songs:  ${stats.fallbackSongs}`);
+  console.log(`  Time:            ${elapsed}s`);
+  console.log(`  Mode:            ${opts.dryRun ? 'DRY RUN' : 'LIVE [BATCHED]'}`);
   console.log('═'.repeat(60));
 
   await prisma.$disconnect();
-  process.exit(errors > 0 ? 1 : 0);
+  process.exit(stats.errors > 0 ? 1 : 0);
 }
 
 main().catch(err => {
