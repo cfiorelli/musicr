@@ -162,7 +162,7 @@ model ExternalPlay {
   year         Int?
   songId       String?   @db.Uuid @map("song_id")
   song         Song?     @relation(fields: [songId], references: [id])
-  createdAt    DateTime  @default(now())
+  createdAt    DateTime  @default(now()) @map("created_at")
 
   @@unique([source, sourcePlayId], map: "idx_external_plays_source_play_id")
   @@index([source], map: "idx_external_plays_source")
@@ -175,7 +175,7 @@ model IngestionCheckpoint {
   source    String   @id  // "kexp"
   cursor    String?       // last-processed airdate (ISO) or page URL
   metadata  Json?         // optional extra state (page count, last run, etc.)
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("ingestion_checkpoints")
 }
@@ -187,8 +187,8 @@ model AuthUser {
   email       String
   displayName String?  @map("display_name")
   avatar      String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
 
   sessions AuthSession[]
 
@@ -204,7 +204,7 @@ model AuthSession {
   authUserId String   @db.Uuid @map("auth_user_id")
   authUser   AuthUser @relation(fields: [authUserId], references: [id], onDelete: Cascade)
   expiresAt  DateTime @map("expires_at")
-  createdAt  DateTime @default(now())
+  createdAt  DateTime @default(now()) @map("created_at")
   anonUserId String?  @db.Uuid @map("anon_user_id")  // anon User.id at login time
 
   @@index([authUserId], map: "idx_auth_sessions_auth_user_id")
