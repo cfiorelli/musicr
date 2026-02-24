@@ -16,6 +16,8 @@ const ChatInterface = () => {
   const [unreadCount, setUnreadCount] = useState(0);
   const [songCount, setSongCount] = useState<number | null>(null);
   const [emojiPickerOpen, setEmojiPickerOpen] = useState<string | null>(null);
+  // Why panel: tracks which message's explanation is expanded (null = all collapsed)
+  const [expandedWhyId, setExpandedWhyId] = useState<string | null>(null);
   // Modal state: only one modal can be open at a time
   const [activeModal, setActiveModal] = useState<'onboarding' | 'info' | null>(null);
   const [historyLoadError, setHistoryLoadError] = useState(false);
@@ -51,7 +53,7 @@ const ChatInterface = () => {
   } = useChatStore();
 
   // Auth store — Google sign-in state
-  const { user: authUser, loading: authLoading, bootstrap: authBootstrap, signIn, signOut } = useAuthStore();
+  const { user: authUser, bootstrap: authBootstrap, signIn, signOut } = useAuthStore();
 
   // Bootstrap auth session on mount
   useEffect(() => { authBootstrap(); }, []);
@@ -524,9 +526,19 @@ const ChatInterface = () => {
                     {firstMatchId === msg.id && (
                       <span className="text-xs text-gray-500 italic">Meaning match · not exact search</span>
                     )}
+                    {/* Why toggle — only shown when explanation data exists */}
+                    {msg.aboutness && (msg.aboutness.emotions || msg.aboutness.moments) && (
+                      <button
+                        onClick={() => setExpandedWhyId(expandedWhyId === msg.id ? null : msg.id)}
+                        className="text-[10px] text-gray-500 hover:text-gray-300 transition-colors ml-0.5"
+                        title="Show match explanation"
+                      >
+                        {expandedWhyId === msg.id ? 'Why ▲' : 'Why?'}
+                      </button>
+                    )}
                   </div>
-                  {/* Inline explanation card — always visible when data exists */}
-                  {msg.aboutness && (msg.aboutness.emotions || msg.aboutness.moments) && (
+                  {/* Collapsible explanation card — default collapsed, expanded on Why click */}
+                  {expandedWhyId === msg.id && msg.aboutness && (msg.aboutness.emotions || msg.aboutness.moments) && (
                     <div className="mt-1.5 pl-2 border-l-2 border-gray-700/60 space-y-0.5">
                       {msg.aboutness.emotions && (
                         <div className="flex items-baseline gap-1.5 min-w-0">
@@ -759,37 +771,35 @@ const ChatInterface = () => {
 
         {/* Auth widget — right side of header */}
         <div className="flex items-center gap-2">
-          {!authLoading && (
-            authUser ? (
-              <div className="flex items-center gap-2">
-                {authUser.avatar && (
-                  <img
-                    src={authUser.avatar}
-                    alt={authUser.displayName ?? authUser.email}
-                    className="w-6 h-6 rounded-full"
-                    referrerPolicy="no-referrer"
-                  />
-                )}
-                <span className="text-xs text-gray-300 hidden sm:inline max-w-[120px] truncate">
-                  {authUser.displayName ?? authUser.email}
-                </span>
-                <button
-                  onClick={() => signOut()}
-                  className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
-                  title="Sign out"
-                >
-                  Sign out
-                </button>
-              </div>
-            ) : (
+          {authUser ? (
+            <div className="flex items-center gap-2">
+              {authUser.avatar && (
+                <img
+                  src={authUser.avatar}
+                  alt={authUser.displayName ?? authUser.email}
+                  className="w-6 h-6 rounded-full"
+                  referrerPolicy="no-referrer"
+                />
+              )}
+              <span className="text-xs text-gray-300 hidden sm:inline max-w-[120px] truncate">
+                {authUser.displayName ?? authUser.email}
+              </span>
               <button
-                onClick={signIn}
-                className="text-xs text-gray-400 hover:text-emerald-400 transition-colors border border-gray-600/60 hover:border-emerald-500/50 rounded px-2 py-1"
-                title="Sign in with Google"
+                onClick={() => signOut()}
+                className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
+                title="Sign out"
               >
-                Sign in
+                Sign out
               </button>
-            )
+            </div>
+          ) : (
+            <button
+              onClick={signIn}
+              className="text-xs text-gray-400 hover:text-emerald-400 transition-colors border border-gray-600/60 hover:border-emerald-500/50 rounded px-2 py-1"
+              title="Sign in with Google"
+            >
+              Sign in with Google
+            </button>
           )}
         </div>
       </div>
