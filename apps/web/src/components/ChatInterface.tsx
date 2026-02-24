@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
 import { useChatStore, type Message } from '../stores/chatStore';
 import { cleanAboutnessText, getMatchStrengthLabel } from '../utils/songMatch';
+import { useAuthStore } from '../stores/authStore';
 
 type ReplyMessage = Message & { parentAuthor?: string };
 type ThreadGroup = { root: Message; replies: ReplyMessage[] };
@@ -48,6 +49,12 @@ const ChatInterface = () => {
     toggleThread,
     debugInfo
   } = useChatStore();
+
+  // Auth store — Google sign-in state
+  const { user: authUser, loading: authLoading, bootstrap: authBootstrap, signIn, signOut } = useAuthStore();
+
+  // Bootstrap auth session on mount
+  useEffect(() => { authBootstrap(); }, []);
 
   // Check if debug mode is enabled via ?debug=1 query parameter
   const [debugMode, setDebugMode] = useState(false);
@@ -747,6 +754,42 @@ const ChatInterface = () => {
                 {songCount.toLocaleString()}
               </span>
             </div>
+          )}
+        </div>
+
+        {/* Auth widget — right side of header */}
+        <div className="flex items-center gap-2">
+          {!authLoading && (
+            authUser ? (
+              <div className="flex items-center gap-2">
+                {authUser.avatar && (
+                  <img
+                    src={authUser.avatar}
+                    alt={authUser.displayName ?? authUser.email}
+                    className="w-6 h-6 rounded-full"
+                    referrerPolicy="no-referrer"
+                  />
+                )}
+                <span className="text-xs text-gray-300 hidden sm:inline max-w-[120px] truncate">
+                  {authUser.displayName ?? authUser.email}
+                </span>
+                <button
+                  onClick={() => signOut()}
+                  className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
+                  title="Sign out"
+                >
+                  Sign out
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={signIn}
+                className="text-xs text-gray-400 hover:text-emerald-400 transition-colors border border-gray-600/60 hover:border-emerald-500/50 rounded px-2 py-1"
+                title="Sign in with Google"
+              >
+                Sign in
+              </button>
+            )
           )}
         </div>
       </div>

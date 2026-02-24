@@ -34,8 +34,9 @@ model Song {
   createdAt          DateTime                    @default(now())
   updatedAt          DateTime                    @updatedAt
 
-  messages  Message[]
-  aboutness SongAboutness?
+  messages      Message[]
+  aboutness     SongAboutness?
+  externalPlays ExternalPlay[]
 
   @@index([tags], map: "idx_songs_tags", type: Gin)
   @@index([phrases], map: "idx_songs_phrases", type: Gin)
@@ -146,4 +147,67 @@ model MessageReaction {
   @@unique([messageId, userId, emoji])
   @@index([messageId])
   @@map("message_reactions")
+}
+
+// KEXP ingestion: provenance record for each external play
+model ExternalPlay {
+  id           String    @id @default(uuid()) @db.Uuid
+  source       String    // "kexp"
+  sourcePlayId String    @map("source_play_id")
+  title        String
+  artist       String
+  album        String?
+  airdate      DateTime?
+  mbid         String?   // MusicBrainz recording_id (from KEXP)
+  year         Int?
+  songId       String?   @db.Uuid @map("song_id")
+  song         Song?     @relation(fields: [songId], references: [id])
+  createdAt    DateTime  @default(now())
+
+  @@unique([source, sourcePlayId], map: "idx_external_plays_source_play_id")
+  @@index([source], map: "idx_external_plays_source")
+  @@index([songId], map: "idx_external_plays_song_id")
+  @@map("external_plays")
+}
+
+// Resumable ingestion checkpoint state per source
+model IngestionCheckpoint {
+  source    String   @id  // "kexp"
+  cursor    String?       // last-processed airdate (ISO) or page URL
+  metadata  Json?         // optional extra state (page count, last run, etc.)
+  updatedAt DateTime @updatedAt
+
+  @@map("ingestion_checkpoints")
+}
+
+// Google-authenticated users (separate from anon User model)
+model AuthUser {
+  id          String   @id @default(uuid()) @db.Uuid
+  googleSub   String   @unique @map("google_sub")
+  email       String
+  displayName String?  @map("display_name")
+  avatar      String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  sessions AuthSession[]
+
+  @@index([googleSub], map: "idx_auth_users_google_sub")
+  @@index([email], map: "idx_auth_users_email")
+  @@map("auth_users")
+}
+
+// Server-side sessions for authenticated users
+model AuthSession {
+  id         String   @id @default(uuid()) @db.Uuid
+  tokenHash  String   @unique @map("token_hash")  // SHA-256(raw_token), hex
+  authUserId String   @db.Uuid @map("auth_user_id")
+  authUser   AuthUser @relation(fields: [authUserId], references: [id], onDelete: Cascade)
+  expiresAt  DateTime @map("expires_at")
+  createdAt  DateTime @default(now())
+  anonUserId String?  @db.Uuid @map("anon_user_id")  // anon User.id at login time
+
+  @@index([authUserId], map: "idx_auth_sessions_auth_user_id")
+  @@index([expiresAt], map: "idx_auth_sessions_expires_at")
+  @@map("auth_sessions")
 }

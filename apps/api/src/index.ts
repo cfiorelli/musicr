@@ -23,6 +23,7 @@ import {
 import { getInstanceFingerprint, createRequestFingerprint } from './utils/fingerprint.js';
 import { isBlocked, getBlockedCount } from './utils/ip-blocklist.js';
 import { containsBlockedKeyword, getBlockedKeywordCount } from './utils/content-filter.js';
+import { AuthService, isAuthConfigured } from './services/auth-service.js';
 import { nanoid } from 'nanoid';
 import os from 'os';
 
@@ -542,6 +543,119 @@ fastify.get('/health', async (_, reply) => {
     blockedIps: getBlockedCount(),
     blockedKeywords: getBlockedKeywordCount(),
   });
+});
+
+// ---------------------------------------------------------------------------
+// Google Auth Routes
+// ---------------------------------------------------------------------------
+const authService = new AuthService(prisma);
+
+// GET /auth/google/start — redirect to Google consent screen
+fastify.get('/auth/google/start', async (_request, reply) => {
+  if (!isAuthConfigured()) {
+    return reply.code(503).send({ error: 'Google auth is not configured on this server' });
+  }
+  const { url, state } = authService.buildAuthUrl();
+  // Store state in a short-lived signed cookie (10 min)
+  reply.setCookie(AuthService.STATE_COOKIE, state, {
+    httpOnly: true,
+    secure: config.nodeEnv === 'production',
+    sameSite: 'lax',
+    maxAge: 60 * 10,
+    path: '/',
+    signed: true,
+  });
+  return reply.redirect(url);
+});
+
+// GET /auth/google/callback — handle OAuth callback
+fastify.get('/auth/google/callback', async (request, reply) => {
+  if (!isAuthConfigured()) {
+    return reply.code(503).send({ error: 'Google auth is not configured' });
+  }
+
+  const query = request.query as Record<string, string>;
+  const { code, state, error: oauthError } = query;
+
+  if (oauthError) {
+    logger.warn({ oauthError }, 'Google OAuth returned error');
+    return reply.redirect('/?auth_error=denied');
+  }
+
+  // Validate state (CSRF)
+  const storedState = request.unsignCookie(request.cookies[AuthService.STATE_COOKIE] ?? '');
+  reply.clearCookie(AuthService.STATE_COOKIE, { path: '/' });
+
+  if (!storedState.valid || storedState.value !== state) {
+    logger.warn({ storedState: storedState.valid, stateMatch: storedState.value === state }, 'OAuth state mismatch');
+    return reply.code(400).send({ error: 'Invalid OAuth state — possible CSRF attempt' });
+  }
+
+  if (!code) {
+    return reply.code(400).send({ error: 'Missing code parameter' });
+  }
+
+  let googleUser: Awaited<ReturnType<AuthService['exchangeCodeForUser']>>;
+  try {
+    googleUser = await authService.exchangeCodeForUser(code);
+  } catch (err) {
+    logger.error({ err }, 'Google token exchange failed');
+    return reply.redirect('/?auth_error=exchange_failed');
+  }
+
+  if (!googleUser.id || !googleUser.email) {
+    logger.error({ googleUser }, 'Google user info missing required fields');
+    return reply.redirect('/?auth_error=missing_user_info');
+  }
+
+  const authUser = await authService.findOrCreateUser(googleUser);
+
+  // Best-effort: capture anon user ID from existing session cookie
+  let anonUserId: string | undefined;
+  try {
+    const existingSession = await userService.getUserSession(request, reply).catch(() => null);
+    anonUserId = existingSession?.userId;
+  } catch { /* non-fatal */ }
+
+  const rawToken = await authService.createSession(authUser.id, anonUserId);
+
+  reply.setCookie(AuthService.SESSION_COOKIE, rawToken, {
+    httpOnly: true,
+    secure: config.nodeEnv === 'production',
+    sameSite: 'lax',
+    maxAge: 60 * 60 * 24 * 30, // 30 days
+    path: '/',
+  });
+
+  // Redirect to web app (frontend origin)
+  const frontendUrl = process.env.FRONTEND_ORIGIN ?? config.server.frontendOrigin;
+  return reply.redirect(frontendUrl);
+});
+
+// GET /auth/session — return current authenticated user or { user: null }
+fastify.get('/auth/session', async (request, reply) => {
+  const rawToken = request.cookies[AuthService.SESSION_COOKIE];
+  if (!rawToken) {
+    return { user: null };
+  }
+
+  const sessionUser = await authService.validateSession(rawToken);
+  if (!sessionUser) {
+    reply.clearCookie(AuthService.SESSION_COOKIE, { path: '/' });
+    return { user: null };
+  }
+
+  return { user: sessionUser };
+});
+
+// POST /auth/logout — destroy session
+fastify.post('/auth/logout', async (request, reply) => {
+  const rawToken = request.cookies[AuthService.SESSION_COOKIE];
+  if (rawToken) {
+    await authService.deleteSession(rawToken);
+  }
+  reply.clearCookie(AuthService.SESSION_COOKIE, { path: '/' });
+  return { ok: true };
 });
 
 // User session endpoint - establishes anonymous user with cookie
