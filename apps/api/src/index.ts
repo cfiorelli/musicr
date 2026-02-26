@@ -619,10 +619,13 @@ fastify.get('/auth/google/callback', async (request, reply) => {
 
   const rawToken = await authService.createSession(authUser.id, anonUserId);
 
+  // SameSite=None allows the cookie to be sent on cross-site fetch() from the web app
+  // (web app and API are on separate Railway subdomains, which are cross-site per PSL).
+  // Requires Secure=true, which is always true in production.
   reply.setCookie(AuthService.SESSION_COOKIE, rawToken, {
     httpOnly: true,
     secure: config.nodeEnv === 'production',
-    sameSite: 'lax',
+    sameSite: config.nodeEnv === 'production' ? 'none' : 'lax',
     maxAge: 60 * 60 * 24 * 30, // 30 days
     path: '/',
   });
@@ -641,7 +644,11 @@ fastify.get('/auth/session', async (request, reply) => {
 
   const sessionUser = await authService.validateSession(rawToken);
   if (!sessionUser) {
-    reply.clearCookie(AuthService.SESSION_COOKIE, { path: '/' });
+    reply.clearCookie(AuthService.SESSION_COOKIE, {
+      path: '/',
+      secure: config.nodeEnv === 'production',
+      sameSite: config.nodeEnv === 'production' ? 'none' : 'lax',
+    });
     return { user: null };
   }
 
@@ -654,7 +661,11 @@ fastify.post('/auth/logout', async (request, reply) => {
   if (rawToken) {
     await authService.deleteSession(rawToken);
   }
-  reply.clearCookie(AuthService.SESSION_COOKIE, { path: '/' });
+  reply.clearCookie(AuthService.SESSION_COOKIE, {
+    path: '/',
+    secure: config.nodeEnv === 'production',
+    sameSite: config.nodeEnv === 'production' ? 'none' : 'lax',
+  });
   return { ok: true };
 });
 
