@@ -43,7 +43,7 @@
     "fastify": "^4.26.2",
     "ioredis": "^5.9.2",
     "nanoid": "^5.1.6",
-    "openai": "^4.28.4",
+    "openai": "^6.22.0",
     "pino": "^8.19.0",
     "pino-pretty": "^11.0.0",
     "prisma": "^5.11.0",
