@@ -72,3 +72,7 @@ tmp/
 temp/
 # Data files (MusicBrainz fetch, etc.)
 data/
+
+# Beads / Dolt files (added by bd init)
+.dolt/
+.beads-credential-key
