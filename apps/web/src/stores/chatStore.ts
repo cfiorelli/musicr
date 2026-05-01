@@ -5,6 +5,21 @@ function generateId() {
   return 'msg_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
 }
 
+const LOCAL_OFFENSIVE_PATTERNS: RegExp[] = [
+  /\bshit\b/i,
+  /\bfuck\b/i,
+  /\bbitch\b/i,
+  /\basshole\b/i,
+  /\bcunt\b/i,
+  /\bdick\b/i,
+  /\bnigg(?:er|a)\b/i,
+];
+
+function shouldSuppressMessage(text: string | undefined | null): boolean {
+  if (!text) return false;
+  return LOCAL_OFFENSIVE_PATTERNS.some((re) => re.test(text));
+}
+
 export interface RoomUser {
   userId: string;
   handle: string;
@@ -407,6 +422,13 @@ export const useChatStore = create<ChatState>((set, get) => ({
               console.log('No optimistic message found to update with song mapping');
             }
           } else if (data.type === 'display') {
+            if (shouldSuppressMessage(data.originalText)) {
+              if (window.location.search.includes('debug=1')) {
+                console.log('[FILTER] Suppressed offensive display message', data.id);
+              }
+              return;
+            }
+
             // Message from another user or historical message
             const message: Message = {
               id: data.id || generateId(), // Use server ID if available
@@ -960,7 +982,9 @@ export const useChatStore = create<ChatState>((set, get) => ({
       }
 
       const data = await response.json();
-      const recentMessages: Message[] = (data.messages || data).map((msg: any) => ({
+      const recentMessages: Message[] = (data.messages || data)
+        .filter((msg: any) => !shouldSuppressMessage(msg.originalText))
+        .map((msg: any) => ({
         id: msg.id,
         content: msg.originalText,
         songTitle: msg.chosenSong?.title || msg.primary?.title,
@@ -1163,7 +1187,9 @@ export const useChatStore = create<ChatState>((set, get) => ({
       const data = await response.json();
       // API returns { messages: [...], hasMore, oldestId }
       const messageList = data.messages || data; // Support both wrapped and unwrapped
-      const messages: Message[] = messageList.map((msg: any) => ({
+      const messages: Message[] = messageList
+        .filter((msg: any) => !shouldSuppressMessage(msg.originalText))
+        .map((msg: any) => ({
         id: msg.id,
         content: msg.originalText,
         songTitle: msg.chosenSong?.title || msg.primary?.title,
@@ -1228,7 +1254,9 @@ export const useChatStore = create<ChatState>((set, get) => ({
       const data = await response.json();
       // API returns { messages: [...], hasMore, oldestId }
       const messageList = data.messages || data; // Support both wrapped and unwrapped
-      const olderMessages: Message[] = messageList.map((msg: any) => ({
+      const olderMessages: Message[] = messageList
+        .filter((msg: any) => !shouldSuppressMessage(msg.originalText))
+        .map((msg: any) => ({
         id: msg.id,
         content: msg.originalText,
         songTitle: msg.chosenSong?.title || msg.primary?.title,

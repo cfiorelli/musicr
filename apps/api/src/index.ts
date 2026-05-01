@@ -717,7 +717,7 @@ fastify.post('/api/map', async (request, reply) => {
     if (text.length > 500) {
       return reply.code(400).send(createErrorResponse('validation_error', 'Text too long (max 500 characters)', 400));
     }
-    if (containsBlockedKeyword(text)) {
+    if (isDisallowedText(text)) {
       logger.warn({ text }, 'REST map request blocked by content filter');
       return reply.code(400).send(createErrorResponse('content_filtered', 'Message contains disallowed content', 400));
     }
@@ -1086,6 +1086,21 @@ const isUuid = (value: string): boolean => {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
 };
 
+// Fallback profanity guard used when BLOCKED_KEYWORDS is missing or incomplete.
+const FALLBACK_PROFANITY_PATTERNS: RegExp[] = [
+  /\bshit\b/i,
+  /\bfuck\b/i,
+  /\bbitch\b/i,
+  /\basshole\b/i,
+  /\bcunt\b/i,
+  /\bdick\b/i,
+  /\bnigg(?:er|a)\b/i,
+];
+
+const isDisallowedText = (text: string): boolean => (
+  containsBlockedKeyword(text) || FALLBACK_PROFANITY_PATTERNS.some((re) => re.test(text))
+);
+
 // GET /api/rooms/:roomId/messages - Fetch recent messages for a room
 fastify.get<{
   Params: { roomId: string };
@@ -1112,6 +1127,15 @@ fastify.get<{
     // Get current user session
     const userSession = await userService.getUserSession(request, reply);
     const currentUserId = userSession.userId;
+
+    // New visitors should start with a clean slate and not receive backlog.
+    if (userSession.isNew) {
+      return {
+        messages: [],
+        hasMore: false,
+        oldestId: null
+      };
+    }
 
     // Lookup room by UUID or name (but never pass non-UUID to id field)
     let room;
@@ -1202,7 +1226,10 @@ fastify.get<{
     const messagesToReturn = hasMore ? messages.slice(0, limit) : messages;
 
     // Reverse to get chronological order (oldest first)
-    const messagesWithDisplay = messagesToReturn.reverse().map(msg => {
+    const messagesWithDisplay = messagesToReturn
+      .filter((msg) => !isDisallowedText(msg.text))
+      .reverse()
+      .map(msg => {
       // Group reactions by emoji
       const reactionsMap = new Map<string, {
         emoji: string;
@@ -1249,7 +1276,7 @@ fastify.get<{
         replyToMessageId: msg.replyToMessageId || null,
         reactions: Array.from(reactionsMap.values())
       };
-    });
+      });
 
     logger.info({
       requestId,
@@ -1557,100 +1584,105 @@ fastify.register(async function (fastify) {
         isNewUser: userSession.isNew
       }, 'WebSocket connection established');
 
-      // Send recent message history to new connection
+      // Send recent message history to returning connections only.
+      // Brand-new visitors get no backlog to avoid exposing prior content.
       try {
-        const recentMessages = await prisma.message.findMany({
-          where: {
-            roomId: defaultRoom.id
-          },
-          include: {
-            user: {
-              select: {
-                anonHandle: true
-              }
+        if (!userSession.isNew) {
+          const recentMessages = await prisma.message.findMany({
+            where: {
+              roomId: defaultRoom.id
             },
-            song: {
-              select: {
-                title: true,
-                artist: true,
-                year: true
-              }
-            },
-            reactions: {
-              include: {
-                user: {
-                  select: {
-                    anonHandle: true
-                  }
+            include: {
+              user: {
+                select: {
+                  anonHandle: true
                 }
               },
-              orderBy: {
-                createdAt: 'asc'
-              }
-            }
-          },
-          orderBy: {
-            createdAt: 'desc'
-          },
-          take: 20
-        });
-
-        // Send messages in chronological order (oldest first)
-        const messagesToSend = recentMessages.reverse().map((msg) => {
-            const scores = msg.scores as any;
-
-            // Group reactions by emoji (same format as REST endpoint)
-            const reactionsMap = new Map<string, {
-              emoji: string;
-              count: number;
-              users: Array<{ userId: string; anonHandle: string }>;
-              hasReacted: boolean;
-            }>();
-
-            for (const reaction of msg.reactions) {
-              const existing = reactionsMap.get(reaction.emoji);
-              const reactionUser = { userId: reaction.userId, anonHandle: reaction.user.anonHandle };
-
-              if (existing) {
-                existing.count++;
-                existing.users.push(reactionUser);
-                if (reaction.userId === userSession.userId) {
-                  existing.hasReacted = true;
+              song: {
+                select: {
+                  title: true,
+                  artist: true,
+                  year: true
                 }
-              } else {
-                reactionsMap.set(reaction.emoji, {
-                  emoji: reaction.emoji,
-                  count: 1,
-                  users: [reactionUser],
-                  hasReacted: reaction.userId === userSession.userId
-                });
+              },
+              reactions: {
+                include: {
+                  user: {
+                    select: {
+                      anonHandle: true
+                    }
+                  }
+                },
+                orderBy: {
+                  createdAt: 'asc'
+                }
               }
-            }
-
-            return {
-              type: 'display',
-              id: msg.id,
-              originalText: msg.text,
-              userId: msg.userId,
-              anonHandle: msg.user.anonHandle,
-              primary: scores ? scores.primary : null,
-              alternates: scores ? scores.alternates : [],
-              why: scores ? {
-                reasoning: `Matched using ${scores.strategy}`,
-                similarity: scores.confidence,
-                matchedPhrase: scores.matchedPhrase
-              } : '',
-              timestamp: msg.createdAt.toISOString(),
-              isHistorical: true,
-              replyToMessageId: msg.replyToMessageId || null,
-              reactions: Array.from(reactionsMap.values())
-            };
+            },
+            orderBy: {
+              createdAt: 'desc'
+            },
+            take: 20
           });
 
-        // Send each historical message
-        messagesToSend.forEach(msg => {
-          connection.send(JSON.stringify(msg));
-        });
+          const filteredRecentMessages = recentMessages.filter((msg) => !isDisallowedText(msg.text));
+
+          // Send messages in chronological order (oldest first)
+          const messagesToSend = filteredRecentMessages.reverse().map((msg) => {
+              const scores = msg.scores as any;
+
+              // Group reactions by emoji (same format as REST endpoint)
+              const reactionsMap = new Map<string, {
+                emoji: string;
+                count: number;
+                users: Array<{ userId: string; anonHandle: string }>;
+                hasReacted: boolean;
+              }>();
+
+              for (const reaction of msg.reactions) {
+                const existing = reactionsMap.get(reaction.emoji);
+                const reactionUser = { userId: reaction.userId, anonHandle: reaction.user.anonHandle };
+
+                if (existing) {
+                  existing.count++;
+                  existing.users.push(reactionUser);
+                  if (reaction.userId === userSession.userId) {
+                    existing.hasReacted = true;
+                  }
+                } else {
+                  reactionsMap.set(reaction.emoji, {
+                    emoji: reaction.emoji,
+                    count: 1,
+                    users: [reactionUser],
+                    hasReacted: reaction.userId === userSession.userId
+                  });
+                }
+              }
+
+              return {
+                type: 'display',
+                id: msg.id,
+                originalText: msg.text,
+                userId: msg.userId,
+                anonHandle: msg.user.anonHandle,
+                primary: scores ? scores.primary : null,
+                alternates: scores ? scores.alternates : [],
+                why: scores ? {
+                  reasoning: `Matched using ${scores.strategy}`,
+                  similarity: scores.confidence,
+                  matchedPhrase: scores.matchedPhrase
+                } : '',
+                timestamp: msg.createdAt.toISOString(),
+                isHistorical: true,
+                replyToMessageId: msg.replyToMessageId || null,
+                reactions: Array.from(reactionsMap.values())
+              };
+            });
+
+          // Send each historical message
+          messagesToSend.forEach(msg => {
+            connection.send(JSON.stringify(msg));
+          });
+        }
 
         // Send connection confirmation after history
         connection.send(JSON.stringify({
@@ -1893,7 +1925,7 @@ fastify.register(async function (fastify) {
           messageData.text = trimmedText;
 
           // Keyword content filter
-          if (containsBlockedKeyword(trimmedText)) {
+          if (isDisallowedText(trimmedText)) {
             logger.warn({ userId: userSession.userId, text: trimmedText }, 'Message blocked by content filter');
             connection.send(JSON.stringify({
               type: 'error',

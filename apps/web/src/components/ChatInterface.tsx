@@ -439,6 +439,16 @@ const ChatInterface = () => {
     return null;
   };
 
+  const formatTimestamp = (timestamp: string) => {
+    return new Date(timestamp).toLocaleString(undefined, {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+    });
+  };
+
   // Song-title detection hint (only when input >= 10 chars)
   const looksLikeSongTitle = inputValue.length >= 10 && (
     inputValue.includes(' - ') || /\b\w+\s+by\s+\w+/i.test(inputValue)
@@ -482,7 +492,7 @@ const ChatInterface = () => {
             <div className="flex items-center gap-2 mb-0.5">
               <span className={nameClass}>{msg.anonHandle}</span>
               <span className="text-gray-600 text-xs">
-                {new Date(msg.timestamp).toLocaleTimeString()}
+                {formatTimestamp(msg.timestamp)}
               </span>
               {msg.isOptimistic && (
                 <span className="text-amber-500 text-xs animate-pulse">sending...</span>
@@ -850,7 +860,7 @@ const ChatInterface = () => {
                       {' → '}
                       <span className="text-green-400">{event.instanceId || 'no-id'}</span>
                       {' @ '}
-                      <span className="text-gray-500">{new Date(event.timestamp).toLocaleTimeString()}</span>
+                      <span className="text-gray-500">{formatTimestamp(event.timestamp)}</span>
                     </div>
                   ))}
                 </div>
